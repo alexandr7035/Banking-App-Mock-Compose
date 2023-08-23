@@ -1,9 +1,11 @@
 package by.alexandr7035.banking.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,6 +47,31 @@ fun PrimaryButton(
     }
 }
 
+
+@Composable
+fun SecondaryButton(
+    onClick: () -> Unit,
+    modifier: Modifier,
+    text: String,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.then(Modifier.wrapContentHeight()),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.primary,
+        ),
+        shape = RoundedCornerShape(30.dp),
+        contentPadding = PaddingValues(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
+
 @Composable
 fun TextBtn(
     onClick: () -> Unit,
@@ -54,7 +81,7 @@ fun TextBtn(
     TextButton(
         onClick = onClick,
         modifier = modifier.then(Modifier.wrapContentHeight()),
-        contentPadding = PaddingValues(0.dp),
+        contentPadding = PaddingValues(vertical = 0.dp, horizontal = 16.dp),
     ) {
         Text(
             text = text,
@@ -71,12 +98,18 @@ fun TextBtn(
 fun PrimaryButton_Preview() {
     BankingAppTheme() {
         Surface() {
-
             Column(
+                modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 PrimaryButton(
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Click me"
+                )
+
+                SecondaryButton(
                     onClick = {},
                     modifier = Modifier.fillMaxWidth(),
                     text = "Click me"

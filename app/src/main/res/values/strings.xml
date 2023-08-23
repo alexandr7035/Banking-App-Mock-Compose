@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Banking App</string>
+
+    <string name="wizard_title_1">Send Money</string>
+    <string name="wizard_title_2">Request Money</string>
+    <string name="wizard_title_3">Easy To Use</string>
+
+    <string name="wizard_desc_1">Send money easily and with one click everything will be sent every time you make a transaction</string>
+    <string name="wizard_desc_2">You can request money to friends or family to send as much money as you want</string>
+    <string name="wizard_desc_3">Very easy to use and easy to understand for those of you who are beginners</string>
+    <string name="next_step">Next Step</string>
+    <string name="skip_this_step">Skip This Step</string>
+    <string name="login_now">Login Now</string>
+    <string name="create_account">Create Account</string>
 </resources>
