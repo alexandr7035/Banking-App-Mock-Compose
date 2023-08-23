@@ -30,6 +30,19 @@ val Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = primaryFontFamily,
         fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold
+    ),
+    titleLarge = TextStyle(
+        fontFamily = primaryFontFamily,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.SemiBold
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = primaryFontFamily,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal,
+        color = Gray30,
+        lineHeight = 24.sp
     )
 
     /* Other default text styles to override
