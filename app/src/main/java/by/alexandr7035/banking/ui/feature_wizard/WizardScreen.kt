@@ -89,7 +89,7 @@ fun WizardScreen(
                 Text(
                     text = page.title,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(horizontal = 56.dp)
@@ -162,7 +162,7 @@ fun WizardScreen(
             Box(Modifier.padding(horizontal = 24.dp)) {
                 SecondaryButton(
                     onClick = {
-                        Toast.makeText(context, "Log in", Toast.LENGTH_SHORT).show()
+                        onLogin.invoke()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.login_now)

@@ -29,12 +29,12 @@ val Typography = Typography(
     ),
     titleMedium = TextStyle(
         fontFamily = primaryFontFamily,
-        fontSize = 16.sp,
+        fontSize = 20.sp,
         fontWeight = FontWeight.SemiBold
     ),
     titleLarge = TextStyle(
         fontFamily = primaryFontFamily,
-        fontSize = 20.sp,
+        fontSize = 24.sp,
         fontWeight = FontWeight.SemiBold
     ),
     bodyMedium = TextStyle(
@@ -43,6 +43,13 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         color = Gray30,
         lineHeight = 24.sp
+    ),
+
+    labelSmall = TextStyle(
+        fontFamily = primaryFontFamily,
+        fontSize = 12.sp,
+        color = Gray50,
+        fontWeight = FontWeight.Normal
     )
 
     /* Other default text styles to override
