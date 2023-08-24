@@ -16,4 +16,6 @@
     <string name="email_address">Email Address</string>
     <string name="password">Password</string>
     <string name="welcome_back">Welcome Back!</string>
+    <string name="forgot_password">Forgot password ?</string>
+    <string name="sign_up">Sign Up</string>
 </resources>
