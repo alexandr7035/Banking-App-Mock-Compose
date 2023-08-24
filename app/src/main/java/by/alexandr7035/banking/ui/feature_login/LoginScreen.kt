@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +31,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -88,17 +91,45 @@ fun LoginScreen() {
 private fun Cover(
     modifier: Modifier
 ) {
-    Box(
+    Column(
         modifier = modifier
             .then(Modifier.background(MaterialTheme.colorScheme.primary))
-            .padding(vertical = 56.dp), contentAlignment = Alignment.Center
+            .padding(top = 48.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
+            modifier = Modifier.padding(horizontal = 24.dp),
             text = "SHIELDPAY",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onPrimary
         )
+
+        // TODO vector images
+        Row(
+            modifier = Modifier
+                .height(160.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom
+        ) {
+
+            Image(
+                modifier = Modifier.fillMaxHeight(0.7F).offset(x=-56.dp),
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(Color(0xFF585679))
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxHeight().offset(x=32.dp).rotate(-45F),
+                colorFilter = ColorFilter.tint(Color(0xFF585679))
+            )
+        }
     }
 }
 
