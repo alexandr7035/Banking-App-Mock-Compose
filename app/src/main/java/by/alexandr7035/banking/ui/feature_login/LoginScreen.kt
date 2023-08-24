@@ -2,39 +2,34 @@ package by.alexandr7035.banking.ui.feature_login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.TextButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,17 +38,26 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.components.DecoratedTextField
+import by.alexandr7035.banking.ui.components.DecoratedPasswordTextField
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.core.ScreenPreview
 
 @Composable
 fun LoginScreen() {
+    val focusManager = LocalFocusManager.current
+
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            }
     ) {
         Cover(Modifier.fillMaxWidth())
 
@@ -114,7 +118,9 @@ private fun Cover(
         ) {
 
             Image(
-                modifier = Modifier.fillMaxHeight(0.7F).offset(x=-56.dp),
+                modifier = Modifier
+                    .fillMaxHeight(0.7F)
+                    .offset(x = -56.dp),
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(Color(0xFF585679))
@@ -126,7 +132,9 @@ private fun Cover(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxHeight().offset(x=32.dp).rotate(-45F),
+                    .fillMaxHeight()
+                    .offset(x = 32.dp)
+                    .rotate(-45F),
                 colorFilter = ColorFilter.tint(Color(0xFF585679))
             )
         }
@@ -150,10 +158,18 @@ private fun LoginForm() {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+
+        val login = rememberSaveable {
+            mutableStateOf("")
+        }
+
+        DecoratedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
+            value = login.value,
+            onValueChange = {
+                login.value = it
+            },
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -167,7 +183,18 @@ private fun LoginForm() {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = "", onValueChange = {})
+
+        val password = rememberSaveable {
+            mutableStateOf("")
+        }
+
+        DecoratedPasswordTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = password.value,
+            onValueChange = {
+                password.value = it
+            },
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
 

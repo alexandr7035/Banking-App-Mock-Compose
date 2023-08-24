@@ -42,7 +42,7 @@ fun PrimaryButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleSmall
         )
     }
 }
@@ -67,7 +67,7 @@ fun SecondaryButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleSmall
         )
     }
 }
@@ -85,7 +85,7 @@ fun TextBtn(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
             textDecoration = TextDecoration.Underline,
             fontWeight = FontWeight.SemiBold
         )
