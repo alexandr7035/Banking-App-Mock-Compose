@@ -13,7 +13,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -58,7 +60,7 @@ fun PrimaryTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
+    error: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -68,7 +70,6 @@ fun PrimaryTextField(
     colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
     shape: Shape = RoundedCornerShape(4.dp),
 ) {
-
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
@@ -95,13 +96,21 @@ fun PrimaryTextField(
             ),
             placeholder = placeholder,
             colors = colors,
-            isError = isError,
+            isError = error != null,
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
-            supportingText = supportingText,
+            supportingText = {
+                if (error != null) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else supportingText?.invoke()
+            },
             label = label,
             container = {
-                TextFieldDefaults.OutlinedBorderContainerBox(enabled, isError, interactionSource, colors, shape)
+                TextFieldDefaults.OutlinedBorderContainerBox(enabled, error != null, interactionSource, colors, shape)
             }
         )
     }
@@ -128,7 +137,7 @@ fun DecoratedTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
+    error: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -162,7 +171,7 @@ fun DecoratedTextField(
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         supportingText = supportingText,
-        isError = isError,
+        error = error,
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
@@ -218,6 +227,7 @@ fun DecoratedPasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    error: String? = null
 ) {
 
     var passwordVisible = rememberSaveable { mutableStateOf(true) }
@@ -227,6 +237,7 @@ fun DecoratedPasswordTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
+        error = error,
         visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
             val icon = if (passwordVisible.value) {
@@ -254,10 +265,20 @@ fun TextField_Preview() {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+            Text("Primary fields")
+
             PrimaryTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = "Test test test",
                 onValueChange = {}
+            )
+
+            PrimaryTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = "Test test test",
+                onValueChange = {},
+                error = "Test error"
             )
 
             PasswordTextField(
@@ -266,15 +287,24 @@ fun TextField_Preview() {
                 onValueChange = {}
             )
 
-            DecoratedPasswordTextField(
+            Text("Decorated fields")
+
+            DecoratedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = "Test test test",
+                value = "Test test",
                 onValueChange = {}
             )
 
             DecoratedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = "Test test",
+                onValueChange = {},
+                error = "test error"
+            )
+
+            DecoratedPasswordTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = "Test test test",
                 onValueChange = {}
             )
         }

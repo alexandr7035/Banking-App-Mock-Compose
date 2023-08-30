@@ -20,7 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -48,82 +47,215 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.components.DecoratedTextField
 import by.alexandr7035.banking.ui.components.DecoratedPasswordTextField
+import by.alexandr7035.banking.ui.components.DecoratedTextField
+import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.theme.Gray30
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import by.alexandr7035.banking.ui.validation.FieldValidationResult
+import de.palm.composestateevents.EventEffect
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    viewModel: LoginViewModel = koinViewModel()
+) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    Column(verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
+    val state = viewModel.loginState.collectAsStateWithLifecycle().value
+    EventEffect(
+        event = state.onLoginEvent,
+        onConsumed = viewModel::onLoginEventTriggered
+    ) { loginResult ->
+        context.showToast("Logged in: $loginResult")
+    }
+
+    LoginScreen_Ui(
+        focusManager = focusManager,
+        context = context,
+        state = state,
+        onLogin = { login, password ->
+            viewModel.login(login, password)
+        },
+        onClearValidation = {
+            viewModel.clearFormValidationErrors()
+        }
+    )
+}
+
+
+@Composable
+private fun LoginScreen_Ui(
+    state: LoginScreenState,
+    focusManager: FocusManager,
+    context: Context,
+    onLogin: (email: String, password: String) -> Unit,
+    onClearValidation: () -> Unit
+) {
+    Box {
+        Column(verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                    })
+                }) {
+            Cover(Modifier.fillMaxWidth())
+
+            Spacer(Modifier.height(32.dp))
+
+            Text(
+                text = stringResource(R.string.welcome_back),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            LoginForm(
+                focusManager = focusManager,
+                context = context,
+                state = state,
+                onLogin = onLogin,
+                onClearValidation = onClearValidation,
+            )
+
+            Row() {
+                // TODO some generic code for spans
+                val annotatedString = buildAnnotatedString {
+                    append("Don’t have an account ? ")
+
+                    val signUp = stringResource(R.string.sign_up)
+                    pushStringAnnotation(tag = signUp, annotation = signUp)
+
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold
+                        )
+                    ) {
+                        append(signUp)
+                    }
+                }
+
+                ClickableText(text = annotatedString, style = TextStyle(
+                    fontFamily = primaryFontFamily,
+                    fontSize = 12.sp,
+                    color = Gray30,
+                ), onClick = { offset ->
+                    annotatedString.getStringAnnotations(offset, offset).firstOrNull()?.let { span ->
+                        context.showToast("TODO: Sign Up")
+                    }
                 })
-            }) {
-        Cover(Modifier.fillMaxWidth())
+            }
 
-        Spacer(Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
+        if (state.isLoading) {
+            FullscreenProgressBar()
+        }
+    }
+}
+
+
+@Composable
+private fun LoginForm(
+    state: LoginScreenState,
+    onLogin: (email: String, password: String) -> Unit,
+    onClearValidation: () -> Unit,
+    focusManager: FocusManager,
+    context: Context,
+) {
+    Column(
+        modifier = Modifier.padding(
+            start = 24.dp,
+            end = 24.dp,
+            top = 36.dp,
+            bottom = 16.dp,
+        )
+    ) {
         Text(
-            text = stringResource(R.string.welcome_back),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground
+            text = stringResource(R.string.email_address),
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.labelSmall,
         )
 
-        LoginForm(focusManager = focusManager, context = context)
+        Spacer(modifier = Modifier.height(12.dp))
+
+        val login = rememberSaveable {
+            mutableStateOf("")
+        }
+
+        DecoratedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = login.value,
+            onValueChange = {
+                login.value = it
+                onClearValidation.invoke()
+            },
+            singleLine = true,
+            error = state.loginField.error
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = stringResource(R.string.password),
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.labelSmall,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+
+        val password = rememberSaveable {
+            mutableStateOf("")
+        }
+
+        DecoratedPasswordTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = password.value,
+            onValueChange = {
+                password.value = it
+            },
+            error = state.passwordField.error
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+            TextButton(
+                onClick = {
+                    focusManager.clearFocus()
+                    // TODO
+                    context.showToast("TODO: Forgot Password")
+                }, colors = ButtonDefaults.textButtonColors(contentColor = Gray30)
+            ) {
+                Text(stringResource(R.string.forgot_password))
+            }
+        }
+
+        Spacer(Modifier.height(36.dp))
 
         Box(Modifier.padding(horizontal = 24.dp)) {
             PrimaryButton(
                 onClick = {
                     focusManager.clearFocus()
-                    // TODO
-                }, modifier = Modifier.fillMaxWidth(), text = stringResource(R.string.sign_in)
+                    onLogin.invoke(login.value, password.value)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.sign_in)
             )
         }
-
-        Spacer(Modifier.height(16.dp))
-
-        Row() {
-            // TODO some generic code for spans
-            val annotatedString = buildAnnotatedString {
-                append("Don’t have an account ? ")
-
-                val signUp = stringResource(R.string.sign_up)
-                pushStringAnnotation(tag = signUp, annotation = signUp)
-
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold
-                    )
-                ) {
-                    append(signUp)
-                }
-            }
-
-            ClickableText(text = annotatedString, style = TextStyle(
-                fontFamily = primaryFontFamily,
-                fontSize = 12.sp,
-                color = Gray30,
-            ), onClick = { offset ->
-                annotatedString.getStringAnnotations(offset, offset).firstOrNull()?.let { span ->
-                    context.showToast("TODO: Sign Up")
-                }
-            })
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -177,81 +309,45 @@ private fun Cover(
     }
 }
 
-@Composable
-private fun LoginForm(
-    focusManager: FocusManager, context: Context
-) {
-    Column(
-        modifier = Modifier.padding(
-            horizontal = 24.dp, vertical = 36.dp
-        )
-    ) {
-        Text(
-            text = stringResource(R.string.email_address),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.labelSmall,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-
-        val login = rememberSaveable {
-            mutableStateOf("")
-        }
-
-        DecoratedTextField(
-            modifier = Modifier.fillMaxWidth(), value = login.value, onValueChange = {
-                login.value = it
-            }, singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.password),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.labelSmall,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-
-        val password = rememberSaveable {
-            mutableStateOf("")
-        }
-
-        DecoratedPasswordTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = password.value,
-            onValueChange = {
-                password.value = it
-            },
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-            TextButton(
-                onClick = {
-                    focusManager.clearFocus()
-                    // TODO
-                    context.showToast("TODO: Forgot Password")
-                }, colors = ButtonDefaults.textButtonColors(contentColor = Gray30)
-            ) {
-                Text(stringResource(R.string.forgot_password))
-            }
-        }
-
-
-    }
-}
 
 @Preview(device = Devices.PIXEL_2)
 @Composable
 fun LoginScreen_Preview() {
     ScreenPreview {
-        LoginScreen()
+        val focusManager = LocalFocusManager.current
+        val context = LocalContext.current
+
+        LoginScreen_Ui(LoginScreenState(), focusManager, context, { _, _ -> }, {})
+    }
+}
+
+@Preview(device = Devices.PIXEL_2)
+@Composable
+fun LoginScreen_Error_Preview() {
+    ScreenPreview {
+        val focusManager = LocalFocusManager.current
+        val context = LocalContext.current
+
+        LoginScreen_Ui(
+            LoginScreenState(
+                loginField = FieldValidationResult("Wrong e-mail format"),
+                passwordField = FieldValidationResult("Wrong password format")
+            ), focusManager, context, { _, _ -> }, {}
+        )
+    }
+}
+
+@Preview(device = Devices.PIXEL_2)
+@Composable
+fun LoginScreen_Progress_Preview() {
+    ScreenPreview {
+        val focusManager = LocalFocusManager.current
+        val context = LocalContext.current
+
+        LoginScreen_Ui(
+            LoginScreenState(
+                isLoading = true
+            ), focusManager, context, { _, _ -> }, {}
+        )
     }
 }
