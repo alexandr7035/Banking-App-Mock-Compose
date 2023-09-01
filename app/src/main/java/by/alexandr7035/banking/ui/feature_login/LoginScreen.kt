@@ -1,7 +1,6 @@
 package by.alexandr7035.banking.ui.feature_login
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -53,6 +52,7 @@ import by.alexandr7035.banking.ui.components.DecoratedPasswordTextField
 import by.alexandr7035.banking.ui.components.DecoratedTextField
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
+import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.theme.Gray30
@@ -64,7 +64,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
-    onLoginCompleted: () -> Unit = {}
+    onLoginCompleted: () -> Unit = {},
+    onShowSnackBar: (message: String, mode: SnackBarMode) -> Unit = { _, _ -> }
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -78,7 +79,7 @@ fun LoginScreen(
 
         when (loginResult) {
             is LoginResult.Success -> onLoginCompleted.invoke()
-            is LoginResult.Error -> context.showToast("Login failed ${loginResult.errorUi}")
+            is LoginResult.Error -> onShowSnackBar.invoke("Login failed ${loginResult.errorUi}", SnackBarMode.Negative)
         }
     }
 
@@ -105,7 +106,8 @@ private fun LoginScreen_Ui(
     onClearValidation: () -> Unit
 ) {
     Box {
-        Column(verticalArrangement = Arrangement.Top,
+        Column(
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
