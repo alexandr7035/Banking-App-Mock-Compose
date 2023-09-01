@@ -1,7 +1,7 @@
 package by.alexandr7035.banking.ui.feature_login
 
 import android.content.Context
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -63,17 +63,23 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = koinViewModel()
+    viewModel: LoginViewModel = koinViewModel(),
+    onLoginCompleted: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
     val state = viewModel.loginState.collectAsStateWithLifecycle().value
+
     EventEffect(
         event = state.onLoginEvent,
         onConsumed = viewModel::onLoginEventTriggered
     ) { loginResult ->
-        context.showToast("Logged in: $loginResult")
+
+        when (loginResult) {
+            is LoginResult.Success -> onLoginCompleted.invoke()
+            is LoginResult.Error -> context.showToast("Login failed ${loginResult.errorUi}")
+        }
     }
 
     LoginScreen_Ui(

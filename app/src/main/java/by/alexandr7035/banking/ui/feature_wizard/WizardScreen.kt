@@ -41,8 +41,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WizardScreen(
-    onLogin: () -> Unit = {},
-    onSignUp: () -> Unit = {}
+    onGoToLogin: () -> Unit = {},
+    onSignUp: () -> Unit = {},
+    onWizardCompleted: () -> Unit = {},
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -150,7 +151,8 @@ fun WizardScreen(
             Box(Modifier.padding(horizontal = 24.dp)) {
                 PrimaryButton(
                     onClick = {
-                        Toast.makeText(context, "Create account", Toast.LENGTH_SHORT).show()
+                        // TODO
+                        Toast.makeText(context, "TODO: Create account", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.create_account)
@@ -162,7 +164,8 @@ fun WizardScreen(
             Box(Modifier.padding(horizontal = 24.dp)) {
                 SecondaryButton(
                     onClick = {
-                        onLogin.invoke()
+                        onWizardCompleted.invoke()
+                        onGoToLogin.invoke()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.login_now)
