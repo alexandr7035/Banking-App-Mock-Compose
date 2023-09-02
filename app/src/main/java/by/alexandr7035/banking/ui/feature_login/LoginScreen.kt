@@ -6,7 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -32,6 +34,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -105,19 +108,19 @@ private fun LoginScreen_Ui(
     onLogin: (email: String, password: String) -> Unit,
     onClearValidation: () -> Unit
 ) {
-    Box {
+    BoxWithConstraints() {
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .height(this@BoxWithConstraints.maxHeight)
                 .verticalScroll(rememberScrollState())
-                .fillMaxSize()
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                         focusManager.clearFocus()
                     })
                 }) {
-            Cover(Modifier.fillMaxWidth())
+            Cover(Modifier.fillMaxWidth().weight(1f))
 
             Spacer(Modifier.height(32.dp))
 
@@ -293,13 +296,14 @@ private fun Cover(
                 .fillMaxWidth(), verticalAlignment = Alignment.Bottom
         ) {
 
+
             Image(
                 modifier = Modifier
                     .fillMaxHeight(0.7F)
                     .offset(x = -56.dp),
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(Color(0xFF585679))
+                colorFilter = ColorFilter.tint(Color(0xFF585679)),
             )
 
             Spacer(modifier = Modifier.weight(1f))
