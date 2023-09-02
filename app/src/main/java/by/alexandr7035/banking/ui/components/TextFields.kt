@@ -195,7 +195,7 @@ fun PasswordTextField(
     modifier: Modifier = Modifier,
 ) {
 
-    var passwordVisible = rememberSaveable { mutableStateOf(true) }
+    val passwordVisible = rememberSaveable { mutableStateOf(false) }
 
     PrimaryTextField(
         modifier = modifier,
@@ -230,7 +230,7 @@ fun DecoratedPasswordTextField(
     error: String? = null
 ) {
 
-    var passwordVisible = rememberSaveable { mutableStateOf(true) }
+    var passwordVisible = rememberSaveable { mutableStateOf(false) }
 
     DecoratedTextField(
         modifier = modifier,
