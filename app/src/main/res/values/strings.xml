@@ -12,4 +12,10 @@
     <string name="skip_this_step">Skip This Step</string>
     <string name="login_now">Login Now</string>
     <string name="create_account">Create Account</string>
+    <string name="sign_in">Sign In</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="forgot_password">Forgot password ?</string>
+    <string name="sign_up">Sign Up</string>
 </resources>
