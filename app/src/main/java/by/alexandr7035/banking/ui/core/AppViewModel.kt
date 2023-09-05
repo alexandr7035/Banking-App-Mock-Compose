@@ -21,4 +21,8 @@ class AppViewModel(
     fun setWizardViewed() {
         appRepository.setWizardViewed(true)
     }
+
+    fun logOut() {
+        appRepository.logOut()
+    }
 }
