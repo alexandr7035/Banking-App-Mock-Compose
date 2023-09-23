@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -28,31 +28,58 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.SettingButton
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import de.palm.composestateevents.EventEffect
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    onLogOut: () -> Unit = {}
+    viewModel: ProfileViewModel = koinViewModel(),
+    onLogOut: () -> Unit = {},
+    onSettingEntry: (entry: SettingEntry) -> Unit = {}
 ) {
+    val state = viewModel.state.collectAsStateWithLifecycle().value
+    val context = LocalContext.current
+
     BoxWithConstraints() {
         ProfileScreen_Ui(
-            modifier = Modifier.width(maxWidth).height(maxHeight),
-            onLogOut = onLogOut
+            modifier = Modifier
+                .width(maxWidth)
+                .height(maxHeight),
+            onLogOutClick = {
+                viewModel.emitIntent(ProfileScreenIntent.LogoutClick)
+            },
+            onSettingEntryClick = {
+                context.showToast("TODO $it")
+                onSettingEntry.invoke(it)
+            },
+            state = state
         )
+
+        LaunchedEffect(Unit) {
+            viewModel.emitIntent(ProfileScreenIntent.LoadScreen)
+        }
+
+        EventEffect(event = state.logoutEvent, onConsumed = {
+            viewModel.emitIntent(ProfileScreenIntent.ConsumeLogoutEvent)
+        }) {
+            onLogOut.invoke()
+        }
     }
 }
 
 @Composable
 private fun ProfileScreen_Ui(
     modifier: Modifier,
-    onLogOut: () -> Unit = {}
+    state: ProfileScreenState,
+    onLogOutClick: () -> Unit = {},
+    onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
 ) {
-    val context = LocalContext.current
-
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.then(
@@ -64,7 +91,6 @@ private fun ProfileScreen_Ui(
                 )
         )
     ) {
-
         Text(
             text = "Your Profile",
             style = TextStyle(
@@ -85,21 +111,25 @@ private fun ProfileScreen_Ui(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingButton(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
                 icon = painterResource(id = R.drawable.ic_scan_qr),
                 text = "Scan QR",
                 showArrow = false
             ) {
-                context.showToast("TODO")
+                onSettingEntryClick.invoke(SettingEntry.ScanQR)
             }
 
             SettingButton(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
                 icon = painterResource(id = R.drawable.ic_my_qr),
                 text = "My QR",
                 showArrow = false
             ) {
-                context.showToast("TODO")
+                onSettingEntryClick.invoke(SettingEntry.MyQR)
             }
         }
 
@@ -119,7 +149,7 @@ private fun ProfileScreen_Ui(
             icon = painterResource(id = R.drawable.ic_profile_filled),
             text = "Change Personal Profile"
         ) {
-            context.showToast("TODO")
+            onSettingEntryClick.invoke(SettingEntry.ChangeProfile)
         }
 
         SettingButton(
@@ -127,7 +157,7 @@ private fun ProfileScreen_Ui(
             icon = painterResource(id = R.drawable.ic_email_filled),
             text = "Change Email Address"
         ) {
-            context.showToast("TODO")
+            onSettingEntryClick.invoke(SettingEntry.ChangeEmail)
         }
 
         SettingButton(
@@ -135,7 +165,7 @@ private fun ProfileScreen_Ui(
             icon = painterResource(id = R.drawable.ic_lock_filled),
             text = "Change Password"
         ) {
-            context.showToast("TODO")
+            onSettingEntryClick.invoke(SettingEntry.ChangePassword)
         }
 
         Text(
@@ -154,7 +184,7 @@ private fun ProfileScreen_Ui(
             icon = painterResource(id = R.drawable.ic_lock_filled_variant),
             text = "Account Security"
         ) {
-            context.showToast("TODO")
+            onSettingEntryClick.invoke(SettingEntry.AccountSecurity)
         }
 
         SettingButton(
@@ -162,12 +192,11 @@ private fun ProfileScreen_Ui(
             icon = painterResource(id = R.drawable.ic_help),
             text = "Help and Privacy"
         ) {
-            context.showToast("TODO")
+            onSettingEntryClick.invoke(SettingEntry.Help)
         }
 
         TextButton(onClick = {
-            context.showToast("TODO")
-            onLogOut.invoke()
+            onLogOutClick.invoke()
         }) {
             Text(
                 text = "Log out",
@@ -191,6 +220,9 @@ private fun ProfileScreen_Ui(
 @Composable
 fun ProfileScreen_Preview() {
     ScreenPreview {
-        ProfileScreen_Ui(Modifier.fillMaxSize())
+        ProfileScreen_Ui(
+            modifier = Modifier.fillMaxSize(),
+            state = ProfileScreenState()
+        )
     }
 }
