@@ -79,4 +79,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha01")
 
     implementation 'com.github.cioccarellia:ksprefs:2.4.0'
+
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 }
