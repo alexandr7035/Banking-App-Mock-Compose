@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.SettingButton
+import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -80,140 +82,143 @@ private fun ProfileScreen_Ui(
     onLogOutClick: () -> Unit = {},
     onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.then(
-            Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    horizontal = 24.dp,
-                    vertical = 32.dp
-                )
-        )
-    ) {
-        Text(
-            text = "Your Profile",
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontFamily = primaryFontFamily,
-                fontWeight = FontWeight(600),
-//                color = Color(0xFFFFFFFF),
-                color = Color(0xFF000000),
-                textAlign = TextAlign.Center
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(intrinsicSize = IntrinsicSize.Max),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+    Column() {
+        ScreenHeader {
             SettingButton(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                icon = painterResource(id = R.drawable.ic_scan_qr),
-                text = "Scan QR",
-                showArrow = false
+                modifier = Modifier.wrapContentSize(), icon = painterResource(id = R.drawable.ic_lock_filled), text = "Test test test"
             ) {
-                onSettingEntryClick.invoke(SettingEntry.ScanQR)
-            }
-
-            SettingButton(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                icon = painterResource(id = R.drawable.ic_my_qr),
-                text = "My QR",
-                showArrow = false
-            ) {
-                onSettingEntryClick.invoke(SettingEntry.MyQR)
+                //TODO
             }
         }
 
-        Text(
-            text = "Account",
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontFamily = primaryFontFamily,
-                fontWeight = FontWeight(500),
-                color = Color(0xFF333333),
-            ),
-            modifier = Modifier.padding(top = 8.dp)
-        )
-
-        SettingButton(
-            modifier = Modifier.fillMaxWidth(),
-            icon = painterResource(id = R.drawable.ic_profile_filled),
-            text = "Change Personal Profile"
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = modifier.then(
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        start = 24.dp,
+                        end = 24.dp,
+                        bottom = 32.dp,
+                        top = 24.dp
+                    )
+            )
         ) {
-            onSettingEntryClick.invoke(SettingEntry.ChangeProfile)
-        }
 
-        SettingButton(
-            modifier = Modifier.fillMaxWidth(),
-            icon = painterResource(id = R.drawable.ic_email_filled),
-            text = "Change Email Address"
-        ) {
-            onSettingEntryClick.invoke(SettingEntry.ChangeEmail)
-        }
 
-        SettingButton(
-            modifier = Modifier.fillMaxWidth(),
-            icon = painterResource(id = R.drawable.ic_lock_filled),
-            text = "Change Password"
-        ) {
-            onSettingEntryClick.invoke(SettingEntry.ChangePassword)
-        }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(intrinsicSize = IntrinsicSize.Max),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                SettingButton(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    icon = painterResource(id = R.drawable.ic_scan_qr),
+                    text = "Scan QR",
+                    showArrow = false
+                ) {
+                    onSettingEntryClick.invoke(SettingEntry.ScanQR)
+                }
 
-        Text(
-            text = "More Settings",
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontFamily = primaryFontFamily,
-                fontWeight = FontWeight(500),
-                color = Color(0xFF333333),
-            ),
-            modifier = Modifier.padding(top = 8.dp)
-        )
+                SettingButton(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    icon = painterResource(id = R.drawable.ic_my_qr),
+                    text = "My QR",
+                    showArrow = false
+                ) {
+                    onSettingEntryClick.invoke(SettingEntry.MyQR)
+                }
+            }
 
-        SettingButton(
-            modifier = Modifier.fillMaxWidth(),
-            icon = painterResource(id = R.drawable.ic_lock_filled_variant),
-            text = "Account Security"
-        ) {
-            onSettingEntryClick.invoke(SettingEntry.AccountSecurity)
-        }
-
-        SettingButton(
-            modifier = Modifier.fillMaxWidth(),
-            icon = painterResource(id = R.drawable.ic_help),
-            text = "Help and Privacy"
-        ) {
-            onSettingEntryClick.invoke(SettingEntry.Help)
-        }
-
-        TextButton(onClick = {
-            onLogOutClick.invoke()
-        }) {
             Text(
-                text = "Log out",
+                text = "Account",
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(600),
-                    color = Color(0xFFFF552F),
-                    textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.Underline,
+                    fontWeight = FontWeight(500),
+                    color = Color(0xFF333333),
                 ),
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.padding(top = 8.dp)
             )
-        }
 
+            SettingButton(
+                modifier = Modifier.fillMaxWidth(),
+                icon = painterResource(id = R.drawable.ic_profile_filled),
+                text = "Change Personal Profile"
+            ) {
+                onSettingEntryClick.invoke(SettingEntry.ChangeProfile)
+            }
+
+            SettingButton(
+                modifier = Modifier.fillMaxWidth(),
+                icon = painterResource(id = R.drawable.ic_email_filled),
+                text = "Change Email Address"
+            ) {
+                onSettingEntryClick.invoke(SettingEntry.ChangeEmail)
+            }
+
+            SettingButton(
+                modifier = Modifier.fillMaxWidth(),
+                icon = painterResource(id = R.drawable.ic_lock_filled),
+                text = "Change Password"
+            ) {
+                onSettingEntryClick.invoke(SettingEntry.ChangePassword)
+            }
+
+            Text(
+                text = "More Settings",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight(500),
+                    color = Color(0xFF333333),
+                ),
+                modifier = Modifier.padding(top = 8.dp)
+            )
+
+            SettingButton(
+                modifier = Modifier.fillMaxWidth(),
+                icon = painterResource(id = R.drawable.ic_lock_filled_variant),
+                text = "Account Security"
+            ) {
+                onSettingEntryClick.invoke(SettingEntry.AccountSecurity)
+            }
+
+            SettingButton(
+                modifier = Modifier.fillMaxWidth(),
+                icon = painterResource(id = R.drawable.ic_help),
+                text = "Help and Privacy"
+            ) {
+                onSettingEntryClick.invoke(SettingEntry.Help)
+            }
+
+            TextButton(onClick = {
+                onLogOutClick.invoke()
+            }) {
+                Text(
+                    text = "Log out",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight(600),
+                        color = Color(0xFFFF552F),
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline,
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+
+        }
     }
+
 }
 
 @Preview
