@@ -9,12 +9,7 @@ class ProfileRepositoryMock(private val dispatcher: CoroutineDispatcher) : Profi
         delay(500)
 
         return@withContext Result.success(
-            Profile(
-                name = "Alexander Michael",
-                id = "089621027821",
-                email = "test@example.com",
-                profilePicUrl = ""
-            )
+            Profile.mock()
         )
     }
 }

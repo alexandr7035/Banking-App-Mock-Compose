@@ -85,10 +85,8 @@ private fun ProfileScreen_Ui(
 
     Column() {
         ScreenHeader {
-            SettingButton(
-                modifier = Modifier.wrapContentSize(), icon = painterResource(id = R.drawable.ic_lock_filled), text = "Test test test"
-            ) {
-                //TODO
+            state.profile?.let {
+                ProfileCard(state.profile)
             }
         }
 
