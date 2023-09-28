@@ -98,10 +98,12 @@ private fun ProfileCard_Content(profile: Profile) {
             )
         }
 
+        Spacer(modifier = Modifier.width(16.dp))
+
         Column(
             Modifier
                 .padding(vertical = 4.dp)
-                .weight(1f, fill = false)
+                .weight(1f, fill = true)
         ) {
             Text(
                 text = profile.name,

@@ -18,4 +18,14 @@
     <string name="welcome_back">Welcome Back!</string>
     <string name="forgot_password">Forgot password ?</string>
     <string name="sign_up">Sign Up</string>
+    <string name="log_out">Log out</string>
+    <string name="help_and_privacy">Help and Privacy</string>
+    <string name="account_security">Account Security</string>
+    <string name="more_settings">More Settings</string>
+    <string name="change_password">Change Password</string>
+    <string name="change_email_address">Change Email Address</string>
+    <string name="change_personal_profile">Change Personal Profile</string>
+    <string name="account">Account</string>
+    <string name="my_qr">My QR</string>
+    <string name="scan_qr">Scan QR</string>
 </resources>

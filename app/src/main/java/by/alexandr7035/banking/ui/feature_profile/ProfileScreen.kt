@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,26 +41,20 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = koinViewModel(),
-    onLogOut: () -> Unit = {},
-    onSettingEntry: (entry: SettingEntry) -> Unit = {}
+    viewModel: ProfileViewModel = koinViewModel(), onLogOut: () -> Unit = {}, onSettingEntry: (entry: SettingEntry) -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val context = LocalContext.current
 
     BoxWithConstraints() {
-        ProfileScreen_Ui(
-            modifier = Modifier
-                .width(maxWidth)
-                .height(maxHeight),
-            onLogOutClick = {
-                viewModel.emitIntent(ProfileScreenIntent.LogoutClick)
-            },
-            onSettingEntryClick = {
-                context.showToast("TODO $it")
-                onSettingEntry.invoke(it)
-            },
-            state = state
+        ProfileScreen_Ui(modifier = Modifier
+            .width(maxWidth)
+            .height(maxHeight), onLogOutClick = {
+            viewModel.emitIntent(ProfileScreenIntent.LogoutClick)
+        }, onSettingEntryClick = {
+            context.showToast("TODO")
+            onSettingEntry.invoke(it)
+        }, state = state
         )
 
         LaunchedEffect(Unit) {
@@ -76,22 +71,20 @@ fun ProfileScreen(
 
 @Composable
 private fun ProfileScreen_Ui(
-    modifier: Modifier,
-    state: ProfileScreenState,
-    onLogOutClick: () -> Unit = {},
-    onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
+    modifier: Modifier, state: ProfileScreenState, onLogOutClick: () -> Unit = {}, onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
 ) {
 
-    Column() {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         ScreenHeader {
             ProfileCard(profile = state.profile, isLoading = state.isLoading)
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = modifier.then(
+            verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier.then(
                 Modifier
-                    .verticalScroll(rememberScrollState())
                     .padding(
                         start = 24.dp,
                         end = 24.dp,
@@ -112,7 +105,7 @@ private fun ProfileScreen_Ui(
                         .weight(1f)
                         .fillMaxHeight(),
                     icon = painterResource(id = R.drawable.ic_scan_qr),
-                    text = "Scan QR",
+                    text = stringResource(R.string.scan_qr),
                     showArrow = false
                 ) {
                     onSettingEntryClick.invoke(SettingEntry.ScanQR)
@@ -123,7 +116,7 @@ private fun ProfileScreen_Ui(
                         .weight(1f)
                         .fillMaxHeight(),
                     icon = painterResource(id = R.drawable.ic_my_qr),
-                    text = "My QR",
+                    text = stringResource(R.string.my_qr),
                     showArrow = false
                 ) {
                     onSettingEntryClick.invoke(SettingEntry.MyQR)
@@ -131,8 +124,7 @@ private fun ProfileScreen_Ui(
             }
 
             Text(
-                text = "Account",
-                style = TextStyle(
+                text = stringResource(R.string.account), style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight(500),
@@ -144,7 +136,7 @@ private fun ProfileScreen_Ui(
             SettingButton(
                 modifier = Modifier.fillMaxWidth(),
                 icon = painterResource(id = R.drawable.ic_profile_filled),
-                text = "Change Personal Profile"
+                text = stringResource(R.string.change_personal_profile)
             ) {
                 onSettingEntryClick.invoke(SettingEntry.ChangeProfile)
             }
@@ -152,7 +144,7 @@ private fun ProfileScreen_Ui(
             SettingButton(
                 modifier = Modifier.fillMaxWidth(),
                 icon = painterResource(id = R.drawable.ic_email_filled),
-                text = "Change Email Address"
+                text = stringResource(R.string.change_email_address)
             ) {
                 onSettingEntryClick.invoke(SettingEntry.ChangeEmail)
             }
@@ -160,13 +152,13 @@ private fun ProfileScreen_Ui(
             SettingButton(
                 modifier = Modifier.fillMaxWidth(),
                 icon = painterResource(id = R.drawable.ic_lock_filled),
-                text = "Change Password"
+                text = stringResource(R.string.change_password)
             ) {
                 onSettingEntryClick.invoke(SettingEntry.ChangePassword)
             }
 
             Text(
-                text = "More Settings",
+                text = stringResource(R.string.more_settings),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
@@ -179,7 +171,7 @@ private fun ProfileScreen_Ui(
             SettingButton(
                 modifier = Modifier.fillMaxWidth(),
                 icon = painterResource(id = R.drawable.ic_lock_filled_variant),
-                text = "Account Security"
+                text = stringResource(R.string.account_security)
             ) {
                 onSettingEntryClick.invoke(SettingEntry.AccountSecurity)
             }
@@ -187,7 +179,7 @@ private fun ProfileScreen_Ui(
             SettingButton(
                 modifier = Modifier.fillMaxWidth(),
                 icon = painterResource(id = R.drawable.ic_help),
-                text = "Help and Privacy"
+                text = stringResource(R.string.help_and_privacy)
             ) {
                 onSettingEntryClick.invoke(SettingEntry.Help)
             }
@@ -196,7 +188,7 @@ private fun ProfileScreen_Ui(
                 onLogOutClick.invoke()
             }) {
                 Text(
-                    text = "Log out",
+                    text = stringResource(R.string.log_out),
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = primaryFontFamily,
@@ -205,8 +197,7 @@ private fun ProfileScreen_Ui(
                         textAlign = TextAlign.Center,
                         textDecoration = TextDecoration.Underline,
                     ),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
@@ -220,8 +211,7 @@ private fun ProfileScreen_Ui(
 fun ProfileScreen_Preview() {
     ScreenPreview {
         ProfileScreen_Ui(
-            modifier = Modifier.fillMaxSize(),
-            state = ProfileScreenState()
+            modifier = Modifier.fillMaxSize(), state = ProfileScreenState()
         )
     }
 }

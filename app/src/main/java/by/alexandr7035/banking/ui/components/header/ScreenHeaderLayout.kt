@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -48,7 +49,7 @@ fun ScreenHeader(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth()
-                .height(108.dp)
+                .height(136.dp)
                 .constrainAs(cover) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -65,23 +66,15 @@ fun ScreenHeader(
                             color = Color(0xFFFFFFFF),
                         )
                     )
-                }, colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = Color.Transparent
-                ), modifier = Modifier.wrapContentHeight()
-//                    .constrainAs(toolbar) {
-//                        start.linkTo(parent.start)
-//                        end.linkTo(parent.end)
-//                        top.linkTo(parent.top)
-//                        bottom.linkTo(parent.bottom)
-//                    }
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
+                modifier = Modifier.wrapContentHeight().padding(top=16.dp)
             )
-
 
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.TopEnd
+                    .fillMaxHeight(), contentAlignment = Alignment.TopEnd
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_cover_ellipse),
@@ -98,8 +91,7 @@ fun ScreenHeader(
                 .padding(horizontal = 24.dp)
                 .constrainAs(panel) {
                     centerAround(cover.bottom)
-                },
-            contentAlignment = Alignment.Center
+                }, contentAlignment = Alignment.Center
         ) {
             content()
         }
