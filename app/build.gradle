@@ -85,4 +85,6 @@ dependencies {
     // Coil for compose to load images
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-svg:2.4.0")
+
+    implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
 }

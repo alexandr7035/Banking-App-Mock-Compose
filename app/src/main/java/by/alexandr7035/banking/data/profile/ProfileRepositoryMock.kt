@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 
 class ProfileRepositoryMock(private val dispatcher: CoroutineDispatcher) : ProfileRepository {
     override suspend fun getProfile(): Result<Profile> = withContext(dispatcher) {
-        delay(500)
+        delay(3500)
 
         return@withContext Result.success(
             Profile.mock()

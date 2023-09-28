@@ -3,6 +3,7 @@ package by.alexandr7035.banking.ui.feature_profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -16,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,13 +39,17 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.valentinilk.shimmer.shimmer
 
 @Composable
-fun ProfileCard(profile: Profile) {
+fun ProfileCard(
+    profile: Profile?,
+    isLoading: Boolean
+) {
     val shape = RoundedCornerShape(size = 10.dp)
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+    Box(
+        modifier = Modifier
             .shadow(
                 elevation = 32.dp,
                 spotColor = Color.Gray,
@@ -58,9 +62,17 @@ fun ProfileCard(profile: Profile) {
             .padding(16.dp)
             .height(intrinsicSize = IntrinsicSize.Max)
             .fillMaxWidth()
-//            .wrapContentHeight()
-
     ) {
+        when {
+            profile != null -> ProfileCard_Content(profile = profile)
+            isLoading -> ProfileCard_Skeleton()
+        }
+    }
+}
+
+@Composable
+private fun ProfileCard_Content(profile: Profile) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         // Avatar container
         Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.BottomEnd) {
             val imageReq = ImageRequest.Builder(LocalContext.current)
@@ -86,8 +98,6 @@ fun ProfileCard(profile: Profile) {
             )
         }
 
-        Spacer(Modifier.width(16.dp))
-
         Column(
             Modifier
                 .padding(vertical = 4.dp)
@@ -105,8 +115,6 @@ fun ProfileCard(profile: Profile) {
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = profile.id,
@@ -127,8 +135,7 @@ fun ProfileCard(profile: Profile) {
         Box(
             modifier = Modifier
                 .border(width = 1.dp, color = Color(0xFF100D40), shape = RoundedCornerShape(size = 32.dp))
-                .width(63.dp)
-                .height(26.dp),
+                .padding(vertical = 6.dp, horizontal = 18.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -145,8 +152,50 @@ fun ProfileCard(profile: Profile) {
     }
 }
 
+@Composable
+fun ProfileCard_Skeleton() {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .shimmer()
+                .background(Color.LightGray, CircleShape)
+        )
+
+        Spacer(Modifier.width(16.dp))
+
+        Column(
+            Modifier
+                .padding(vertical = 4.dp)
+                .weight(1f, fill = false)
+        ) {
+
+            Box(
+                Modifier
+                    .height(16.dp)
+                    .width(160.dp)
+                    .shimmer()
+                    .background(Color.LightGray, RoundedCornerShape(4.dp))
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                Modifier
+                    .height(16.dp)
+                    .width(100.dp)
+                    .shimmer()
+                    .background(Color.LightGray, RoundedCornerShape(4.dp))
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun ProfileCard_Preview() {
-    ProfileCard(Profile.mock())
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        ProfileCard(Profile.mock(), false)
+        ProfileCard(null, true)
+    }
 }
