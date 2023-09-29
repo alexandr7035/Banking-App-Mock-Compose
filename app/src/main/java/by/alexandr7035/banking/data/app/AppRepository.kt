@@ -8,4 +8,6 @@ interface AppRepository {
     fun setLoggedIn(token: String)
 
     fun isLoggedIn(): Boolean
+
+    fun logOut()
 }

@@ -21,4 +21,8 @@ class AppRepositoryImpl(
     override fun isLoggedIn(): Boolean {
         return prefs.pull(PrefKeys.IS_LOGGED_IN.name, false)
     }
+
+    override fun logOut() {
+        prefs.push(PrefKeys.IS_LOGGED_IN.name, false)
+    }
 }

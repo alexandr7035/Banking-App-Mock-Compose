@@ -79,4 +79,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha01")
 
     implementation 'com.github.cioccarellia:ksprefs:2.4.0'
+
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
+    // Coil for compose to load images
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-svg:2.4.0")
+
+    implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
 }
