@@ -28,4 +28,8 @@
     <string name="account">Account</string>
     <string name="my_qr">My QR</string>
     <string name="scan_qr">Scan QR</string>
+    <string name="send">Send</string>
+    <string name="request">Request</string>
+    <string name="top_up">Top up</string>
+    <string name="pay">Pay</string>
 </resources>
