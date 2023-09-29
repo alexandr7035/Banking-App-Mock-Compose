@@ -15,8 +15,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -43,26 +46,20 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = koinViewModel(),
-    onLogoutClick: () -> Unit = {},
-    onSettingEntry: (entry: SettingEntry) -> Unit = {}
+    viewModel: ProfileViewModel = koinViewModel(), onLogoutClick: () -> Unit = {}, onSettingEntry: (entry: SettingEntry) -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val context = LocalContext.current
 
     BoxWithConstraints() {
-        ProfileScreen_Ui(
-            modifier = Modifier
-                .width(maxWidth)
-                .height(maxHeight),
-            onLogOutClick = {
-                onLogoutClick.invoke()
-            },
-            onSettingEntryClick = {
-                context.showToast("TODO")
-                onSettingEntry.invoke(it)
-            },
-            state = state
+        ProfileScreen_Ui(modifier = Modifier
+            .width(maxWidth)
+            .height(maxHeight), onLogOutClick = {
+            onLogoutClick.invoke()
+        }, onSettingEntryClick = {
+            context.showToast("TODO")
+            onSettingEntry.invoke(it)
+        }, state = state
         )
 
         LaunchedEffect(Unit) {
@@ -73,18 +70,14 @@ fun ProfileScreen(
 
 @Composable
 private fun ProfileScreen_Ui(
-    modifier: Modifier,
-    state: ProfileScreenState,
-    onLogOutClick: () -> Unit = {},
-    onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
+    modifier: Modifier, state: ProfileScreenState, onLogOutClick: () -> Unit = {}, onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
 ) {
     Column(
         modifier = modifier.then(
-            Modifier
-                .verticalScroll(rememberScrollState())
+            Modifier.verticalScroll(rememberScrollState())
         )
     ) {
-        ScreenHeader {
+        ScreenHeader(toolbar = { ProfileToolBar() }) {
             ProfileCard(profile = state.profile, isLoading = state.isLoading)
         }
 
@@ -212,6 +205,23 @@ private fun ProfileScreen_Ui(
         }
     }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ProfileToolBar() {
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = stringResource(id = R.string.your_profile), style = TextStyle(
+                    fontSize = 16.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight(600),
+                    color = Color(0xFFFFFFFF),
+                )
+            )
+        }, colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent), modifier = Modifier.wrapContentHeight()
+    )
 }
 
 @Preview
