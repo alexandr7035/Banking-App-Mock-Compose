@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -39,6 +40,7 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 @Composable
 fun ScreenHeader(
     toolbar: @Composable () -> Unit = {},
+    panelVerticalOffset: Dp? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
 
@@ -79,7 +81,11 @@ fun ScreenHeader(
                 .wrapContentSize()
                 .padding(horizontal = 24.dp)
                 .constrainAs(panel) {
-                    centerAround(cover.bottom)
+                    if (panelVerticalOffset == null) {
+                        centerAround(cover.bottom)
+                    } else {
+                        top.linkTo(cover.bottom, margin = -panelVerticalOffset)
+                    }
                 }, contentAlignment = Alignment.Center
         ) {
             content()
@@ -94,24 +100,27 @@ fun ScreenHeader(
 fun ScreenHeader_Preview() {
     ScreenPreview {
         Column() {
-            ScreenHeader( toolbar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = "Title",
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontFamily = primaryFontFamily,
-                                fontWeight = FontWeight(600),
-                                color = Color(0xFFFFFFFF),
+            ScreenHeader(
+                toolbar = {
+                    CenterAlignedTopAppBar(
+                        title = {
+                            Text(
+                                text = "Title",
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    fontFamily = primaryFontFamily,
+                                    fontWeight = FontWeight(600),
+                                    color = Color(0xFFFFFFFF),
+                                )
                             )
-                        )
-                    },
-                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
-                    modifier = Modifier
-                        .wrapContentHeight()
-                )
-            }) {
+                        },
+                        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
+                        modifier = Modifier
+                            .wrapContentHeight()
+                    )
+                },
+                panelVerticalOffset = null
+            ) {
                 SettingButton(
                     modifier = Modifier.wrapContentSize(),
                     icon = painterResource(id = R.drawable.ic_lock_filled),
