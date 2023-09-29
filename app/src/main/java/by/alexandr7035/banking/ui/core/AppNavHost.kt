@@ -35,12 +35,14 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
+import by.alexandr7035.banking.ui.feature_profile.logout_dialog.LogoutDialog
 import by.alexandr7035.banking.ui.feature_wizard.WizardScreen
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.launch
@@ -75,18 +77,12 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
     val shouldShowBottomNav = NavEntries.primaryDestinations.contains(navBackStackEntry?.destination?.route)
 //    val shouldShowBottomNav = false
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState) { ResultSnackBar(snackbarData = it) }
-        },
-        bottomBar = { if (shouldShowBottomNav) BottomNav(navController) }
-    )
-    { pv ->
+    Scaffold(snackbarHost = {
+        SnackbarHost(hostState = snackBarHostState) { ResultSnackBar(snackbarData = it) }
+    }, bottomBar = { if (shouldShowBottomNav) BottomNav(navController) }) { pv ->
         // TODO app routes model
         NavHost(
-            navController = navController,
-            startDestination = NavEntries.Graphs.HomeGraph.route,
-            modifier = Modifier.padding(pv)
+            navController = navController, startDestination = NavEntries.Graphs.HomeGraph.route, modifier = Modifier.padding(pv)
         ) {
             composable(NavEntries.Wizard.route) {
                 WizardScreen(onGoToLogin = {
@@ -97,66 +93,65 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
             }
 
             composable(NavEntries.Login.route) {
-                LoginScreen(
-                    onLoginCompleted = {
-                        viewModel.onLoginCompleted()
+                LoginScreen(onLoginCompleted = {
+                    viewModel.onLoginCompleted()
 
-                        navController.navigate(NavEntries.Graphs.HomeGraph.route) {
-                            popUpTo(NavEntries.Login.route) {
-                                inclusive = true
-                            }
+                    navController.navigate(NavEntries.Graphs.HomeGraph.route) {
+                        popUpTo(NavEntries.Login.route) {
+                            inclusive = true
                         }
-                    },
-                    onShowSnackBar = { msg, mode ->
-                        hostCoroutineScope.launch {
-                            snackBarHostState.showResultSnackBar(msg, mode)
-                        }
-                    })
+                    }
+                }, onShowSnackBar = { msg, mode ->
+                    hostCoroutineScope.launch {
+                        snackBarHostState.showResultSnackBar(msg, mode)
+                    }
+                })
             }
 
             navigation(
-                startDestination = NavEntries.Profile.route,
-                route = NavEntries.Graphs.HomeGraph.route
+                startDestination = NavEntries.Profile.route, route = NavEntries.Graphs.HomeGraph.route
             ) {
                 composable(NavEntries.Home.route) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = NavEntries.Home.label,
-                            textAlign = TextAlign.Center
+                            text = NavEntries.Home.label, textAlign = TextAlign.Center
                         )
                     }
                 }
 
                 composable(NavEntries.History.route) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = NavEntries.History.label,
-                            textAlign = TextAlign.Center
+                            text = NavEntries.History.label, textAlign = TextAlign.Center
                         )
                     }
                 }
 
                 composable(NavEntries.Statistics.route) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = NavEntries.Statistics.label,
-                            textAlign = TextAlign.Center
+                            text = NavEntries.Statistics.label, textAlign = TextAlign.Center
                         )
                     }
                 }
 
-                composable(NavEntries.Profile.route) {
+                composable(NavEntries.Profile.route) { navBackResult ->
                     ProfileScreen(
-                        onLogOut = {
+                        onLogoutClick = {
+                            navController.navigate(NavEntries.LogoutDialog.route)
+                        }
+                    )
+
+                    // logout dialog result
+                    val shouldTryLogout = navBackResult.savedStateHandle.get<Boolean>(NavResult.SHOULD_LOGOUT.name) ?: false
+                    LaunchedEffect(shouldTryLogout) {
+                        if (shouldTryLogout) {
                             viewModel.logOut()
 
                             navController.navigate(NavEntries.Login.route) {
@@ -165,7 +160,14 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                                 }
                             }
                         }
-                    )
+                    }
+                }
+
+                dialog(route = NavEntries.LogoutDialog.route) {
+                    LogoutDialog(onDismiss = { shouldLogout ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set(NavResult.SHOULD_LOGOUT.name, shouldLogout)
+                        navController.popBackStack()
+                    })
                 }
             }
         }
@@ -176,7 +178,7 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
 
 @Composable
 private fun BottomNav(navController: NavController) {
-    val primaryDestinations = listOf(
+    val destinationsWithBottomNav = listOf(
         NavEntries.Home,
         NavEntries.History,
         NavEntries.Statistics,
@@ -194,7 +196,7 @@ private fun BottomNav(navController: NavController) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
-        primaryDestinations.forEach { navEntry ->
+        destinationsWithBottomNav.forEach { navEntry ->
             val isDestinationSelected = currentDestination?.hierarchy?.any { it.route == navEntry.route } == true
 
             val icon = if (isDestinationSelected) {
@@ -203,47 +205,41 @@ private fun BottomNav(navController: NavController) {
                 painterResource(id = navEntry.navIcons!!.unselected)
             }
 
-            BottomNavigationItem(
-                selected = isDestinationSelected,
-                onClick = {
-                    navController.navigate(navEntry.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
+            BottomNavigationItem(selected = isDestinationSelected, onClick = {
+                navController.navigate(navEntry.route) {
+                    // Pop up to the start destination of the graph to
+                    // avoid building up a large stack of destinations
+                    // on the back stack as users select items
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
                     }
-                },
-                icon = {
-                    Icon(
-                        modifier = Modifier
-                            .padding(bottom = 8.dp)
-                            .size(24.dp),
-                        painter = icon,
-                        contentDescription = null,
-                        tint = selectedEntryColor(isDestinationSelected)
-                    )
-                },
-                label = {
-                    Text(
-                        text = navEntry.label,
-                        style = TextStyle(
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            fontFamily = primaryFontFamily,
-                            fontWeight =  if (isDestinationSelected) FontWeight(500) else FontWeight(400),
-                            color = selectedEntryColor(isDestinationSelected),
-                            textAlign = TextAlign.Center,
-                        )
-                    )
+                    // Avoid multiple copies of the same destination when
+                    // reselecting the same item
+                    launchSingleTop = true
+                    // Restore state when reselecting a previously selected item
+                    restoreState = true
                 }
-            )
+            }, icon = {
+                Icon(
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .size(24.dp),
+                    painter = icon,
+                    contentDescription = null,
+                    tint = selectedEntryColor(isDestinationSelected)
+                )
+            }, label = {
+                Text(
+                    text = navEntry.label, style = TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = if (isDestinationSelected) FontWeight(500) else FontWeight(400),
+                        color = selectedEntryColor(isDestinationSelected),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+            })
         }
 
     }

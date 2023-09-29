@@ -1,8 +1,5 @@
 package by.alexandr7035.banking.ui.feature_profile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -42,12 +39,13 @@ import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
-import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = koinViewModel(), onLogOut: () -> Unit = {}, onSettingEntry: (entry: SettingEntry) -> Unit = {}
+    viewModel: ProfileViewModel = koinViewModel(),
+    onLogoutClick: () -> Unit = {},
+    onSettingEntry: (entry: SettingEntry) -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val context = LocalContext.current
@@ -58,28 +56,27 @@ fun ProfileScreen(
                 .width(maxWidth)
                 .height(maxHeight),
             onLogOutClick = {
-                viewModel.emitIntent(ProfileScreenIntent.LogoutClick)
-            }, onSettingEntryClick = {
+                onLogoutClick.invoke()
+            },
+            onSettingEntryClick = {
                 context.showToast("TODO")
                 onSettingEntry.invoke(it)
-            }, state = state
+            },
+            state = state
         )
 
         LaunchedEffect(Unit) {
             viewModel.emitIntent(ProfileScreenIntent.LoadScreen)
-        }
-
-        EventEffect(event = state.logoutEvent, onConsumed = {
-            viewModel.emitIntent(ProfileScreenIntent.ConsumeLogoutEvent)
-        }) {
-            onLogOut.invoke()
         }
     }
 }
 
 @Composable
 private fun ProfileScreen_Ui(
-    modifier: Modifier, state: ProfileScreenState, onLogOutClick: () -> Unit = {}, onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
+    modifier: Modifier,
+    state: ProfileScreenState,
+    onLogOutClick: () -> Unit = {},
+    onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
 ) {
     Column(
         modifier = modifier.then(

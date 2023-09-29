@@ -8,5 +8,4 @@ data class ProfileScreenState(
     val profile: Profile? = null,
     val isLoading: Boolean = true,
     val error: Throwable? = null,
-    val logoutEvent: StateEvent = consumed,
 )
