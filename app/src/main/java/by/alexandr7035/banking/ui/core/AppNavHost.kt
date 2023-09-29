@@ -73,6 +73,7 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val shouldShowBottomNav = NavEntries.primaryDestinations.contains(navBackStackEntry?.destination?.route)
+//    val shouldShowBottomNav = false
 
     Scaffold(
         snackbarHost = {

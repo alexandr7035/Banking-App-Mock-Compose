@@ -1,6 +1,10 @@
 package by.alexandr7035.banking.ui.feature_profile
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -11,12 +15,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -47,14 +53,16 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     BoxWithConstraints() {
-        ProfileScreen_Ui(modifier = Modifier
-            .width(maxWidth)
-            .height(maxHeight), onLogOutClick = {
-            viewModel.emitIntent(ProfileScreenIntent.LogoutClick)
-        }, onSettingEntryClick = {
-            context.showToast("TODO")
-            onSettingEntry.invoke(it)
-        }, state = state
+        ProfileScreen_Ui(
+            modifier = Modifier
+                .width(maxWidth)
+                .height(maxHeight),
+            onLogOutClick = {
+                viewModel.emitIntent(ProfileScreenIntent.LogoutClick)
+            }, onSettingEntryClick = {
+                context.showToast("TODO")
+                onSettingEntry.invoke(it)
+            }, state = state
         )
 
         LaunchedEffect(Unit) {
@@ -73,25 +81,23 @@ fun ProfileScreen(
 private fun ProfileScreen_Ui(
     modifier: Modifier, state: ProfileScreenState, onLogOutClick: () -> Unit = {}, onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
 ) {
-
     Column(
-        Modifier
-            .verticalScroll(rememberScrollState())
+        modifier = modifier.then(
+            Modifier
+                .verticalScroll(rememberScrollState())
+        )
     ) {
         ScreenHeader {
             ProfileCard(profile = state.profile, isLoading = state.isLoading)
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier.then(
-                Modifier
-                    .padding(
-                        start = 24.dp,
-                        end = 24.dp,
-                        bottom = 32.dp,
-                        top = 24.dp
-                    )
-            )
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .wrapContentHeight()
+                .padding(
+                    start = 24.dp, end = 24.dp, top = 24.dp, bottom = 32.dp
+                ),
         ) {
 
             Row(
@@ -129,8 +135,7 @@ private fun ProfileScreen_Ui(
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight(500),
                     color = Color(0xFF333333),
-                ),
-                modifier = Modifier.padding(top = 8.dp)
+                ), modifier = Modifier.padding(top = 8.dp)
             )
 
             SettingButton(
@@ -158,14 +163,12 @@ private fun ProfileScreen_Ui(
             }
 
             Text(
-                text = stringResource(R.string.more_settings),
-                style = TextStyle(
+                text = stringResource(R.string.more_settings), style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight(500),
                     color = Color(0xFF333333),
-                ),
-                modifier = Modifier.padding(top = 8.dp)
+                ), modifier = Modifier.padding(top = 8.dp)
             )
 
             SettingButton(
@@ -184,22 +187,30 @@ private fun ProfileScreen_Ui(
                 onSettingEntryClick.invoke(SettingEntry.Help)
             }
 
-            TextButton(onClick = {
-                onLogOutClick.invoke()
-            }) {
-                Text(
-                    text = stringResource(R.string.log_out),
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight(600),
-                        color = Color(0xFFFF552F),
-                        textAlign = TextAlign.Center,
-                        textDecoration = TextDecoration.Underline,
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
+            Box(
+                Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth(), Alignment.Center
+            ) {
+
+                TextButton(
+                    onClick = {
+                        onLogOutClick.invoke()
+                    },
+                ) {
+                    Text(
+                        text = stringResource(R.string.log_out), style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = primaryFontFamily,
+                            fontWeight = FontWeight(600),
+                            color = Color(0xFFFF552F),
+                            textAlign = TextAlign.Center,
+                            textDecoration = TextDecoration.Underline,
+                        )
+                    )
+                }
             }
+
 
         }
     }
