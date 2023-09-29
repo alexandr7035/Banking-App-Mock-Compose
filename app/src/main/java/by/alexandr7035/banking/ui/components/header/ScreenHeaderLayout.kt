@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -36,14 +36,14 @@ import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 // TODO fix according to design
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenHeader(
+    toolbar: @Composable () -> Unit = {},
     content: @Composable BoxScope.() -> Unit
 ) {
 
     ConstraintLayout(Modifier.wrapContentSize()) {
-        val (cover, panel, toolbar) = createRefs()
+        val (cover, panel) = createRefs()
 
         Box(
             modifier = Modifier
@@ -56,20 +56,9 @@ fun ScreenHeader(
                     top.linkTo(parent.top)
                 }, contentAlignment = Alignment.TopCenter
         ) {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Title", style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = primaryFontFamily,
-                            fontWeight = FontWeight(600),
-                            color = Color(0xFFFFFFFF),
-                        )
-                    )
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
-                modifier = Modifier.wrapContentHeight().padding(top=16.dp)
-            )
+            Spacer(Modifier.height(16.dp))
+
+            toolbar()
 
             BoxWithConstraints(
                 modifier = Modifier
@@ -99,14 +88,34 @@ fun ScreenHeader(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun ScreenHeader_Preview() {
     ScreenPreview {
         Column() {
-            ScreenHeader {
+            ScreenHeader( toolbar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Title",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = primaryFontFamily,
+                                fontWeight = FontWeight(600),
+                                color = Color(0xFFFFFFFF),
+                            )
+                        )
+                    },
+                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
+                    modifier = Modifier
+                        .wrapContentHeight()
+                )
+            }) {
                 SettingButton(
-                    modifier = Modifier.wrapContentSize(), icon = painterResource(id = R.drawable.ic_lock_filled), text = "Test test test"
+                    modifier = Modifier.wrapContentSize(),
+                    icon = painterResource(id = R.drawable.ic_lock_filled),
+                    text = "Test test test"
                 ) {}
             }
         }
