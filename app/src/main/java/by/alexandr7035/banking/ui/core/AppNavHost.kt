@@ -110,7 +110,7 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
             }
 
             navigation(
-                startDestination = NavEntries.Profile.route, route = NavEntries.Graphs.HomeGraph.route
+                startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
             ) {
                 composable(NavEntries.Home.route) {
                     HomeScreen()
