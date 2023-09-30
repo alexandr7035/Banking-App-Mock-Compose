@@ -7,6 +7,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -88,27 +90,32 @@ fun AccountActionPanel(
             color = Color(0xFFF2F2F2)
         )
 
-        Row(
-            modifier = Modifier
-                .padding(top = 16.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
-                .horizontalScroll(rememberScrollState())
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
 
-            val items = listOf(
-                AccountAction.SendMoney,
-                AccountAction.RequestMoney,
-                AccountAction.Pay,
-                AccountAction.TopUp
-            )
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
 
-            items.forEach { it ->
-                AccountActionItem(actionType = it, onActionClick = { accountAction ->
-                    onActionClick.invoke(accountAction)
-                })
+            Row(
+                modifier = Modifier
+                    .padding(top = 16.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
+                    .width(maxWidth)
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                val items = listOf(
+                    AccountAction.SendMoney,
+                    AccountAction.RequestMoney,
+                    AccountAction.Pay,
+                    AccountAction.TopUp
+                )
+
+                items.forEach { it ->
+                    AccountActionItem(actionType = it, onActionClick = { accountAction ->
+                        onActionClick.invoke(accountAction)
+                    })
+                }
             }
         }
+
     }
 }
 
