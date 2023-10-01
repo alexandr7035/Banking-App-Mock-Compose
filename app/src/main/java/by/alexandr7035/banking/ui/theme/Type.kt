@@ -7,14 +7,31 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.unit.sp
+import by.alexandr7035.banking.R
 
+// FIXME cant use google fonts due to issue with drawing when default font replaced with google's
+// FIXME the issue happens with IntrinsicSize calculation
+//val primaryFontFamily = FontFamily(
+//    Font(
+//        googleFont = PoppinsFont,
+//        fontProvider = googleFontProvider,
+//        weight = FontWeight.SemiBold,
+//        style = FontStyle.Normal
+//    )
+//)
 
 val primaryFontFamily = FontFamily(
-    Font(
-        googleFont = PoppinsFont,
-        fontProvider = googleFontProvider,
-        weight = FontWeight.SemiBold,
-        style = FontStyle.Normal
+    androidx.compose.ui.text.font.Font(
+        R.font.poppins,
+        FontWeight.Normal
+    ),
+    androidx.compose.ui.text.font.Font(
+        R.font.poppins_medium,
+        FontWeight.Medium
+    ),
+    androidx.compose.ui.text.font.Font(
+        R.font.poppins_semibold,
+        FontWeight.SemiBold
     )
 )
 
