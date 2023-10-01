@@ -64,7 +64,7 @@ fun AccountActionPanel(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(400),
+                    fontWeight = FontWeight.Normal,
                     color = Color(0xFF100D40),
                 )
             )
@@ -76,7 +76,7 @@ fun AccountActionPanel(
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(600),
+                    fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF100D40),
                 )
             )
@@ -166,7 +166,7 @@ private fun AccountActionItem(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 fontFamily = primaryFontFamily,
-                fontWeight = FontWeight(400),
+                fontWeight = FontWeight.Normal,
                 color = Color(0xFF100D40),
                 textAlign = TextAlign.Center,
             )

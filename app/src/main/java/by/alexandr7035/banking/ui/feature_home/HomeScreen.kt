@@ -1,23 +1,32 @@
 package by.alexandr7035.banking.ui.feature_home
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -29,6 +38,9 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.ScreenPreview
+import by.alexandr7035.banking.ui.extensions.showToast
+import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
+import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
@@ -45,6 +57,8 @@ fun HomeScreen_Ui() {
                 rememberScrollState()
             )
     ) {
+        val ctx = LocalContext.current
+
         ScreenHeader(
             toolbar = {
                 HomeToolbar(
@@ -58,15 +72,77 @@ fun HomeScreen_Ui() {
                 // TODO
             })
         }
+
+        Spacer(Modifier.height(8.dp))
+
+        SectionTitle(stringResource(R.string.your_cards)) {
+            ctx.showToast("TODO")
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+//                .wrapContentHeight()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // TODO cards usecase
+            PaymentCard(cardUi = CardUi.mock())
+            PaymentCard(cardUi = CardUi.mock())
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        SectionTitle(stringResource(R.string.your_saving)) {
+            ctx.showToast("TODO")
+        }
+    }
+}
+
+
+@Composable
+private fun SectionTitle(
+    title: String,
+    onViewMore: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = title,
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontFamily = primaryFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF100D40),
+            )
+        )
+
+        TextButton(onClick = { onViewMore.invoke() }) {
+            Text(
+                text = stringResource(R.string.view_all),
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight(500),
+                    color = Color(0xFF100D40),
+                )
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeToolbar(
-    name: String,
+private fun HomeToolbar(name: String) {
+    val ctx = LocalContext.current
 
-    ) {
     TopAppBar(
         title = {
             Column(Modifier.padding(horizontal = 8.dp)) {
@@ -76,7 +152,7 @@ private fun HomeToolbar(
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
                         fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight(400),
+                        fontWeight = FontWeight.Normal,
                         color = Color(0xB8FFFFFF),
                     )
                 )
@@ -89,7 +165,7 @@ private fun HomeToolbar(
                         fontSize = 18.sp,
                         lineHeight = 26.sp,
                         fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight(500),
+                        fontWeight = FontWeight.Medium,
                         color = Color(0xFFFFFFFF),
                     ),
                     maxLines = 1,
@@ -98,7 +174,9 @@ private fun HomeToolbar(
             }
         },
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                ctx.showToast("TODO")
+            }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_bell),
                     contentDescription = null,

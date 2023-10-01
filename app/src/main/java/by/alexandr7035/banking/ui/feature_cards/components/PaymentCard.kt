@@ -38,7 +38,8 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PaymentCard(
-    cardUi: CardUi, onCLick: (cardNumber: String) -> Unit = {}
+    cardUi: CardUi,
+    onCLick: (cardNumber: String) -> Unit = {}
 ) {
     Card(
         backgroundColor = MaterialTheme.colorScheme.primary,
@@ -87,7 +88,7 @@ fun PaymentCard(
                         text = cardUi.cardNumber.formatCardNumber(), style = TextStyle(
                             fontSize = 16.sp,
                             fontFamily = primaryFontFamily,
-                            fontWeight = FontWeight(500),
+                            fontWeight = FontWeight.Medium,
                             color = Color(0xFFFAF9FF),
                         )
                     )
@@ -95,7 +96,7 @@ fun PaymentCard(
                     Spacer(Modifier.height(50.dp))
 
                     Text(
-                        text = "$2885.00", style = TextStyle(
+                        text = cardUi.balance, style = TextStyle(
                             fontSize = 20.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight(600),
@@ -119,7 +120,7 @@ fun PaymentCard(
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
                             fontFamily = primaryFontFamily,
-                            fontWeight = FontWeight(400),
+                            fontWeight = FontWeight.Normal,
                             color = Color(0xCCFFFFFF),
                         )
                     )
