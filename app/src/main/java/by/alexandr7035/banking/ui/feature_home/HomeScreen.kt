@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.data.profile.Profile
+import by.alexandr7035.banking.ui.components.DashedButton
 import by.alexandr7035.banking.ui.components.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
@@ -98,33 +99,50 @@ fun HomeScreen_Ui(state: HomeState.Success) {
             ctx.showToast("TODO")
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            state.cards.forEach {
-                PaymentCard(cardUi = it)
+
+        if (state.cards.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                state.cards.forEach {
+                    PaymentCard(cardUi = it)
+                }
             }
+        } else {
+            DashedButton(
+                onClick = {
+                    ctx.showToast("TODO")
+                },
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .height(160.dp)
+                    .fillMaxWidth(),
+                text = stringResource(id = R.string.add_a_card)
+            )
         }
 
-        Spacer(Modifier.height(8.dp))
+        if (state.savings.isNotEmpty()) {
 
-        SectionTitle(stringResource(R.string.your_saving)) {
-            ctx.showToast("TODO")
-        }
+            Spacer(Modifier.height(8.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize()
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            state.savings.forEach {
-                SavingCard(savingUi = it)
+            SectionTitle(stringResource(R.string.your_saving)) {
+                ctx.showToast("TODO")
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                state.savings.forEach {
+                    SavingCard(savingUi = it)
+                }
             }
         }
     }
@@ -132,8 +150,7 @@ fun HomeScreen_Ui(state: HomeState.Success) {
 
 @Composable
 private fun SectionTitle(
-    title: String,
-    onViewMore: (() -> Unit)? = null
+    title: String, onViewMore: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
@@ -152,8 +169,7 @@ private fun SectionTitle(
         )
 
         TextButton(
-            onClick = { onViewMore?.invoke() },
-            enabled = onViewMore != null
+            onClick = { onViewMore?.invoke() }, enabled = onViewMore != null
         ) {
             Text(
                 text = stringResource(R.string.view_all), style = TextStyle(
@@ -271,15 +287,11 @@ private fun HomeScreen_Skeleton() {
 @Composable
 fun HomeScreen_Preview() {
     ScreenPreview {
-        HomeScreen_Ui(HomeState.Success(
-            profile = Profile.mock(),
-            cards = List(3) {
-                CardUi.mock()
-            },
-            savings = List(3) {
-                SavingUi.mock()
-            }
-        ))
+        HomeScreen_Ui(HomeState.Success(profile = Profile.mock(), cards = List(3) {
+            CardUi.mock()
+        }, savings = List(3) {
+            SavingUi.mock()
+        }))
     }
 }
 
@@ -289,5 +301,17 @@ fun HomeScreen_Preview() {
 fun HomeScreen_Skeleton_Preview() {
     ScreenPreview {
         HomeScreen_Skeleton()
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreen_Empty() {
+    ScreenPreview {
+        HomeScreen_Ui(
+            HomeState.Success(
+                profile = Profile.mock(), cards = emptyList(), savings = emptyList()
+            )
+        )
     }
 }
