@@ -1,9 +1,7 @@
 package by.alexandr7035.banking.ui.feature_home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,7 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.ui.components.ErrorFullScreen
-import by.alexandr7035.banking.ui.components.FullscreenProgressBar
+import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
@@ -62,7 +60,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     when (state) {
         is HomeState.Success -> HomeScreen_Ui(state = state)
-        is HomeState.Loading -> FullscreenProgressBar()
+        is HomeState.Loading -> HomeScreen_Skeleton()
         is HomeState.Error -> ErrorFullScreen(error = state.error, onRetry = {
             viewModel.emitIntent(HomeIntent.EnterScreen)
         })
@@ -134,7 +132,8 @@ fun HomeScreen_Ui(state: HomeState.Success) {
 
 @Composable
 private fun SectionTitle(
-    title: String, onViewMore: () -> Unit
+    title: String,
+    onViewMore: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
@@ -152,7 +151,10 @@ private fun SectionTitle(
             )
         )
 
-        TextButton(onClick = { onViewMore.invoke() }) {
+        TextButton(
+            onClick = { onViewMore?.invoke() },
+            enabled = onViewMore != null
+        ) {
             Text(
                 text = stringResource(R.string.view_all), style = TextStyle(
                     fontSize = 14.sp,
@@ -171,31 +173,32 @@ private fun SectionTitle(
 private fun HomeToolbar(name: String) {
     val ctx = LocalContext.current
 
-    TopAppBar(title = {
-        Column(Modifier.padding(horizontal = 8.dp)) {
-            Text(
-                text = stringResource(id = R.string.welcome_back), style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    color = Color(0xB8FFFFFF),
+    TopAppBar(
+        title = {
+            Column(Modifier.padding(horizontal = 8.dp)) {
+                Text(
+                    text = stringResource(id = R.string.welcome_back), style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xB8FFFFFF),
+                    )
                 )
-            )
 
-            Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(8.dp))
 
-            Text(
-                text = name, style = TextStyle(
-                    fontSize = 18.sp,
-                    lineHeight = 26.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFFFFFFFF),
-                ), maxLines = 1, overflow = TextOverflow.Ellipsis
-            )
-        }
-    },
+                Text(
+                    text = name, style = TextStyle(
+                        fontSize = 18.sp,
+                        lineHeight = 26.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFFFFFFFF),
+                    ), maxLines = 1, overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
         actions = {
             IconButton(onClick = {
                 ctx.showToast("TODO")
@@ -217,16 +220,49 @@ private fun HomeToolbar(name: String) {
 
 @Composable
 private fun HomeScreen_Skeleton() {
-    Column(Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .padding(bottom = 24.dp)
+    ) {
         ScreenHeader(
             toolbar = {}, panelVerticalOffset = 24.dp
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .padding(16.dp)
-            )
+            AccountActionPanel_Skeleton()
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        SectionTitle(stringResource(R.string.your_cards))
+
+        SkeletonShape(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .fillMaxWidth()
+                .height(160.dp)
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        SectionTitle(stringResource(R.string.your_saving))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize()
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            List(3) {
+                SkeletonShape(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                )
+            }
         }
     }
 }
@@ -235,11 +271,15 @@ private fun HomeScreen_Skeleton() {
 @Composable
 fun HomeScreen_Preview() {
     ScreenPreview {
-        HomeScreen_Ui(HomeState.Success(profile = Profile.mock(), cards = List(3) {
-            CardUi.mock()
-        }, savings = List(3) {
-            SavingUi.mock()
-        }))
+        HomeScreen_Ui(HomeState.Success(
+            profile = Profile.mock(),
+            cards = List(3) {
+                CardUi.mock()
+            },
+            savings = List(3) {
+                SavingUi.mock()
+            }
+        ))
     }
 }
 

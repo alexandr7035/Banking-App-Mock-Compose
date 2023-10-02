@@ -30,6 +30,10 @@ class HomeViewModel(
     }
 
     private fun loadData() {
+        _state.update {
+            HomeState.Loading
+        }
+
         viewModelScope.launch(coroutineExceptionHandler) {
 
             val profileJob = async() {
@@ -39,7 +43,7 @@ class HomeViewModel(
             val cardsJob = async() {
                 delay(1500)
                 // TODO repo
-                List(3) {
+                List(1) {
                     CardUi.mock()
                 }
             }

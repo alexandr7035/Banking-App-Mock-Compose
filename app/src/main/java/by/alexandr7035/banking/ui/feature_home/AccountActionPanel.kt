@@ -38,7 +38,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun AccountActionPanel(
@@ -140,7 +142,6 @@ private fun AccountActionItem(
             )
             .padding(vertical = 8.dp, horizontal = 12.dp)
             .clip(RoundedCornerShape(14.dp))
-
     ) {
         Box(
             modifier = Modifier
@@ -174,8 +175,68 @@ private fun AccountActionItem(
     }
 }
 
+@Composable
+fun AccountActionPanel_Skeleton() {
+    val shape = RoundedCornerShape(size = 10.dp)
+    Column(
+        modifier = Modifier
+            .shadow(
+                elevation = 32.dp,
+                spotColor = Color.Gray,
+                ambientColor = Color.Gray,
+                shape = shape,
+            )
+            .background(color = Color(0xFFFFFFFF), shape = shape)
+    ) {
+        Row(Modifier.padding(horizontal = 24.dp, vertical = 18.dp)) {
+            Text(
+                text = "My Balance",
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    color = Color(0xFF100D40),
+                )
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            SkeletonShape(
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(18.dp),
+                shape = RoundedCornerShape(4.dp)
+            )
+        }
+
+        Divider(
+            thickness = 2.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            color = Color(0xFFF2F2F2)
+        )
+
+        SkeletonShape(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
+                .height(100.dp),
+            shape = RoundedCornerShape(4.dp)
+        )
+    }
+}
+
+
 @Preview
 @Composable
 fun AccountActionPanel_Preview() {
     AccountActionPanel(balance = 2000.52F, onActionClick = {})
+}
+
+@Preview
+@Composable
+fun AccountActionPanel_Skeleton_Preview() {
+    AccountActionPanel_Skeleton()
 }
