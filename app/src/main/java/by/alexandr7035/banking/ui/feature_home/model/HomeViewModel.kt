@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_home
+package by.alexandr7035.banking.ui.feature_home.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,7 +43,7 @@ class HomeViewModel(
             val cardsJob = async() {
                 delay(1500)
                 // TODO repo
-                List(1) {
+                List(2) {
                     CardUi.mock()
                 }
             }
@@ -51,7 +51,7 @@ class HomeViewModel(
             val savingsJob = async() {
                 delay(1000)
                 // TODO repo
-                List(3) {
+                List(2) {
                     SavingUi.mock()
                 }
             }

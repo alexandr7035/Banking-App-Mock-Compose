@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_home
+package by.alexandr7035.banking.ui.feature_home.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

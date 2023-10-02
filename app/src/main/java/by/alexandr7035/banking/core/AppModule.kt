@@ -7,7 +7,7 @@ import by.alexandr7035.banking.data.login.LoginRepositoryImpl
 import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.ui.core.AppViewModel
-import by.alexandr7035.banking.ui.feature_home.HomeViewModel
+import by.alexandr7035.banking.ui.feature_home.model.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
 import by.alexandr7035.banking.ui.feature_profile.ProfileViewModel
 import com.cioccarellia.ksprefs.KsPrefs

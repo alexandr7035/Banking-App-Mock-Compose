@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_home
+package by.alexandr7035.banking.ui.feature_home.model
 
 import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.ui.components.error.UiError

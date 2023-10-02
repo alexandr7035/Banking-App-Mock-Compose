@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -39,8 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
+import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
-import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun AccountActionPanel(
@@ -141,7 +140,6 @@ private fun AccountActionItem(
                 interactionSource = interactionSource
             )
             .padding(vertical = 8.dp, horizontal = 12.dp)
-            .clip(RoundedCornerShape(14.dp))
     ) {
         Box(
             modifier = Modifier
