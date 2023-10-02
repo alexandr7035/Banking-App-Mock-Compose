@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -41,11 +42,20 @@ fun SavingCard(
     modifier: Modifier = Modifier,
     savingUi: SavingUi
 ) {
+
+    val shape = RoundedCornerShape(10.dp)
+
     Box(
         modifier = modifier.then(
             Modifier
+                .shadow(
+                    elevation = 32.dp,
+                    spotColor = Color.Gray,
+                    ambientColor = Color.Gray,
+                    shape = shape,
+                )
                 .background(
-                    color = Color.White, shape = RoundedCornerShape(10.dp)
+                    color = Color.White, shape = shape
                 )
                 .padding(16.dp)
         )

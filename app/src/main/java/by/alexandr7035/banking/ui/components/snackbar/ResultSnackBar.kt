@@ -59,7 +59,7 @@ fun ResultSnackBar(
 private fun ResultSnackBar_UI(
     message: String,
     cornerRadius: Dp = 16.dp,
-    fontSize: TextUnit = 18.sp,
+    fontSize: TextUnit = 14.sp,
     snackBarMode: SnackBarMode
 ) {
     Surface(
