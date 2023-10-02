@@ -20,6 +20,7 @@ For example, for banking profile the app uses local mock Repositories with stati
 <p align="left">
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/f6436798-c655-45fd-940f-909108f0cd8f" width="20%"/>
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/9af32fed-6bdd-421a-bbad-b0a6b30c9384" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/5b60ccfd-c1a5-4716-a18b-d70c434f6ea1" width="20%"/>
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/498d3dcc-a79f-4575-8bf5-bf678777683a" width="20%"/>
 </p>
 
