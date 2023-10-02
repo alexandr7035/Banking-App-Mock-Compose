@@ -1,7 +1,9 @@
 package by.alexandr7035.banking.ui.feature_home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,9 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,41 +37,60 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.data.profile.Profile
+import by.alexandr7035.banking.ui.components.ErrorFullScreen
+import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
+import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen() {
-    HomeScreen_Ui()
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+
+    LaunchedEffect(Unit) {
+        viewModel.emitIntent(HomeIntent.EnterScreen)
+    }
+
+    val state = viewModel.state.collectAsStateWithLifecycle().value
+    when (state) {
+        is HomeState.Success -> HomeScreen_Ui(state = state)
+        is HomeState.Loading -> FullscreenProgressBar()
+        is HomeState.Error -> ErrorFullScreen(error = state.error, onRetry = {
+            viewModel.emitIntent(HomeIntent.EnterScreen)
+        })
+    }
 }
 
 @Composable
-fun HomeScreen_Ui() {
+fun HomeScreen_Ui(state: HomeState.Success) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(
                 rememberScrollState()
             )
+            .padding(bottom = 24.dp)
     ) {
         val ctx = LocalContext.current
 
         ScreenHeader(
             toolbar = {
                 HomeToolbar(
-                    // TODO
-                    name = "Alexander Michael"
+                    state.profile.name
                 )
-            },
-            panelVerticalOffset = 24.dp
+            }, panelVerticalOffset = 24.dp
         ) {
             AccountActionPanel(balance = 2000f, onActionClick = {
                 // TODO
+                ctx.showToast("TODO")
             })
         }
 
@@ -82,14 +103,13 @@ fun HomeScreen_Ui() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-//                .wrapContentHeight()
                 .horizontalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // TODO cards usecase
-            PaymentCard(cardUi = CardUi.mock())
-            PaymentCard(cardUi = CardUi.mock())
+            state.cards.forEach {
+                PaymentCard(cardUi = it)
+            }
         }
 
         Spacer(Modifier.height(8.dp))
@@ -97,14 +117,24 @@ fun HomeScreen_Ui() {
         SectionTitle(stringResource(R.string.your_saving)) {
             ctx.showToast("TODO")
         }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize()
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            state.savings.forEach {
+                SavingCard(savingUi = it)
+            }
+        }
     }
 }
 
-
 @Composable
 private fun SectionTitle(
-    title: String,
-    onViewMore: () -> Unit
+    title: String, onViewMore: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -114,8 +144,7 @@ private fun SectionTitle(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = title,
-            style = TextStyle(
+            text = title, style = TextStyle(
                 fontSize = 16.sp,
                 fontFamily = primaryFontFamily,
                 fontWeight = FontWeight.SemiBold,
@@ -125,8 +154,7 @@ private fun SectionTitle(
 
         TextButton(onClick = { onViewMore.invoke() }) {
             Text(
-                text = stringResource(R.string.view_all),
-                style = TextStyle(
+                text = stringResource(R.string.view_all), style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontFamily = primaryFontFamily,
@@ -143,36 +171,31 @@ private fun SectionTitle(
 private fun HomeToolbar(name: String) {
     val ctx = LocalContext.current
 
-    TopAppBar(
-        title = {
-            Column(Modifier.padding(horizontal = 8.dp)) {
-                Text(
-                    text = stringResource(id = R.string.welcome_back),
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        color = Color(0xB8FFFFFF),
-                    )
+    TopAppBar(title = {
+        Column(Modifier.padding(horizontal = 8.dp)) {
+            Text(
+                text = stringResource(id = R.string.welcome_back), style = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    color = Color(0xB8FFFFFF),
                 )
+            )
 
-                Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
 
-                Text(
-                    text = name,
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        lineHeight = 26.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFFFFFFFF),
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        },
+            Text(
+                text = name, style = TextStyle(
+                    fontSize = 18.sp,
+                    lineHeight = 26.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFFFFFFFF),
+                ), maxLines = 1, overflow = TextOverflow.Ellipsis
+            )
+        }
+    },
         actions = {
             IconButton(onClick = {
                 ctx.showToast("TODO")
@@ -185,18 +208,46 @@ private fun HomeToolbar(name: String) {
                 )
             }
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         modifier = Modifier
             .wrapContentHeight()
             .padding(top = 16.dp)
     )
 }
 
+@Composable
+private fun HomeScreen_Skeleton() {
+    Column(Modifier.fillMaxSize()) {
+        ScreenHeader(
+            toolbar = {}, panelVerticalOffset = 24.dp
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .padding(16.dp)
+            )
+        }
+    }
+}
 
 @Preview
 @Composable
 fun HomeScreen_Preview() {
     ScreenPreview {
-        HomeScreen_Ui()
+        HomeScreen_Ui(HomeState.Success(profile = Profile.mock(), cards = List(3) {
+            CardUi.mock()
+        }, savings = List(3) {
+            SavingUi.mock()
+        }))
+    }
+}
+
+
+@Preview
+@Composable
+fun HomeScreen_Skeleton_Preview() {
+    ScreenPreview {
+        HomeScreen_Skeleton()
     }
 }

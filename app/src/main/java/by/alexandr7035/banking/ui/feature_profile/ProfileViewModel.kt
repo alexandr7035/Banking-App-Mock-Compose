@@ -23,7 +23,9 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
         when (intent) {
             is ProfileScreenIntent.LoadScreen -> {
                 viewModelScope.launch {
-                    val profile = repository.getProfile()
+                    val profile = runCatching {
+                        repository.getProfile()
+                    }
 
                     if (profile.isSuccess) {
                         _state.update { curr ->

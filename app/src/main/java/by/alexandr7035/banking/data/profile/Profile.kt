@@ -5,7 +5,8 @@ data class Profile(
     val id: String,
     val email: String,
     val profilePicUrl: String,
-    val tier: String = "Basic"
+    val tier: String = "Basic",
+    val balance: Float = 2500f
 ) {
     companion object {
         fun mock() = Profile(
