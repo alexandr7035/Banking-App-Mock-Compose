@@ -1,6 +1,5 @@
 package by.alexandr7035.banking.ui.components
 
-import android.widget.ImageButton
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -184,6 +182,38 @@ fun SettingButton(
     }
 }
 
+@Composable
+fun DashedButton(
+    onClick: () -> Unit,
+    modifier: Modifier,
+    text: String,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.then(Modifier.dashedBorder(
+            strokeWidth = 1.5.dp,
+            color = MaterialTheme.colorScheme.primary,
+            cornerRadiusDp = 10.dp
+        )),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.primary,
+        ),
+        shape = RoundedCornerShape(10.dp),
+        contentPadding = PaddingValues(16.dp),
+//        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary)
+    ) {
+        Text(
+            text = text,
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontFamily = primaryFontFamily,
+                fontWeight = FontWeight.SemiBold,
+            )
+        )
+    }
+}
+
 
 @Preview
 @Composable
@@ -211,6 +241,12 @@ fun Buttons_Preview() {
                     onClick = {},
                     modifier = Modifier.wrapContentSize(),
                     text = "Click me"
+                )
+
+                DashedButton(
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Add Card"
                 )
 
                 Box(
