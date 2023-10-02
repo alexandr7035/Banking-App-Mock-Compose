@@ -40,6 +40,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
+import by.alexandr7035.banking.ui.feature_home.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_profile.logout_dialog.LogoutDialog
@@ -109,16 +110,10 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
             }
 
             navigation(
-                startDestination = NavEntries.Profile.route, route = NavEntries.Graphs.HomeGraph.route
+                startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
             ) {
                 composable(NavEntries.Home.route) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = NavEntries.Home.label, textAlign = TextAlign.Center
-                        )
-                    }
+                    HomeScreen()
                 }
 
                 composable(NavEntries.History.route) {

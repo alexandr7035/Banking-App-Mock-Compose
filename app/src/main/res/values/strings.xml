@@ -28,4 +28,14 @@
     <string name="account">Account</string>
     <string name="my_qr">My QR</string>
     <string name="scan_qr">Scan QR</string>
+    <string name="send">Send</string>
+    <string name="request">Request</string>
+    <string name="top_up">Top up</string>
+    <string name="pay">Pay</string>
+    <string name="your_profile">Your Profile</string>
+    <string name="payment_card">Payment Card</string>
+    <string name="view_all">View All</string>
+    <string name="your_saving">Your Saving</string>
+    <string name="your_cards">Your Cards</string>
+    <string name="add_a_card">Add a Card</string>
 </resources>
