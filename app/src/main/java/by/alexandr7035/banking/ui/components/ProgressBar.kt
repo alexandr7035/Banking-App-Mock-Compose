@@ -60,12 +60,14 @@ fun PercentageIndicator(
     emptyColor: Color = Color(0xFFF2F2F2)
 ) {
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
         val percentageStr = floor(percentage * 100).roundToInt()
 
         Canvas(
-            Modifier
-                .fillMaxSize()
+            Modifier.fillMaxSize()
         ) {
             val centerX = size.width / 2
             val centerY = size.height / 2
@@ -101,13 +103,16 @@ fun PercentageIndicator(
             text = "${percentageStr}%",
             style = TextStyle(
                 fontFamily = primaryFontFamily,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Medium,
                 color = Color(0xFF100D40),
                 textAlign = TextAlign.Center,
             ),
             textAlignment = Alignment.Center,
             maxLines = 1,
-            modifier = Modifier.padding(thickness + 4.dp)
+            modifier = Modifier.padding(
+                vertical = thickness + 4.dp,
+                horizontal = thickness + 6.dp,
+            ),
         )
     }
 }
