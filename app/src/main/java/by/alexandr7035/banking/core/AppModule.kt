@@ -7,6 +7,7 @@ import by.alexandr7035.banking.data.login.LoginRepositoryImpl
 import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.ui.core.AppViewModel
+import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
 import by.alexandr7035.banking.ui.feature_home.model.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
 import by.alexandr7035.banking.ui.feature_profile.ProfileViewModel
@@ -21,6 +22,7 @@ val appModule = module {
     viewModel { AppViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { HomeViewModel(get()) }
+    viewModel { CardListViewModel() }
 
     single<AppRepository> {
         AppRepositoryImpl(get())

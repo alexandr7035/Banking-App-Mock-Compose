@@ -2,6 +2,7 @@ package by.alexandr7035.banking.ui.feature_cards.screen_card_list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -30,79 +33,136 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.DashedButton
+import by.alexandr7035.banking.ui.components.ErrorFullScreen
+import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CardListScreen(
+    viewModel: CardListViewModel = koinViewModel(),
     onBack: () -> Unit,
     onAddCard: () -> Unit
 ) {
     val ctx = LocalContext.current
+    val state = viewModel.state.collectAsStateWithLifecycle().value
 
-    CardListScreen_Ui(
-        cards = List(2) {
-            CardUi.mock()
-        },
-        onAddCard = { ctx.showToast("TODO") },
-        onBack = onBack
-    )
-}
-
-@Composable
-fun CardListScreen_Ui(
-    cards: List<CardUi>,
-    onBack: () -> Unit = {},
-    onAddCard: () -> Unit = {}
-) {
     Scaffold(
         topBar = {
             ToolBar(onBack)
         }
     ) { pv ->
 
-        BoxWithConstraints(Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .height(maxHeight)
-                    .width(maxWidth)
-                    .verticalScroll(rememberScrollState())
-                    .padding(
-                        top = pv.calculateTopPadding() + 16.dp,
-                        bottom = pv.calculateBottomPadding() + 16.dp,
-                        start = 24.dp,
-                        end = 24.dp
-                    ),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                if (cards.isNotEmpty()) {
-                    cards.forEach {
-                        PaymentCard(cardUi = it)
-                    }
+        Box(
+            Modifier.padding(
+                top = pv.calculateTopPadding(),
+                bottom = pv.calculateBottomPadding()
+            )
+        ) {
+            when (state) {
+                is CardListState.Loading -> CardListScreen_Skeleton()
 
-                    DashedButton(
-                        onClick = { onAddCard.invoke() },
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(id = R.string.add_a_card),
-                        icon = painterResource(id = R.drawable.ic_plus)
+                is CardListState.Success -> {
+                    CardListScreen_Ui(
+                        cards = List(2) {
+                            CardUi.mock()
+                        },
+                        onAddCard = { ctx.showToast("TODO") },
+                        onBack = onBack,
                     )
-                } else {
+                }
 
+                is CardListState.Error -> {
+                    ErrorFullScreen(
+                        error = state.error,
+                        onRetry = {
+                            viewModel.emitIntent(CardListIntent.EnterScreen)
+                        }
+                    )
                 }
             }
         }
 
+        LaunchedEffect(Unit) {
+            viewModel.emitIntent(CardListIntent.EnterScreen)
+        }
+    }
+}
+
+@Composable
+fun CardListScreen_Ui(
+    cards: List<CardUi>,
+    onBack: () -> Unit = {},
+    onAddCard: () -> Unit = {},
+) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .height(maxHeight)
+                .width(maxWidth)
+                .verticalScroll(rememberScrollState())
+                .padding(
+                    vertical = 16.dp,
+                    horizontal = 24.dp,
+                ),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (cards.isNotEmpty()) {
+                cards.forEach {
+                    PaymentCard(cardUi = it)
+                }
+
+                DashedButton(
+                    onClick = { onAddCard.invoke() },
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = R.string.add_a_card),
+                    icon = painterResource(id = R.drawable.ic_plus)
+                )
+            } else {
+                DashedButton(
+                    onClick = { onAddCard.invoke() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp),
+                    text = stringResource(id = R.string.add_a_card),
+                    icon = painterResource(id = R.drawable.ic_plus)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CardListScreen_Skeleton() {
+    Column(
+        modifier = Modifier.padding(
+            vertical = 16.dp,
+            horizontal = 24.dp,
+        ),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        (0..2).forEach { _ ->
+            SkeletonShape(
+                modifier = Modifier
+                    .height(160.dp)
+                    .fillMaxWidth(),
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ToolBar(onBack: () -> Unit) {
+
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -148,6 +208,14 @@ fun CardListScreen_Preview() {
 @Preview
 fun CardListScreen_Empty_Preview() {
     ScreenPreview {
+        CardListScreen_Ui(cards = emptyList())
+    }
+}
 
+@Composable
+@Preview
+fun CardListScreen_Skeleton_Preview() {
+    ScreenPreview {
+        CardListScreen_Skeleton()
     }
 }
