@@ -40,7 +40,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
-import by.alexandr7035.banking.ui.feature_home.HomeScreen
+import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
+import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_profile.logout_dialog.LogoutDialog
@@ -113,7 +114,15 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                 startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
             ) {
                 composable(NavEntries.Home.route) {
-                    HomeScreen()
+                    HomeScreen(onGoToDestination = { navEntry ->
+                        if (navEntry in listOf(
+                                NavEntries.CardList
+                            // TODO other destinations
+                            )
+                        ) {
+                            navController.navigate(navEntry.route)
+                        }
+                    })
                 }
 
                 composable(NavEntries.History.route) {
@@ -163,6 +172,17 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                         navController.previousBackStackEntry?.savedStateHandle?.set(NavResult.SHOULD_LOGOUT.name, shouldLogout)
                         navController.popBackStack()
                     })
+                }
+
+                composable(NavEntries.CardList.route) {
+                    CardListScreen(
+                        onAddCard = {
+                            
+                        },
+                        onBack = {
+                            navController.popBackStack()
+                        }
+                    )
                 }
             }
         }

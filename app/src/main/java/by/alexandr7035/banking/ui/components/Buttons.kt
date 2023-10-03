@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -187,14 +190,17 @@ fun DashedButton(
     onClick: () -> Unit,
     modifier: Modifier,
     text: String,
+    icon: Painter? = null
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.then(Modifier.dashedBorder(
-            strokeWidth = 1.5.dp,
-            color = MaterialTheme.colorScheme.primary,
-            cornerRadiusDp = 10.dp
-        )),
+        modifier = modifier.then(
+            Modifier.dashedBorder(
+                strokeWidth = 1.5.dp,
+                color = MaterialTheme.colorScheme.primary,
+                cornerRadiusDp = 10.dp
+            )
+        ),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = MaterialTheme.colorScheme.primary,
@@ -203,14 +209,28 @@ fun DashedButton(
         contentPadding = PaddingValues(16.dp),
 //        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary)
     ) {
-        Text(
-            text = text,
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontFamily = primaryFontFamily,
-                fontWeight = FontWeight.SemiBold,
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null) {
+                Image(
+                    painter = icon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(24.dp),
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+            Text(
+                text = text,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                )
             )
-        )
+        }
     }
 }
 
@@ -246,6 +266,13 @@ fun Buttons_Preview() {
                 DashedButton(
                     onClick = {},
                     modifier = Modifier.fillMaxWidth(),
+                    text = "Add Card"
+                )
+
+                DashedButton(
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    icon = painterResource(id = R.drawable.ic_plus),
                     text = "Add Card"
                 )
 
