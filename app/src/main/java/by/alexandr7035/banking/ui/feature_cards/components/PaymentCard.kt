@@ -105,7 +105,7 @@ fun PaymentCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(54.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
                 Column(
                     modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.End
