@@ -8,7 +8,9 @@ import by.alexandr7035.banking.ui.components.error.UiError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,7 +43,7 @@ class HomeViewModel(
             }
 
             val cardsJob = async() {
-                delay(1500)
+                delay(300)
                 // TODO repo
                 List(2) {
                     CardUi.mock()
@@ -49,7 +51,7 @@ class HomeViewModel(
             }
 
             val savingsJob = async() {
-                delay(1000)
+                delay(200)
                 // TODO repo
                 List(2) {
                     SavingUi.mock()
