@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
@@ -28,6 +29,7 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
 fun CardNumberField(
+    title: String,
     onPostValue: (value: String) -> Unit,
     modifier: Modifier = Modifier,
     type: KeyboardType = KeyboardType.Text,
@@ -39,7 +41,7 @@ fun CardNumberField(
 
     Column(modifier = modifier) {
         Text(
-            text = "Card Number",
+            text = title,
             style = TextStyle(
                 fontSize = 12.sp,
                 fontFamily = primaryFontFamily,
@@ -66,7 +68,9 @@ fun CardNumberField(
                 CardNumberHelpers.formatOtherCardNumbers(number)
             },
             trailingIcon = {
-                Text("TODO")
+                Box(Modifier.padding(end=10.dp).heightIn(max=32.dp)) {
+                    SmallCardIcon()
+                }
             }
         )
     }
@@ -82,7 +86,9 @@ fun CardTextField_Preview() {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-            CardNumberField(onPostValue = {})
+            CardNumberField(
+                title = "Card Number",
+                onPostValue = {})
         }
     }
 }

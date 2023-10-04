@@ -100,7 +100,9 @@ fun AddCardScreen(
 
             PrimaryButton(
                 onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth().imePadding(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding(),
                 text = stringResource(R.string.save_card)
             )
         }
@@ -144,58 +146,59 @@ private fun ToolBar(onBack: () -> Unit) {
 
 @Composable
 private fun AddCardFormUi() {
-        Column(
-                Modifier
-                    .verticalScroll(rememberScrollState())
-        ) {
-            CardNumberField(
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
+        CardNumberField(
+            title = "Card Number",
+            onPostValue = {},
+            type = KeyboardType.Number
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            FormField(
+                title = "Expired Date",
                 onPostValue = {},
+                modifier = Modifier.weight(1f)
+            )
+
+            FormField(
+                title = "CVC/CVV",
+                onPostValue = {},
+                modifier = Modifier.weight(1f),
                 type = KeyboardType.Number
             )
-
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                FormField(
-                    title = "Expired Date",
-                    onPostValue = {},
-                    modifier = Modifier.weight(1f)
-                )
-
-                FormField(
-                    title = "CVC/CVV",
-                    onPostValue = {},
-                    modifier = Modifier.weight(1f),
-                    type = KeyboardType.Number
-                )
-            }
-
-            FormField(
-                title = "Cardholder Name",
-                onPostValue = {},
-                capitalize = true
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Billing Address",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF333333),
-                )
-            )
-
-            FormField(
-                title = "Address Line 1",
-                onPostValue = {},
-            )
-
-            FormField(
-                title = "Address Line 2",
-                onPostValue = {},
-            )
         }
+
+        FormField(
+            title = "Cardholder Name",
+            onPostValue = {},
+            capitalize = true
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Billing Address",
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontFamily = primaryFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF333333),
+            )
+        )
+
+        FormField(
+            title = "Address Line 1",
+            onPostValue = {},
+        )
+
+        FormField(
+            title = "Address Line 2",
+            onPostValue = {},
+        )
+    }
 }
 
 @Composable
