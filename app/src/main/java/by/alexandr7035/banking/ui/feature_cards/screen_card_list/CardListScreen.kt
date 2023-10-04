@@ -51,7 +51,6 @@ fun CardListScreen(
     onBack: () -> Unit,
     onAddCard: () -> Unit
 ) {
-    val ctx = LocalContext.current
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
     Scaffold(
@@ -74,8 +73,7 @@ fun CardListScreen(
                         cards = List(2) {
                             CardUi.mock()
                         },
-                        onAddCard = { ctx.showToast("TODO") },
-                        onBack = onBack,
+                        onAddCard = { onAddCard.invoke() },
                     )
                 }
 
@@ -99,7 +97,6 @@ fun CardListScreen(
 @Composable
 fun CardListScreen_Ui(
     cards: List<CardUi>,
-    onBack: () -> Unit = {},
     onAddCard: () -> Unit = {},
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {

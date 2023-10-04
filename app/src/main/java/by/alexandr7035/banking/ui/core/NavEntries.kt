@@ -69,6 +69,12 @@ sealed class NavEntries(
         label = "Card List"
     )
 
+    object AddCard: NavEntries(
+        route = "add_card",
+        navIcons = null,
+        label = "Add Card"
+    )
+
     sealed class Graphs(val route: String) {
         object HomeGraph : Graphs("homeGraph")
     }

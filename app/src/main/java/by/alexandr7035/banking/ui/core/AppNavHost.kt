@@ -40,6 +40,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
+import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
@@ -177,12 +178,18 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                 composable(NavEntries.CardList.route) {
                     CardListScreen(
                         onAddCard = {
-                            
+                            navController.navigate(NavEntries.AddCard.route)
                         },
                         onBack = {
                             navController.popBackStack()
                         }
                     )
+                }
+
+                composable(NavEntries.AddCard.route) {
+                    AddCardScreen(onBack = {
+                        navController.popBackStack()
+                    })
                 }
             }
         }
