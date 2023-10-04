@@ -1,8 +1,6 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_add_card
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +45,7 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.PrimaryTextField
 import by.alexandr7035.banking.ui.core.ScreenPreview
+import by.alexandr7035.banking.ui.feature_cards.components.CardNumberField
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
@@ -143,15 +142,13 @@ private fun ToolBar(onBack: () -> Unit) {
 }
 
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun AddCardFormUi() {
         Column(
                 Modifier
                     .verticalScroll(rememberScrollState())
         ) {
-            FormField(
-                title = "Card Number",
+            CardNumberField(
                 onPostValue = {},
                 type = KeyboardType.Number
             )
