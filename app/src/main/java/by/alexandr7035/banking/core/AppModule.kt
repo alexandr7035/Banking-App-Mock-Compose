@@ -7,6 +7,7 @@ import by.alexandr7035.banking.data.login.LoginRepositoryImpl
 import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.ui.core.AppViewModel
+import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
 import by.alexandr7035.banking.ui.feature_home.model.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
@@ -23,6 +24,7 @@ val appModule = module {
     viewModel { ProfileViewModel(get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { CardListViewModel() }
+    viewModel { AddCardViewModel() }
 
     single<AppRepository> {
         AppRepositoryImpl(get())
@@ -33,7 +35,6 @@ val appModule = module {
     }
 
     single<ProfileRepository> {
-        // FIXME
         ProfileRepositoryMock(Dispatchers.IO)
     }
 

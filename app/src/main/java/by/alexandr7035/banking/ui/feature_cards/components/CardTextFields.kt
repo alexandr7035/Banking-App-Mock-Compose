@@ -12,8 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -24,20 +22,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.ui.components.PrimaryTextField
 import by.alexandr7035.banking.ui.feature_cards.helpers.CardNumberHelpers
+import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardState
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
 fun CardNumberField(
     title: String,
+    cardNumber: String,
     onPostValue: (value: String) -> Unit,
     modifier: Modifier = Modifier,
     type: KeyboardType = KeyboardType.Text,
 ) {
-
-    val cardNumber = rememberSaveable {
-        mutableStateOf("")
-    }
 
     Column(modifier = modifier) {
         Text(
@@ -54,9 +50,8 @@ fun CardNumberField(
         Spacer(Modifier.height(16.dp))
 
         PrimaryTextField(
-            value = cardNumber.value,
+            value = cardNumber,
             onValueChange = {
-                cardNumber.value = it
                 onPostValue.invoke(it)
             },
             modifier = Modifier.fillMaxWidth(),
@@ -88,7 +83,9 @@ fun CardTextField_Preview() {
         ) {
             CardNumberField(
                 title = "Card Number",
-                onPostValue = {})
+                onPostValue = {},
+                cardNumber = AddCardState.mock().cardFields.cardNumber
+            )
         }
     }
 }
