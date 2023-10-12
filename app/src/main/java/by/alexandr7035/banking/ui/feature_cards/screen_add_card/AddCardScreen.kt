@@ -29,8 +29,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -41,8 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
@@ -56,12 +52,12 @@ import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.PrimaryTextField
 import by.alexandr7035.banking.ui.components.ReadonlyTextField
+import by.alexandr7035.banking.ui.components.dialogs.DatePickerDialog
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.feature_cards.components.CardNumberField
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -155,23 +151,16 @@ fun AddCardScreen_Ui(
                         }
 
                         FormField(
-                            title = "CVC/CVV",
-                            onValueChange = {
+                            title = "CVC/CVV", onValueChange = {
                                 onIntent.invoke(AddCardIntent.CvvCodeChanged(it))
-                            },
-                            value = state.cardFields.cvvCode,
-                            modifier = Modifier.weight(1f),
-                            type = KeyboardType.Number
+                            }, value = state.cardFields.cvvCode, modifier = Modifier.weight(1f), type = KeyboardType.Number
                         )
                     }
 
                     FormField(
-                        title = "Cardholder Name",
-                        onValueChange = {
+                        title = "Cardholder Name", onValueChange = {
                             onIntent.invoke(AddCardIntent.CardHolderChanged(it))
-                        },
-                        value = state.cardFields.cardHolder,
-                        capitalize = true
+                        }, value = state.cardFields.cardHolder, capitalize = true
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -224,31 +213,12 @@ fun AddCardScreen_Ui(
     }
 
     if (state.showDatePicker) {
-        val datePickerState = rememberDatePickerState()
-        val dialogState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-        ModalBottomSheet(
-            onDismissRequest = {
-                onIntent.invoke(AddCardIntent.ExpirationDateChanged(datePickerState.selectedDateMillis))
+        DatePickerDialog(
+            onDismissRequest = { selectedMills ->
+                onIntent.invoke(AddCardIntent.ExpirationDateChanged(selectedMills))
                 onIntent.invoke(AddCardIntent.ToggleDatePicker(false))
-            },
-            sheetState = dialogState,
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
-                DatePicker(
-                    state = datePickerState
-                )
-
-                Spacer(modifier = Modifier.height(72.dp))
             }
-        }
-
+        )
     }
 }
 
