@@ -1,7 +1,9 @@
 package by.alexandr7035.banking.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -257,6 +260,32 @@ fun DecoratedPasswordTextField(
 
 }
 
+@Composable
+fun ReadonlyTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    visualTransformation: VisualTransformation = VisualTransformation.None
+) {
+    Box(modifier = modifier) {
+        PrimaryTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = visualTransformation
+        )
+
+        // TODO ripple
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .alpha(0f)
+                .clickable(onClick = onClick),
+        )
+    }
+}
+
 @Preview
 @Composable
 fun TextField_Preview() {
@@ -306,6 +335,15 @@ fun TextField_Preview() {
                 modifier = Modifier.fillMaxWidth(),
                 value = "Test test test",
                 onValueChange = {}
+            )
+
+            Text("Other")
+
+            ReadonlyTextField(
+                value = "Test",
+                onValueChange = {},
+                onClick = { },
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
