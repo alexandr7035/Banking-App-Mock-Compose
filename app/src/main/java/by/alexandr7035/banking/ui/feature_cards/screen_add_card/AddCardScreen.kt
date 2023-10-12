@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_add_card
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,17 +13,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -33,6 +41,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
@@ -45,50 +55,41 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.PrimaryTextField
+import by.alexandr7035.banking.ui.components.ReadonlyTextField
 import by.alexandr7035.banking.ui.core.ScreenPreview
 import by.alexandr7035.banking.ui.extensions.showToast
 import by.alexandr7035.banking.ui.feature_cards.components.CardNumberField
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AddCardScreen(
-    viewModel: AddCardViewModel = koinViewModel(),
-    onBack: () -> Unit = {}
+    viewModel: AddCardViewModel = koinViewModel(), onBack: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
-    AddCardScreen_Ui(
-        onBack = onBack,
-        state = state,
-        onIntent = { viewModel.emitIntent(it) }
-    )
+    AddCardScreen_Ui(onBack = onBack, state = state, onIntent = { viewModel.emitIntent(it) })
 
     val ctx = LocalContext.current
 
-    EventEffect(
-        event = state.cardSavedEvent,
-        onConsumed = {
-            viewModel.emitIntent(AddCardIntent.ConsumeResultEvent)
-        },
-        action = { isCardAdded ->
-            if (isCardAdded) {
-                ctx.showToast("Card has been added!")
-            }
-            else {
-                ctx.showToast("Failed to save card")
-            }
-            onBack.invoke()
+    EventEffect(event = state.cardSavedEvent, onConsumed = {
+        viewModel.emitIntent(AddCardIntent.ConsumeResultEvent)
+    }, action = { isCardAdded ->
+        if (isCardAdded) {
+            ctx.showToast("Card has been added!")
+        } else {
+            ctx.showToast("Failed to save card")
         }
-    )
+        onBack.invoke()
+    })
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCardScreen_Ui(
-    onBack: () -> Unit = {},
-    state: AddCardState,
-    onIntent: (intent: AddCardIntent) -> Unit = {}
+    onBack: () -> Unit = {}, state: AddCardState, onIntent: (intent: AddCardIntent) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -127,11 +128,31 @@ fun AddCardScreen_Ui(
                     )
 
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        FormField(
-                            title = "Expired Date",
-                            value = "TODO", onValueChange = {},
-                            modifier = Modifier.weight(1f)
-                        )
+
+                        // FIXME field
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = "Expired Date", style = TextStyle(
+                                    fontSize = 12.sp,
+                                    fontFamily = primaryFontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color(0xFF020614),
+                                ), modifier = Modifier.padding(top = 8.dp)
+                            )
+
+                            Spacer(Modifier.height(16.dp))
+
+                            ReadonlyTextField(
+                                value = state.cardFields.expirationDate,
+                                onValueChange = {
+//                                    onIntent.invoke(AddCardIntent.ExpirationDateChanged(it))
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    onIntent.invoke(AddCardIntent.ToggleDatePicker(isShown = true))
+                                },
+                            )
+                        }
 
                         FormField(
                             title = "CVC/CVV",
@@ -187,9 +208,11 @@ fun AddCardScreen_Ui(
             PrimaryButton(
                 onClick = {
                     onIntent.invoke(AddCardIntent.SaveCard)
-                }, modifier = Modifier
+                },
+                modifier = Modifier
                     .fillMaxWidth()
-                    .imePadding(), text = stringResource(R.string.save_card)
+                    .imePadding(),
+                text = stringResource(R.string.save_card)
             )
         }
 
@@ -198,6 +221,34 @@ fun AddCardScreen_Ui(
 
     if (state.isLoading) {
         FullscreenProgressBar()
+    }
+
+    if (state.showDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        val dialogState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+        ModalBottomSheet(
+            onDismissRequest = {
+                onIntent.invoke(AddCardIntent.ExpirationDateChanged(datePickerState.selectedDateMillis))
+                onIntent.invoke(AddCardIntent.ToggleDatePicker(false))
+            },
+            sheetState = dialogState,
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                DatePicker(
+                    state = datePickerState
+                )
+
+                Spacer(modifier = Modifier.height(72.dp))
+            }
+        }
+
     }
 }
 
@@ -290,6 +341,17 @@ fun AddCardScreen_Loading_Preview() {
     ScreenPreview {
         AddCardScreen_Ui(
             state = AddCardState.mock(isLoading = true)
+        )
+    }
+}
+
+
+@Composable
+@Preview(device = Devices.NEXUS_5)
+fun AddCardScreen_Datepicker_Preview() {
+    ScreenPreview {
+        AddCardScreen_Ui(
+            state = AddCardState.mock(showDatePicker = true)
         )
     }
 }

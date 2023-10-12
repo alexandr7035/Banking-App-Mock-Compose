@@ -6,5 +6,5 @@ data class AddCardFormFields(
     val addressFirstLine: String = "",
     val addressSecondLine: String = "",
     val cvvCode: String = "",
-    val expirationDate: Long? = null ,
+    val expirationDate: String = "-",
 )
