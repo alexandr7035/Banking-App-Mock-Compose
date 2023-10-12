@@ -50,6 +50,7 @@ fun PrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier,
     text: String,
+    isEnabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -59,7 +60,8 @@ fun PrimaryButton(
             contentColor = MaterialTheme.colorScheme.onPrimary,
         ),
         shape = RoundedCornerShape(30.dp),
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(16.dp),
+        enabled = isEnabled
     ) {
         Text(
             text = text,
