@@ -6,7 +6,6 @@ import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.usecases.cards.GetAllCardsUseCase
 import by.alexandr7035.banking.ui.error.asUiTextError
-import by.alexandr7035.banking.ui.extensions.getFormattedDate
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,13 +38,7 @@ class CardListViewModel(
             when (res) {
                 is OperationResult.Success -> {
                     val cardsUi = res.data.map {
-                        val date = it.expiration.getFormattedDate("MM/yy")
-
-                        CardUi(
-                            cardNumber = it.cardNumber,
-                            expiration = date,
-                            balance = "\$${it.usdBalance}$"
-                        )
+                        CardUi.mapFromDomain(it)
                     }
 
                     reduceData(cardsUi)

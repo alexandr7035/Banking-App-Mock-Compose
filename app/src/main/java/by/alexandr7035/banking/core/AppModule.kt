@@ -36,7 +36,10 @@ val appModule = module {
     viewModel { LoginViewModel(get()) }
     viewModel { AppViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(
+        profileRepository = get(),
+        getHomeCardsUseCase = get()
+    ) }
     viewModel { CardListViewModel(getAllCardsUseCase = get()) }
 
     viewModel {

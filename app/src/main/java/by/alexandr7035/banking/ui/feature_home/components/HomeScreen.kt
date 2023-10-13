@@ -3,8 +3,10 @@ package by.alexandr7035.banking.ui.feature_home.components
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -134,7 +136,7 @@ fun HomeScreen_Ui(
         } else {
             DashedButton(
                 onClick = {
-                    ctx.showToast("TODO")
+                    onGoToDestination.invoke(NavEntries.AddCard)
                 },
                 modifier = Modifier
                     .padding(horizontal = 24.dp)

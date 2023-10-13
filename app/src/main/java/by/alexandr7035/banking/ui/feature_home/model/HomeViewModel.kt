@@ -6,6 +6,7 @@ import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.ui.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val profileRepository: ProfileRepository,
+    private val getHomeCardsUseCase: GetHomeCardsUseCase
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(
@@ -32,6 +34,7 @@ class HomeViewModel(
             is AppError -> {
                 reduceError(exception.errorType)
             }
+
             else -> {
                 reduceError(ErrorType.UNKNOWN_ERROR)
             }
@@ -50,10 +53,10 @@ class HomeViewModel(
             }
 
             val cardsJob = async() {
-                delay(300)
-                // TODO repo
-                List(2) {
-                    CardUi.mock()
+                val res = getHomeCardsUseCase.execute()
+
+                res.map {
+                    CardUi.mapFromDomain(it)
                 }
             }
 

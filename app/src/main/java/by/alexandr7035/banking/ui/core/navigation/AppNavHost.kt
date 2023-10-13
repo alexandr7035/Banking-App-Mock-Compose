@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core
+package by.alexandr7035.banking.ui.core.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,8 +39,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
-import by.alexandr7035.banking.ui.core.navigation.NavEntries
-import by.alexandr7035.banking.ui.core.navigation.NavResult
+import by.alexandr7035.banking.ui.core.AppViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
@@ -52,6 +51,7 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+// TODO split nav graph
 @Composable
 fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
     val navController = rememberNavController()
@@ -117,7 +117,8 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                 composable(NavEntries.Home.route) {
                     HomeScreen(onGoToDestination = { navEntry ->
                         if (navEntry in listOf(
-                                NavEntries.CardList
+                                NavEntries.CardList,
+                                NavEntries.AddCard
                             // TODO other destinations
                             )
                         ) {
