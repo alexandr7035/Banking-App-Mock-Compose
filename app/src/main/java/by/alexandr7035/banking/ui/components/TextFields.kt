@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.Gray25
 import by.alexandr7035.banking.ui.theme.Gray5
 import by.alexandr7035.banking.ui.theme.Gray60
@@ -266,14 +267,16 @@ fun ReadonlyTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    error: String? = null
 ) {
     Box(modifier = modifier) {
         PrimaryTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = visualTransformation
+            visualTransformation = visualTransformation,
+            error = error
         )
 
         // TODO ripple

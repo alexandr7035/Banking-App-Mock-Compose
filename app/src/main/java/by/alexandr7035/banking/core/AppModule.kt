@@ -6,7 +6,13 @@ import by.alexandr7035.banking.data.login.LoginRepository
 import by.alexandr7035.banking.data.login.LoginRepositoryImpl
 import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
+import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
+import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpirationUseCase
+import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseCase
+import by.alexandr7035.banking.domain.usecases.validation.ValidateCardNumberUseCase
+import by.alexandr7035.banking.domain.usecases.validation.ValidateCvvCodeUseCase
 import by.alexandr7035.banking.ui.core.AppViewModel
+import by.alexandr7035.banking.ui.error.ValidationErrorMapper
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
 import by.alexandr7035.banking.ui.feature_home.model.HomeViewModel
@@ -24,7 +30,27 @@ val appModule = module {
     viewModel { ProfileViewModel(get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { CardListViewModel() }
-    viewModel { AddCardViewModel() }
+
+    viewModel { AddCardViewModel(
+        validateCardNumberUseCase = get(),
+        validateCvvCodeUseCase = get(),
+        validateCardExpirationUseCase = get(),
+        validateCardHolderUseCase = get(),
+        validateBillingAddressUseCase = get(),
+        validationErrorMapper = get()
+    ) }
+
+    // Use cases
+    factory { ValidateCardNumberUseCase() }
+    factory { ValidateCvvCodeUseCase() }
+    factory { ValidateCardExpirationUseCase() }
+    factory { ValidateBillingAddressUseCase() }
+    factory { ValidateCardHolderUseCase() }
+
+
+    single {
+        ValidationErrorMapper()
+    }
 
     single<AppRepository> {
         AppRepositoryImpl(get())
@@ -41,4 +67,5 @@ val appModule = module {
     single {
         KsPrefs(androidApplication().applicationContext)
     }
+
 }

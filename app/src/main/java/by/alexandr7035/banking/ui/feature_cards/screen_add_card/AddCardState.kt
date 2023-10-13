@@ -4,7 +4,7 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 
 data class AddCardState(
-    val cardFields: AddCardFormFields = AddCardFormFields(),
+    val formFields: AddCardFormFields = AddCardFormFields(),
     val isLoading: Boolean = false,
     val showDatePicker: Boolean = false,
     val cardSavedEvent: StateEventWithContent<Boolean> = consumed()
@@ -14,12 +14,14 @@ data class AddCardState(
             isLoading: Boolean = false,
             showDatePicker: Boolean = false
         ) = AddCardState(
-            cardFields = AddCardFormFields(
-                cardNumber = "2298126833989874",
-                cardHolder = "Alexander Michael",
-                addressFirstLine = "2890 Pangandaran Street",
-                addressSecondLine = "",
-                cvvCode = "123",
+            formFields = AddCardFormFields(
+                cardNumber = UiField("2298126833989874"),
+                cardHolder = UiField("Alexander Michael"),
+                addressFirstLine = UiField("2890 Pangandaran Street"),
+                addressSecondLine = UiField(""),
+                cvvCode = UiField("123"),
+                expirationDateTimestamp = null,
+                expirationDate = UiField("-")
             ),
             isLoading = isLoading,
             showDatePicker = showDatePicker
