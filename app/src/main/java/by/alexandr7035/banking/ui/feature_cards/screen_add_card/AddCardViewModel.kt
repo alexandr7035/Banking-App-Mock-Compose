@@ -8,7 +8,10 @@ import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpiration
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardNumberUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCvvCodeUseCase
-import by.alexandr7035.banking.domain.usecases.validation.ValidationError
+import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.domain.repository.cards.AddCardPayload
+import by.alexandr7035.banking.domain.usecases.cards.AddCardUseCase
 import by.alexandr7035.banking.ui.error.ValidationErrorMapper
 import by.alexandr7035.banking.ui.extensions.getFormattedDate
 import de.palm.composestateevents.consumed
@@ -25,6 +28,7 @@ class AddCardViewModel(
     private val validateCardExpirationUseCase: ValidateCardExpirationUseCase,
     private val validateCardHolderUseCase: ValidateCardHolderUseCase,
     private val validateBillingAddressUseCase: ValidateBillingAddressUseCase,
+    private val addCardUseCase: AddCardUseCase,
     private val validationErrorMapper: ValidationErrorMapper
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddCardState())
@@ -88,13 +92,32 @@ class AddCardViewModel(
                             )
                         }
                     } else {
-                        // TODO repository call
-                        delay(2000)
+                        val res = OperationResult.runWrapped {
+                            addCardUseCase.execute(payload = AddCardPayload(
+                                cardNumber = currentState.formFields.cardNumber.value,
+                                cardHolder = currentState.formFields.cardHolder.value,
+                                expirationDate = currentState.formFields.expirationDateTimestamp!!,
+                                addressSecondLine = currentState.formFields.addressFirstLine.value,
+                                addressFirstLine = currentState.formFields.addressSecondLine.value,
+                                cvvCode =   currentState.formFields.cvvCode.value
+                            ))
+                        }
 
-                        _state.update { curr ->
-                            curr.copy(
-                                isLoading = false, cardSavedEvent = triggered(true)
-                            )
+                        when (res) {
+                            is OperationResult.Success -> {
+                                _state.update { curr ->
+                                    curr.copy(
+                                        isLoading = false, cardSavedEvent = triggered(true)
+                                    )
+                                }
+                            }
+                            is OperationResult.Failure -> {
+                                _state.update { curr ->
+                                    curr.copy(
+                                        isLoading = false, cardSavedEvent = triggered(false)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -171,7 +194,7 @@ class AddCardViewModel(
         )
 
         // This will stop validation on first invalid field
-//        return validationChain.all { it.invoke().isValid }
+        // return validationChain.all { it.invoke().isValid }
 
         var formValidFlag = true
 
@@ -184,7 +207,7 @@ class AddCardViewModel(
     }
 
     private fun reduceErrors(
-        fieldType: AddCardFieldType, error: ValidationError?
+        fieldType: AddCardFieldType, error: ErrorType?
     ) {
         val currentFields = _state.value.formFields
 

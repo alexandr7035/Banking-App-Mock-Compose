@@ -1,11 +1,19 @@
 package by.alexandr7035.banking.core
 
+import androidx.room.Room
 import by.alexandr7035.banking.data.app.AppRepository
 import by.alexandr7035.banking.data.app.AppRepositoryImpl
+import by.alexandr7035.banking.data.cards.CardsRepositoryMock
+import by.alexandr7035.banking.data.cards.cache.CardsDao
+import by.alexandr7035.banking.data.db.CacheDatabase
 import by.alexandr7035.banking.data.login.LoginRepository
 import by.alexandr7035.banking.data.login.LoginRepositoryImpl
 import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
+import by.alexandr7035.banking.domain.repository.cards.CardsRepository
+import by.alexandr7035.banking.domain.usecases.cards.AddCardUseCase
+import by.alexandr7035.banking.domain.usecases.cards.GetAllCardsUseCase
+import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpirationUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseCase
@@ -24,21 +32,25 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
+// TODO separate module
 val appModule = module {
     viewModel { LoginViewModel(get()) }
     viewModel { AppViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { HomeViewModel(get()) }
-    viewModel { CardListViewModel() }
+    viewModel { CardListViewModel(getAllCardsUseCase = get()) }
 
-    viewModel { AddCardViewModel(
-        validateCardNumberUseCase = get(),
-        validateCvvCodeUseCase = get(),
-        validateCardExpirationUseCase = get(),
-        validateCardHolderUseCase = get(),
-        validateBillingAddressUseCase = get(),
-        validationErrorMapper = get()
-    ) }
+    viewModel {
+        AddCardViewModel(
+            validateCardNumberUseCase = get(),
+            validateCvvCodeUseCase = get(),
+            validateCardExpirationUseCase = get(),
+            validateCardHolderUseCase = get(),
+            validateBillingAddressUseCase = get(),
+            validationErrorMapper = get(),
+            addCardUseCase = get()
+        )
+    }
 
     // Use cases
     factory { ValidateCardNumberUseCase() }
@@ -46,10 +58,26 @@ val appModule = module {
     factory { ValidateCardExpirationUseCase() }
     factory { ValidateBillingAddressUseCase() }
     factory { ValidateCardHolderUseCase() }
+    factory { GetAllCardsUseCase(cardsRepository = get()) }
+    factory { AddCardUseCase(cardsRepository = get()) }
+    factory { GetHomeCardsUseCase(cardsRepository = get()) }
 
 
     single {
         ValidationErrorMapper()
+    }
+
+    single<CacheDatabase> {
+        Room.databaseBuilder(
+            androidApplication().applicationContext,
+            CacheDatabase::class.java,
+            "cache.db"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    single<CardsDao> {
+        val db: CacheDatabase = get()
+        db.getCardsDao()
     }
 
     single<AppRepository> {
@@ -61,7 +89,14 @@ val appModule = module {
     }
 
     single<ProfileRepository> {
-        ProfileRepositoryMock(Dispatchers.IO)
+        ProfileRepositoryMock(dispatcher = Dispatchers.IO)
+    }
+
+    single<CardsRepository> {
+        CardsRepositoryMock(
+            cacheDao = get(),
+            coroutineDispatcher = Dispatchers.IO
+        )
     }
 
     single {

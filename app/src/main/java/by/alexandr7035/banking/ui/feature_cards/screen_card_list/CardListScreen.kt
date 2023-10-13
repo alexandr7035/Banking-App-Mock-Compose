@@ -70,9 +70,7 @@ fun CardListScreen(
 
                 is CardListState.Success -> {
                     CardListScreen_Ui(
-                        cards = List(2) {
-                            CardUi.mock()
-                        },
+                        cards = state.cards,
                         onAddCard = { onAddCard.invoke() },
                     )
                 }
