@@ -88,4 +88,11 @@ dependencies {
     implementation("io.coil-kt:coil-svg:2.4.0")
 
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
+
+    // Room
+    def room_version = "2.5.2"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 }
