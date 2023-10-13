@@ -2,9 +2,10 @@ package by.alexandr7035.banking.ui.feature_cards.screen_card_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.usecases.cards.GetAllCardsUseCase
-import by.alexandr7035.banking.ui.error.UiError
+import by.alexandr7035.banking.ui.error.asUiTextError
 import by.alexandr7035.banking.ui.extensions.getFormattedDate
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +52,7 @@ class CardListViewModel(
                 }
 
                 is OperationResult.Failure -> {
-                    reduceError(UiError.fromDomainError(res.error.errorType))
+                    reduceError(res.error.errorType)
                 }
             }
 
@@ -64,9 +65,9 @@ class CardListViewModel(
         }
     }
 
-    private fun reduceError(uiError: UiError) {
+    private fun reduceError(errorType: ErrorType) {
         _state.update {
-            CardListState.Error(uiError)
+            CardListState.Error(errorType.asUiTextError())
         }
     }
 

@@ -145,7 +145,7 @@ fun AddCardScreen_Ui(
                                 onClick = {
                                     onIntent.invoke(AddCardIntent.ToggleDatePicker(isShown = true))
                                 },
-                                error = state.formFields.expirationDate.error
+                                error = state.formFields.expirationDate.error?.asString()
                             )
                         }
 
@@ -299,7 +299,7 @@ private fun FormField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = type,
             ),
-            error = uiField.error
+            error = uiField.error?.asString()
         )
     }
 }

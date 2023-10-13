@@ -27,6 +27,7 @@ import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
+// TODO refactoring of fields
 @Composable
 fun CardNumberField(
     title: String,
@@ -65,11 +66,14 @@ fun CardNumberField(
                 CardNumberHelpers.formatOtherCardNumbers(number)
             },
             trailingIcon = {
-                Box(Modifier.padding(end=10.dp).heightIn(max=32.dp)) {
+                Box(
+                    Modifier
+                        .padding(end = 10.dp)
+                        .heightIn(max = 32.dp)) {
                     SmallCardIcon()
                 }
             },
-            error = cardNumber.error
+            error = cardNumber.error?.asString()
         )
     }
 }
@@ -87,7 +91,7 @@ fun CardTextField_Preview() {
             CardNumberField(
                 title = "Card Number",
                 onPostValue = {},
-                cardNumber = AddCardState.mock().formFields.cardNumber
+                cardNumber = AddCardState.mock().formFields.cardNumber,
             )
         }
     }

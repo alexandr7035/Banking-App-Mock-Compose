@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.components
+package by.alexandr7035.banking.ui.components.error
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -7,18 +7,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import by.alexandr7035.banking.ui.error.UiError
+import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.components.PrimaryButton
+import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 
 
 //TODO design
 @Composable
 fun ErrorFullScreen(
-    error: UiError,
+    error: UiText,
     modifier: Modifier = Modifier,
     onRetry: (() -> Unit)? = null,
 ) {
@@ -31,7 +34,7 @@ fun ErrorFullScreen(
     ) {
 
         Text(
-            text = error.title,
+            text = stringResource(R.string.error_happened),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
@@ -41,7 +44,7 @@ fun ErrorFullScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = error.message,
+            text = error.asString(),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
@@ -53,8 +56,10 @@ fun ErrorFullScreen(
 
             PrimaryButton(
                 onClick = { onRetry.invoke() },
-                text = "Try Again",
-                modifier = Modifier.wrapContentSize().padding(horizontal = 20.dp)
+                text = stringResource(R.string.try_again),
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(horizontal = 20.dp)
             )
         }
     }
@@ -67,7 +72,7 @@ fun ErrorFullScreen_Preview() {
     BankingAppTheme() {
         Surface() {
             ErrorFullScreen(
-                error = UiError("Error happened", "Error details ..."),
+                error = UiText.DynamicString("Internet connection failed"),
                 onRetry = {}
             )
         }

@@ -12,11 +12,10 @@ import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.repository.cards.AddCardPayload
 import by.alexandr7035.banking.domain.usecases.cards.AddCardUseCase
-import by.alexandr7035.banking.ui.error.ValidationErrorMapper
+import by.alexandr7035.banking.ui.error.asUiTextError
 import by.alexandr7035.banking.ui.extensions.getFormattedDate
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -29,7 +28,6 @@ class AddCardViewModel(
     private val validateCardHolderUseCase: ValidateCardHolderUseCase,
     private val validateBillingAddressUseCase: ValidateBillingAddressUseCase,
     private val addCardUseCase: AddCardUseCase,
-    private val validationErrorMapper: ValidationErrorMapper
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddCardState())
     val state = _state.asStateFlow()
@@ -212,7 +210,7 @@ class AddCardViewModel(
         val currentFields = _state.value.formFields
 
         if (error != null) {
-            val uiError = validationErrorMapper.mapToUi(error)
+            val uiError = error.asUiTextError()
 
             val updatedFields = when (fieldType) {
                 AddCardFieldType.CARD_NUMBER -> {

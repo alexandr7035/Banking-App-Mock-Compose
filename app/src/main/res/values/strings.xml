@@ -40,4 +40,6 @@
     <string name="add_a_card">Add a Card</string>
     <string name="save_card">Save Card</string>
     <string name="set_date">Set date</string>
+    <string name="error_happened">An error happened...</string>
+    <string name="try_again">Try Again</string>
 </resources>

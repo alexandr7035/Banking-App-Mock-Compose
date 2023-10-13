@@ -39,7 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.ui.components.DashedButton
-import by.alexandr7035.banking.ui.components.ErrorFullScreen
+import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.navigation.NavEntries
@@ -75,9 +75,12 @@ fun HomeScreen(
         )
 
         is HomeState.Loading -> HomeScreen_Skeleton()
-        is HomeState.Error -> ErrorFullScreen(error = state.error, onRetry = {
-            viewModel.emitIntent(HomeIntent.EnterScreen)
-        })
+        is HomeState.Error -> ErrorFullScreen(
+            error = state.error,
+            onRetry = {
+                viewModel.emitIntent(HomeIntent.EnterScreen)
+            }
+        )
     }
 }
 

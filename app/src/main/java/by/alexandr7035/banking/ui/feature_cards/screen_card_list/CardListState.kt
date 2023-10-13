@@ -1,10 +1,10 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_card_list
 
-import by.alexandr7035.banking.ui.error.UiError
+import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 
 sealed class CardListState {
     data class Success(val cards: List<CardUi>) : CardListState()
-    data class Error(val error: UiError) : CardListState()
+    data class Error(val error: UiText) : CardListState()
     object Loading: CardListState()
 }

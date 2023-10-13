@@ -20,7 +20,6 @@ import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseC
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardNumberUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCvvCodeUseCase
 import by.alexandr7035.banking.ui.core.AppViewModel
-import by.alexandr7035.banking.ui.error.ValidationErrorMapper
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
 import by.alexandr7035.banking.ui.feature_home.model.HomeViewModel
@@ -47,7 +46,6 @@ val appModule = module {
             validateCardExpirationUseCase = get(),
             validateCardHolderUseCase = get(),
             validateBillingAddressUseCase = get(),
-            validationErrorMapper = get(),
             addCardUseCase = get()
         )
     }
@@ -61,11 +59,6 @@ val appModule = module {
     factory { GetAllCardsUseCase(cardsRepository = get()) }
     factory { AddCardUseCase(cardsRepository = get()) }
     factory { GetHomeCardsUseCase(cardsRepository = get()) }
-
-
-    single {
-        ValidationErrorMapper()
-    }
 
     single<CacheDatabase> {
         Room.databaseBuilder(
