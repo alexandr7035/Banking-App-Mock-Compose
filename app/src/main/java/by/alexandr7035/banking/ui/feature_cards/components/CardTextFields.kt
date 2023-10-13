@@ -23,13 +23,14 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.ui.components.PrimaryTextField
 import by.alexandr7035.banking.ui.feature_cards.helpers.CardNumberHelpers
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardState
+import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
 fun CardNumberField(
     title: String,
-    cardNumber: String,
+    cardNumber: UiField,
     onPostValue: (value: String) -> Unit,
     modifier: Modifier = Modifier,
     type: KeyboardType = KeyboardType.Text,
@@ -50,12 +51,13 @@ fun CardNumberField(
         Spacer(Modifier.height(16.dp))
 
         PrimaryTextField(
-            value = cardNumber,
+            value = cardNumber.value,
             onValueChange = {
                 onPostValue.invoke(it)
             },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
+            singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = type,
             ),
@@ -66,7 +68,8 @@ fun CardNumberField(
                 Box(Modifier.padding(end=10.dp).heightIn(max=32.dp)) {
                     SmallCardIcon()
                 }
-            }
+            },
+            error = cardNumber.error
         )
     }
 }
@@ -84,7 +87,7 @@ fun CardTextField_Preview() {
             CardNumberField(
                 title = "Card Number",
                 onPostValue = {},
-                cardNumber = AddCardState.mock().cardFields.cardNumber
+                cardNumber = AddCardState.mock().formFields.cardNumber
             )
         }
     }
