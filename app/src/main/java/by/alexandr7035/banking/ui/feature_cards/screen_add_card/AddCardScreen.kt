@@ -1,7 +1,6 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_add_card
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,22 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -68,21 +63,26 @@ fun AddCardScreen(
 
     AddCardScreen_Ui(onBack = onBack, state = state, onIntent = { viewModel.emitIntent(it) })
 
+    LaunchedEffect(Unit) {
+        viewModel.emitIntent(AddCardIntent.EnterScreen)
+    }
+
     val ctx = LocalContext.current
 
-    EventEffect(event = state.cardSavedEvent, onConsumed = {
-        viewModel.emitIntent(AddCardIntent.ConsumeResultEvent)
-    }, action = { isCardAdded ->
-        if (isCardAdded) {
-            ctx.showToast("Card has been added!")
-        } else {
-            ctx.showToast("Failed to save card")
+    EventEffect(
+        event = state.cardSavedEvent,
+        onConsumed = viewModel::consumeSaveCardEvent,
+        action = { isCardAdded ->
+            if (isCardAdded) {
+                ctx.showToast("Card has been added!")
+                onBack.invoke()
+            } else {
+                ctx.showToast("Failed to save card")
+            }
         }
-        onBack.invoke()
-    })
+    )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCardScreen_Ui(
     onBack: () -> Unit = {}, state: AddCardState, onIntent: (intent: AddCardIntent) -> Unit = {}
@@ -116,9 +116,9 @@ fun AddCardScreen_Ui(
                 ) {
                     CardNumberField(
                         title = "Card Number",
-                        cardNumber = state.cardFields.cardNumber,
+                        cardNumber = state.formFields.cardNumber,
                         onPostValue = {
-                            onIntent.invoke(AddCardIntent.CardNumberChanged(it))
+                            onIntent.invoke(AddCardIntent.StringFieldChanged(AddCardFieldType.CARD_NUMBER, it))
                         },
                         type = KeyboardType.Number,
                     )
@@ -139,28 +139,34 @@ fun AddCardScreen_Ui(
                             Spacer(Modifier.height(16.dp))
 
                             ReadonlyTextField(
-                                value = state.cardFields.expirationDate,
-                                onValueChange = {
-//                                    onIntent.invoke(AddCardIntent.ExpirationDateChanged(it))
-                                },
+                                value = state.formFields.expirationDate.value,
+                                onValueChange = {},
                                 modifier = Modifier.fillMaxWidth(),
                                 onClick = {
                                     onIntent.invoke(AddCardIntent.ToggleDatePicker(isShown = true))
                                 },
+                                error = state.formFields.expirationDate.error
                             )
                         }
 
                         FormField(
-                            title = "CVC/CVV", onValueChange = {
-                                onIntent.invoke(AddCardIntent.CvvCodeChanged(it))
-                            }, value = state.cardFields.cvvCode, modifier = Modifier.weight(1f), type = KeyboardType.Number
+                            title = "CVC/CVV",
+                            onValueChange = {
+                                onIntent.invoke(AddCardIntent.StringFieldChanged(AddCardFieldType.CVV_CODE, it))
+                            },
+                            uiField = state.formFields.cvvCode,
+                            modifier = Modifier.weight(1f),
+                            type = KeyboardType.Number
                         )
                     }
 
                     FormField(
-                        title = "Cardholder Name", onValueChange = {
-                            onIntent.invoke(AddCardIntent.CardHolderChanged(it))
-                        }, value = state.cardFields.cardHolder, capitalize = true
+                        title = "Cardholder Name",
+                        onValueChange = {
+                            onIntent.invoke(AddCardIntent.StringFieldChanged(AddCardFieldType.CARD_HOLDER, it))
+                        },
+                        uiField = state.formFields.cardHolder,
+                        capitalize = true
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -177,17 +183,17 @@ fun AddCardScreen_Ui(
                     FormField(
                         title = "Address Line 1",
                         onValueChange = {
-                            onIntent.invoke(AddCardIntent.AddressFirstLineChanged(it))
+                            onIntent.invoke(AddCardIntent.StringFieldChanged(AddCardFieldType.ADDRESS_LINE_1, it))
                         },
-                        value = state.cardFields.addressFirstLine,
+                        uiField = state.formFields.addressFirstLine,
                     )
 
                     FormField(
                         title = "Address Line 2",
                         onValueChange = {
-                            onIntent.invoke(AddCardIntent.AddressSecondLineChanged(it))
+                            onIntent.invoke(AddCardIntent.StringFieldChanged(AddCardFieldType.ADDRESS_LINE_2, it))
                         },
-                        value = state.cardFields.addressSecondLine,
+                        uiField = state.formFields.addressSecondLine,
                     )
                 }
             }
@@ -215,7 +221,7 @@ fun AddCardScreen_Ui(
     if (state.showDatePicker) {
         DatePickerDialog(
             onDismissRequest = { selectedMills ->
-                onIntent.invoke(AddCardIntent.ExpirationDateChanged(selectedMills))
+                onIntent.invoke(AddCardIntent.ExpirationPickerSet(selectedMills))
                 onIntent.invoke(AddCardIntent.ToggleDatePicker(false))
             }
         )
@@ -257,7 +263,8 @@ private fun ToolBar(onBack: () -> Unit) {
 @Composable
 private fun FormField(
     title: String,
-    value: String,
+    // TODO rename
+    uiField: UiField,
     onValueChange: (value: String) -> Unit,
     modifier: Modifier = Modifier,
     type: KeyboardType = KeyboardType.Text,
@@ -271,25 +278,28 @@ private fun FormField(
                 fontFamily = primaryFontFamily,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xFF020614),
-            ), modifier = Modifier.padding(top = 8.dp)
+            ),
+            modifier = Modifier.padding(top = 8.dp)
         )
 
         Spacer(Modifier.height(16.dp))
 
         PrimaryTextField(
             value = if (capitalize) {
-                value.toUpperCase(Locale.current)
+                uiField.value.toUpperCase(Locale.current)
             } else {
-                value
+                uiField.value
             },
             onValueChange = {
                 onValueChange.invoke(it)
             },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
+            singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = type,
             ),
+            error = uiField.error
         )
     }
 }

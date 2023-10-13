@@ -7,6 +7,7 @@ data class AddCardFormFields(
     val addressSecondLine: UiField = UiField(""),
     val cvvCode: UiField = UiField(""),
     val expirationDate: UiField = UiField(""),
+    val expirationDateTimestamp: Long? = null,
 )
 
 enum class AddCardFieldType {
@@ -15,5 +16,5 @@ enum class AddCardFieldType {
     ADDRESS_LINE_1,
     ADDRESS_LINE_2,
     CVV_CODE,
-    EXPIRATION_DATE
+    CARD_EXPIRATION_DATE
 }
