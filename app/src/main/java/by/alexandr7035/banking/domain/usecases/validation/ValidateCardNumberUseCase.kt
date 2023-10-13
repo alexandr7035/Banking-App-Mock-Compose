@@ -1,15 +1,17 @@
 package by.alexandr7035.banking.domain.usecases.validation
 
+import by.alexandr7035.banking.domain.core.ErrorType
+
 class ValidateCardNumberUseCase {
     fun execute(cardNumber: String): ValidationResult {
         return if (cardNumber.isNotBlank() && validateWithLuhnAlgorithm(cardNumber)) {
             ValidationResult(true)
         } else {
             return if (cardNumber.isBlank()) {
-                ValidationResult(false, ValidationError.FIELD_IS_EMPTY)
+                ValidationResult(false, ErrorType.FIELD_IS_EMPTY)
             }
             else {
-                ValidationResult(false, ValidationError.INVALID_CARD_NUMBER)
+                ValidationResult(false, ErrorType.INVALID_CARD_NUMBER)
             }
         }
     }
