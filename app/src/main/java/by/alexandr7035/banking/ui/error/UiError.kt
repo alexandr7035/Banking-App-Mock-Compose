@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.components.error
+package by.alexandr7035.banking.ui.error
 
 import by.alexandr7035.banking.domain.core.ErrorType
 

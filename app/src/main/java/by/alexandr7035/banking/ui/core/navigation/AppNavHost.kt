@@ -39,6 +39,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
+import by.alexandr7035.banking.ui.core.navigation.NavEntries
+import by.alexandr7035.banking.ui.core.navigation.NavResult
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.components.HomeScreen

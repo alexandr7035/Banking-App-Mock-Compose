@@ -4,13 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.data.profile.ProfileRepository
-import by.alexandr7035.banking.ui.components.error.UiError
+import by.alexandr7035.banking.ui.error.UiError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

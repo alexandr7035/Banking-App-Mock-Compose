@@ -24,7 +24,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -38,8 +37,7 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.DashedButton
 import by.alexandr7035.banking.ui.components.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
-import by.alexandr7035.banking.ui.core.ScreenPreview
-import by.alexandr7035.banking.ui.extensions.showToast
+import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily

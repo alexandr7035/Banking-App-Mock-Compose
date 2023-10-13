@@ -1,6 +1,6 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_card_list
 
-import by.alexandr7035.banking.ui.components.error.UiError
+import by.alexandr7035.banking.ui.error.UiError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 
 sealed class CardListState {
