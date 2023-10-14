@@ -1,7 +1,7 @@
 package by.alexandr7035.banking.ui.feature_cards.model
 
 import by.alexandr7035.banking.domain.repository.cards.PaymentCard
-import by.alexandr7035.banking.ui.extensions.getFormattedDate
+import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
 
 data class CardUi(
     val cardNumber: String,

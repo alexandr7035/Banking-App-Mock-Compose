@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.error
+package by.alexandr7035.banking.ui.core.error
 
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.core.ErrorType

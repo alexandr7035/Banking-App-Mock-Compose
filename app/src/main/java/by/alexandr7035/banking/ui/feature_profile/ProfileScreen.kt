@@ -40,7 +40,7 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.SettingButton
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.ScreenPreview
-import by.alexandr7035.banking.ui.extensions.showToast
+import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
 

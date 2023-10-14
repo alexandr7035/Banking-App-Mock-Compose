@@ -58,7 +58,7 @@ import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.components.ScreenPreview
-import by.alexandr7035.banking.ui.extensions.showToast
+import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.Gray30
 import by.alexandr7035.banking.ui.theme.primaryFontFamily

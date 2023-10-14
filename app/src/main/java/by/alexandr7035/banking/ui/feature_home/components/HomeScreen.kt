@@ -46,7 +46,7 @@ import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.navigation.NavEntries
 import by.alexandr7035.banking.ui.components.ScreenPreview
-import by.alexandr7035.banking.ui.extensions.showToast
+import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.AccountActionPanel

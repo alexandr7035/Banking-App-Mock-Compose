@@ -12,8 +12,8 @@ import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.repository.cards.AddCardPayload
 import by.alexandr7035.banking.domain.usecases.cards.AddCardUseCase
-import by.alexandr7035.banking.ui.error.asUiTextError
-import by.alexandr7035.banking.ui.extensions.getFormattedDate
+import by.alexandr7035.banking.ui.core.error.asUiTextError
+import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.flow.MutableStateFlow
