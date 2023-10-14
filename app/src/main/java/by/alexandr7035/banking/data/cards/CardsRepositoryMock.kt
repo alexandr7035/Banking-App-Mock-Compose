@@ -16,6 +16,8 @@ class CardsRepositoryMock(
     private val coroutineDispatcher: CoroutineDispatcher
 ) : CardsRepository {
     override suspend fun getCards(): List<PaymentCard> = withContext(coroutineDispatcher) {
+        delay(MOCK_DELAY)
+
         return@withContext cacheDao.getCards().map { cardEntity ->
             mapCachedCardToDomain(cardEntity)
         }
@@ -37,6 +39,7 @@ class CardsRepositoryMock(
 
     override suspend fun getCardByNumber(number: String): PaymentCard = withContext(coroutineDispatcher) {
         val cardEntity = cacheDao.getCardByNumber(number) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+        delay(MOCK_DELAY)
         return@withContext mapCachedCardToDomain(cardEntity)
     }
 

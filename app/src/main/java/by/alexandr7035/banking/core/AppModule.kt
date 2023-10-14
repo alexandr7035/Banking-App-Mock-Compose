@@ -13,6 +13,7 @@ import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.domain.repository.cards.CardsRepository
 import by.alexandr7035.banking.domain.usecases.cards.AddCardUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetAllCardsUseCase
+import by.alexandr7035.banking.domain.usecases.cards.GetCardByNumberUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpirationUseCase
@@ -21,6 +22,7 @@ import by.alexandr7035.banking.domain.usecases.validation.ValidateCardNumberUseC
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCvvCodeUseCase
 import by.alexandr7035.banking.ui.core.AppViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
+import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
 import by.alexandr7035.banking.ui.feature_home.model.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
@@ -41,6 +43,7 @@ val appModule = module {
         getHomeCardsUseCase = get()
     ) }
     viewModel { CardListViewModel(getAllCardsUseCase = get()) }
+    viewModel { CardDetailsViewModel(getCardByNumberUseCase = get()) }
 
     viewModel {
         AddCardViewModel(
@@ -62,6 +65,7 @@ val appModule = module {
     factory { GetAllCardsUseCase(cardsRepository = get()) }
     factory { AddCardUseCase(cardsRepository = get()) }
     factory { GetHomeCardsUseCase(cardsRepository = get()) }
+    factory { GetCardByNumberUseCase(cardsRepository = get()) }
 
     single<CacheDatabase> {
         Room.databaseBuilder(
