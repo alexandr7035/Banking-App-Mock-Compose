@@ -95,8 +95,8 @@ class AddCardViewModel(
                                 cardNumber = currentState.formFields.cardNumber.value,
                                 cardHolder = currentState.formFields.cardHolder.value,
                                 expirationDate = currentState.formFields.expirationDateTimestamp!!,
-                                addressSecondLine = currentState.formFields.addressFirstLine.value,
-                                addressFirstLine = currentState.formFields.addressSecondLine.value,
+                                addressFirstLine = currentState.formFields.addressFirstLine.value,
+                                addressSecondLine = currentState.formFields.addressSecondLine.value,
                                 cvvCode =   currentState.formFields.cvvCode.value
                             ))
                         }
