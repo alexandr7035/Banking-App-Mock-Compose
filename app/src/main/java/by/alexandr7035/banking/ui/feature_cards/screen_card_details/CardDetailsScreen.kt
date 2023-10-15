@@ -1,19 +1,23 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_card_details
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -22,17 +26,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryButton
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
+import by.alexandr7035.banking.ui.core.error.asUiTextError
+import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun CardDetailsScreen(
     viewModel: CardDetailsViewModel = koinViewModel(),
@@ -40,9 +50,7 @@ fun CardDetailsScreen(
     onBack: () -> Unit,
 ) {
 
-    LaunchedEffect(Unit) {
-        viewModel.emitIntent(CardDetailsIntent.EnterScreen(cardId))
-    }
+    val state = viewModel.state.collectAsStateWithLifecycle().value
 
     Scaffold(
         topBar = {
@@ -52,19 +60,58 @@ fun CardDetailsScreen(
             )
         }
     ) { pv ->
-
-        Box(
+        BoxWithConstraints(
             Modifier.padding(
                 top = pv.calculateTopPadding(),
                 bottom = pv.calculateBottomPadding()
             )
         ) {
-            when (val state = viewModel.state.collectAsStateWithLifecycle().value) {
+            when (state) {
                 is CardDetailsState.Success -> {
                     CardDetailsScreen_Ui(
                         cardUi = state.card,
-                        onBack = onBack
+                        onIntent = { viewModel.emitIntent(it) }
                     )
+
+                    if (state.showDeleteCardDialog) {
+                        ConfirmDeleteCardDialog(
+                            onDismiss = {
+                                viewModel.emitIntent(
+                                    CardDetailsIntent.ToggleDeleteCardDialog(
+                                        isDialogShown = false
+                                    )
+                                )
+                            },
+                            onConfirmDelete = {
+                                viewModel.emitIntent(CardDetailsIntent.ConfirmDeleteCard)
+                            }
+                        )
+                    }
+
+                    if (state.showLoading) {
+                        FullscreenProgressBar()
+                    }
+
+
+                    val ctx = LocalContext.current
+                    EventEffect(
+                        event = state.cardDeletedResultEvent,
+                        onConsumed = viewModel::consumeDeleteResultEvent,
+                    ) { result ->
+                        ctx.showToast("Delete: ${result.isSuccess()}")
+
+                        when (result) {
+                            is OperationResult.Success -> {
+                                onBack.invoke()
+                            }
+
+                            is OperationResult.Failure -> {
+                                ctx.showToast(result.error.errorType.asUiTextError().asString(ctx))
+                                // TODO error snack
+                            }
+                        }
+
+                    }
                 }
 
                 is CardDetailsState.Loading -> CardDetailsScreen_Skeleton()
@@ -76,18 +123,31 @@ fun CardDetailsScreen(
             }
         }
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.emitIntent(CardDetailsIntent.EnterScreen(cardId))
+    }
 }
 
 @Composable
 private fun CardDetailsScreen_Ui(
+    modifier: Modifier = Modifier,
     cardUi: CardUi,
-    onBack: () -> Unit = {}
+    onIntent: (intent: CardDetailsIntent) -> Unit = {},
 ) {
     Column(
-        modifier = Modifier.padding(
-            vertical = 16.dp,
-            horizontal = 24.dp
+        modifier = modifier.then(
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(
+                    vertical = 16.dp,
+                    horizontal = 24.dp
+                ),
         ),
+//        Modifier.padding(
+//            vertical = 16.dp,
+//            horizontal = 24.dp
+//        ),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         PaymentCard(cardUi = cardUi)
@@ -142,7 +202,9 @@ private fun CardDetailsScreen_Ui(
         Spacer(Modifier.height(16.dp))
 
         SecondaryButton(
-            onClick = { /*TODO*/ },
+            onClick = {
+                onIntent.invoke(CardDetailsIntent.ToggleDeleteCardDialog(isDialogShown = true))
+            },
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.remove_card)
         )
@@ -184,7 +246,7 @@ private fun CardDetailsScreen_Skeleton() {
 @Preview
 fun CardDetailsScreen_Preview() {
     ScreenPreview {
-        CardDetailsScreen_Ui(CardUi.mock())
+        CardDetailsScreen_Ui(cardUi = CardUi.mock())
     }
 }
 
