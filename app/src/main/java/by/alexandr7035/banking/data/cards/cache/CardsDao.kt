@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.data.cards.cache
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -15,4 +16,7 @@ interface CardsDao {
 
     @Query("SELECT * FROM cards_cache WHERE number = (:number)")
     suspend fun getCardByNumber(number: String): CardEntity?
+
+    @Delete
+    suspend fun deleteCard(card: CardEntity)
 }

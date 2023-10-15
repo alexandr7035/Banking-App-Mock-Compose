@@ -4,4 +4,5 @@ interface CardsRepository {
     suspend fun getCards(): List<PaymentCard>
     suspend fun addCard(data: AddCardPayload)
     suspend fun getCardByNumber(number: String): PaymentCard
+    suspend fun deleteCardByNumber(number: String)
 }
