@@ -5,8 +5,8 @@ import by.alexandr7035.banking.domain.repository.cards.PaymentCard
 
 class GetAllCardsUseCase(private val cardsRepository: CardsRepository) {
     suspend fun execute(): List<PaymentCard> {
-        return cardsRepository.getCards().sortedBy {
-            it.expiration
+        return cardsRepository.getCards().sortedByDescending {
+            it.addedDate
         }
     }
 }
