@@ -15,6 +15,6 @@ fun ErrorType.asUiTextError(): UiText {
         ErrorType.CARD_ALREADY_ADDED ->  UiText.StringResource(R.string.card_already_added)
         ErrorType.GENERIC_VALIDATION_ERROR ->  UiText.StringResource(R.string.generic_validation_error)
 
-        ErrorType.UNKNOWN_ERROR ->  UiText.StringResource(R.string.invalid_card_number)
+        ErrorType.UNKNOWN_ERROR ->  UiText.StringResource(R.string.unknown_error)
     }
 }
