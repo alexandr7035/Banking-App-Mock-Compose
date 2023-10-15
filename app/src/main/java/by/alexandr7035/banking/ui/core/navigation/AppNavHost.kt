@@ -31,16 +31,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
 import by.alexandr7035.banking.ui.core.AppViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
+import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
@@ -115,16 +118,21 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                 startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
             ) {
                 composable(NavEntries.Home.route) {
-                    HomeScreen(onGoToDestination = { navEntry ->
-                        if (navEntry in listOf(
-                                NavEntries.CardList,
-                                NavEntries.AddCard
-                            // TODO other destinations
-                            )
-                        ) {
-                            navController.navigate(navEntry.route)
+                    HomeScreen(
+                        onGoToDestination = { navEntry ->
+                            if (navEntry in listOf(
+                                    NavEntries.CardList,
+                                    NavEntries.AddCard
+                                    // TODO other destinations
+                                )
+                            ) {
+                                navController.navigate(navEntry.route)
+                            }
+                        },
+                        onCardDetails = {cardId ->
+                            navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
                         }
-                    })
+                    )
                 }
 
                 composable(NavEntries.History.route) {
@@ -181,6 +189,9 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                         onAddCard = {
                             navController.navigate(NavEntries.AddCard.route)
                         },
+                        onCardDetails = { cardId ->
+                            navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                        },
                         onBack = {
                             navController.popBackStack()
                         }
@@ -191,6 +202,18 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                     AddCardScreen(onBack = {
                         navController.popBackStack()
                     })
+                }
+
+                composable(
+                    route = "${NavEntries.CardDetails.route}/{cardId}",
+                    arguments = listOf(navArgument("cardId") { type = NavType.StringType })
+                ) {
+                    CardDetailsScreen(
+                        cardId = it.arguments?.getString("cardId")!!,
+                        onBack = {
+                            navController.popBackStack()
+                        },
+                    )
                 }
             }
         }

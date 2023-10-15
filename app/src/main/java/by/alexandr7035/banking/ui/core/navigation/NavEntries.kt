@@ -5,6 +5,7 @@ import by.alexandr7035.banking.R
 sealed class NavEntries(
     val route: String,
     val navIcons: NavIconPair?,
+    // TODO make label optional
     val label: String,
 ) {
 
@@ -73,6 +74,12 @@ sealed class NavEntries(
         route = "add_card",
         navIcons = null,
         label = "Add Card"
+    )
+
+    object CardDetails: NavEntries(
+        route = "card_details",
+        navIcons = null,
+        label = "Card Details"
     )
 
     sealed class Graphs(val route: String) {

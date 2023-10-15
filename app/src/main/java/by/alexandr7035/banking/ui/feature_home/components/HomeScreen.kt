@@ -62,7 +62,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    onGoToDestination: (navEntry: NavEntries) -> Unit = {}
+    onGoToDestination: (navEntry: NavEntries) -> Unit = {},
+    onCardDetails: (cardId: String) -> Unit = {}
 ) {
 
     LaunchedEffect(Unit) {
@@ -73,7 +74,8 @@ fun HomeScreen(
     when (state) {
         is HomeState.Success -> HomeScreen_Ui(
             state = state,
-            onGoToDestination = onGoToDestination
+            onGoToDestination = onGoToDestination,
+            onCardDetails = onCardDetails
         )
 
         is HomeState.Loading -> HomeScreen_Skeleton()
@@ -89,7 +91,8 @@ fun HomeScreen(
 @Composable
 fun HomeScreen_Ui(
     state: HomeState.Success,
-    onGoToDestination: (navEntry: NavEntries) -> Unit = {}
+    onGoToDestination: (navEntry: NavEntries) -> Unit = {},
+    onCardDetails: (cardId: String) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -130,7 +133,10 @@ fun HomeScreen_Ui(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 state.cards.forEach {
-                    PaymentCard(cardUi = it)
+                    PaymentCard(
+                        cardUi = it,
+                        onCLick = { onCardDetails.invoke(it) }
+                    )
                 }
             }
         } else {

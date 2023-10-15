@@ -42,4 +42,8 @@
     <string name="set_date">Set date</string>
     <string name="error_happened">An error happened...</string>
     <string name="try_again">Try Again</string>
+    <string name="card_details">Card details</string>
+    <string name="remove_card">Remove card</string>
+    <string name="billing_address">Billing Address</string>
+    <string name="added_on">Added On</string>
 </resources>

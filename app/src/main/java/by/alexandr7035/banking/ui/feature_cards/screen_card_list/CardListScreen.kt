@@ -47,7 +47,8 @@ import org.koin.androidx.compose.koinViewModel
 fun CardListScreen(
     viewModel: CardListViewModel = koinViewModel(),
     onBack: () -> Unit,
-    onAddCard: () -> Unit
+    onAddCard: () -> Unit,
+    onCardDetails: (cardNumber: String) -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -70,6 +71,7 @@ fun CardListScreen(
                     CardListScreen_Ui(
                         cards = state.cards,
                         onAddCard = { onAddCard.invoke() },
+                        onCardDetails = { onCardDetails.invoke(it) }
                     )
                 }
 
@@ -94,6 +96,7 @@ fun CardListScreen(
 fun CardListScreen_Ui(
     cards: List<CardUi>,
     onAddCard: () -> Unit = {},
+    onCardDetails: (cardNumber: String) -> Unit = {}
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         Column(
@@ -109,10 +112,14 @@ fun CardListScreen_Ui(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (cards.isNotEmpty()) {
-                cards.forEach {
-                    PaymentCard(cardUi = it)
+                cards.forEach { card ->
+                    PaymentCard(
+                        cardUi = card,
+                        onCLick = { onCardDetails.invoke(card.cardNumber) }
+                    )
                 }
 
+                // TODO show FAB if this btn invisible due to long list
                 DashedButton(
                     onClick = { onAddCard.invoke() },
                     modifier = Modifier.fillMaxWidth(),
