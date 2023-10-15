@@ -15,6 +15,7 @@ import by.alexandr7035.banking.domain.usecases.cards.AddCardUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetAllCardsUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetCardByNumberUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
+import by.alexandr7035.banking.domain.usecases.cards.RemoveCardUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpirationUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseCase
@@ -38,12 +39,19 @@ val appModule = module {
     viewModel { LoginViewModel(get()) }
     viewModel { AppViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
-    viewModel { HomeViewModel(
-        profileRepository = get(),
-        getHomeCardsUseCase = get()
-    ) }
+    viewModel {
+        HomeViewModel(
+            profileRepository = get(),
+            getHomeCardsUseCase = get()
+        )
+    }
     viewModel { CardListViewModel(getAllCardsUseCase = get()) }
-    viewModel { CardDetailsViewModel(getCardByNumberUseCase = get()) }
+    viewModel {
+        CardDetailsViewModel(
+            getCardByNumberUseCase = get(),
+            deleteCardByNumberUseCase = get()
+        )
+    }
 
     viewModel {
         AddCardViewModel(
@@ -66,6 +74,7 @@ val appModule = module {
     factory { AddCardUseCase(cardsRepository = get()) }
     factory { GetHomeCardsUseCase(cardsRepository = get()) }
     factory { GetCardByNumberUseCase(cardsRepository = get()) }
+    factory { RemoveCardUseCase(cardsRepository = get()) }
 
     single<CacheDatabase> {
         Room.databaseBuilder(
