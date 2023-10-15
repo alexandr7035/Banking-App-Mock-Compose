@@ -5,6 +5,13 @@ sealed class OperationResult<out T> {
 
     data class Failure(val error: AppError) : OperationResult<Nothing>()
 
+    fun isSuccess(): Boolean {
+        return when (this) {
+            is Success -> true
+            is Failure -> false
+        }
+    }
+
     companion object {
         inline fun <R> runWrapped(block: () -> R): OperationResult<R> {
             return try {
