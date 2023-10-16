@@ -239,7 +239,8 @@ fun AddCardScreen_Ui(
             onDismissRequest = { selectedMills ->
                 onIntent.invoke(AddCardIntent.ExpirationPickerSet(selectedMills))
                 onIntent.invoke(AddCardIntent.ToggleDatePicker(false))
-            }
+            },
+            initialSelectedDate = state.formFields.expirationDateTimestamp
         )
     }
 }

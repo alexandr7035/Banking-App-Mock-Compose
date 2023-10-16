@@ -23,7 +23,7 @@ fun DatePickerDialog(
     initialSelectedDate: Long? = null
 ) {
     val datePickerState = rememberDatePickerState(
-        initialDisplayedMonthMillis = initialSelectedDate,
+        initialSelectedDateMillis = initialSelectedDate,
     )
     val dialogState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
