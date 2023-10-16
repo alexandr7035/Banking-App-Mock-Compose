@@ -14,6 +14,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -86,139 +87,145 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
     Scaffold(snackbarHost = {
         SnackbarHost(hostState = snackBarHostState) { ResultSnackBar(snackbarData = it) }
     }, bottomBar = { if (shouldShowBottomNav) BottomNav(navController) }) { pv ->
-        // TODO app routes model
-        NavHost(
-            navController = navController, startDestination = NavEntries.Graphs.HomeGraph.route, modifier = Modifier.padding(pv)
-        ) {
-            composable(NavEntries.Wizard.route) {
-                WizardScreen(onGoToLogin = {
-                    navController.navigate(NavEntries.Login.route)
-                }, onWizardCompleted = {
-                    viewModel.setWizardViewed()
-                })
-            }
 
-            composable(NavEntries.Login.route) {
-                LoginScreen(onLoginCompleted = {
-                    viewModel.onLoginCompleted()
+        CompositionLocalProvider(LocalScopedSnackbarState provides ScopedSnackBarState(
+            value = snackBarHostState,
+            coroutineScope = hostCoroutineScope
+        )) {
 
-                    navController.navigate(NavEntries.Graphs.HomeGraph.route) {
-                        popUpTo(NavEntries.Login.route) {
-                            inclusive = true
-                        }
-                    }
-                }, onShowSnackBar = { msg, mode ->
-                    hostCoroutineScope.launch {
-                        snackBarHostState.showResultSnackBar(msg, mode)
-                    }
-                })
-            }
-
-            navigation(
-                startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
+            // TODO app routes model
+            NavHost(
+                navController = navController, startDestination = NavEntries.Graphs.HomeGraph.route, modifier = Modifier.padding(pv)
             ) {
-                composable(NavEntries.Home.route) {
-                    HomeScreen(
-                        onGoToDestination = { navEntry ->
-                            if (navEntry in listOf(
-                                    NavEntries.CardList,
-                                    NavEntries.AddCard
-                                    // TODO other destinations
-                                )
-                            ) {
-                                navController.navigate(navEntry.route)
+                composable(NavEntries.Wizard.route) {
+                    WizardScreen(onGoToLogin = {
+                        navController.navigate(NavEntries.Login.route)
+                    }, onWizardCompleted = {
+                        viewModel.setWizardViewed()
+                    })
+                }
+
+                composable(NavEntries.Login.route) {
+                    LoginScreen(onLoginCompleted = {
+                        viewModel.onLoginCompleted()
+
+                        navController.navigate(NavEntries.Graphs.HomeGraph.route) {
+                            popUpTo(NavEntries.Login.route) {
+                                inclusive = true
                             }
-                        },
-                        onCardDetails = {cardId ->
-                            navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
                         }
-                    )
+                    }, onShowSnackBar = { msg, mode ->
+                        hostCoroutineScope.launch {
+                            snackBarHostState.showResultSnackBar(msg, mode)
+                        }
+                    })
                 }
 
-                composable(NavEntries.History.route) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = NavEntries.History.label, textAlign = TextAlign.Center
+                navigation(
+                    startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
+                ) {
+                    composable(NavEntries.Home.route) {
+                        HomeScreen(
+                            onGoToDestination = { navEntry ->
+                                if (navEntry in listOf(
+                                        NavEntries.CardList,
+                                        NavEntries.AddCard
+                                        // TODO other destinations
+                                    )
+                                ) {
+                                    navController.navigate(navEntry.route)
+                                }
+                            },
+                            onCardDetails = { cardId ->
+                                navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                            }
                         )
                     }
-                }
 
-                composable(NavEntries.Statistics.route) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = NavEntries.Statistics.label, textAlign = TextAlign.Center
-                        )
-                    }
-                }
-
-                composable(NavEntries.Profile.route) { navBackResult ->
-                    ProfileScreen(
-                        onLogoutClick = {
-                            navController.navigate(NavEntries.LogoutDialog.route)
+                    composable(NavEntries.History.route) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = NavEntries.History.label, textAlign = TextAlign.Center
+                            )
                         }
-                    )
+                    }
 
-                    // logout dialog result
-                    val shouldTryLogout = navBackResult.savedStateHandle.get<Boolean>(NavResult.SHOULD_LOGOUT.name) ?: false
-                    LaunchedEffect(shouldTryLogout) {
-                        if (shouldTryLogout) {
-                            viewModel.logOut()
+                    composable(NavEntries.Statistics.route) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = NavEntries.Statistics.label, textAlign = TextAlign.Center
+                            )
+                        }
+                    }
 
-                            navController.navigate(NavEntries.Login.route) {
-                                popUpTo(NavEntries.Graphs.HomeGraph.route) {
-                                    inclusive = true
+                    composable(NavEntries.Profile.route) { navBackResult ->
+                        ProfileScreen(
+                            onLogoutClick = {
+                                navController.navigate(NavEntries.LogoutDialog.route)
+                            }
+                        )
+
+                        // logout dialog result
+                        val shouldTryLogout = navBackResult.savedStateHandle.get<Boolean>(NavResult.SHOULD_LOGOUT.name) ?: false
+                        LaunchedEffect(shouldTryLogout) {
+                            if (shouldTryLogout) {
+                                viewModel.logOut()
+
+                                navController.navigate(NavEntries.Login.route) {
+                                    popUpTo(NavEntries.Graphs.HomeGraph.route) {
+                                        inclusive = true
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                dialog(route = NavEntries.LogoutDialog.route) {
-                    LogoutDialog(onDismiss = { shouldLogout ->
-                        navController.previousBackStackEntry?.savedStateHandle?.set(NavResult.SHOULD_LOGOUT.name, shouldLogout)
-                        navController.popBackStack()
-                    })
-                }
-
-                composable(NavEntries.CardList.route) {
-                    CardListScreen(
-                        onAddCard = {
-                            navController.navigate(NavEntries.AddCard.route)
-                        },
-                        onCardDetails = { cardId ->
-                            navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
-                        },
-                        onBack = {
+                    dialog(route = NavEntries.LogoutDialog.route) {
+                        LogoutDialog(onDismiss = { shouldLogout ->
+                            navController.previousBackStackEntry?.savedStateHandle?.set(NavResult.SHOULD_LOGOUT.name, shouldLogout)
                             navController.popBackStack()
-                        }
-                    )
-                }
+                        })
+                    }
 
-                composable(NavEntries.AddCard.route) {
-                    AddCardScreen(onBack = {
-                        navController.popBackStack()
-                    })
-                }
+                    composable(NavEntries.CardList.route) {
+                        CardListScreen(
+                            onAddCard = {
+                                navController.navigate(NavEntries.AddCard.route)
+                            },
+                            onCardDetails = { cardId ->
+                                navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                            },
+                            onBack = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
 
-                composable(
-                    route = "${NavEntries.CardDetails.route}/{cardId}",
-                    arguments = listOf(navArgument("cardId") { type = NavType.StringType })
-                ) {
-                    CardDetailsScreen(
-                        cardId = it.arguments?.getString("cardId")!!,
-                        onBack = {
+                    composable(NavEntries.AddCard.route) {
+                        AddCardScreen(onBack = {
                             navController.popBackStack()
-                        },
-                    )
+                        })
+                    }
+
+                    composable(
+                        route = "${NavEntries.CardDetails.route}/{cardId}",
+                        arguments = listOf(navArgument("cardId") { type = NavType.StringType })
+                    ) {
+                        CardDetailsScreen(
+                            cardId = it.arguments?.getString("cardId")!!,
+                            onBack = {
+                                navController.popBackStack()
+                            },
+                        )
+                    }
                 }
             }
         }
     }
-
 }
 
 
