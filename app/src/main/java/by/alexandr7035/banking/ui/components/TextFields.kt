@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
+import by.alexandr7035.banking.ui.theme.Gray15
 import by.alexandr7035.banking.ui.theme.Gray25
 import by.alexandr7035.banking.ui.theme.Gray5
 import by.alexandr7035.banking.ui.theme.Gray60
@@ -71,7 +72,10 @@ fun PrimaryTextField(
     singleLine: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
+    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = Color(0xFFCFCFD3)
+    ),
     shape: Shape = RoundedCornerShape(4.dp),
 ) {
     BasicTextField(
@@ -185,7 +189,7 @@ fun DecoratedTextField(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             containerColor = backgroundColor.value,
             unfocusedBorderColor = Gray5,
-            focusedBorderColor = Gray25
+            focusedBorderColor = Gray15
         ),
         shape = shape
     )

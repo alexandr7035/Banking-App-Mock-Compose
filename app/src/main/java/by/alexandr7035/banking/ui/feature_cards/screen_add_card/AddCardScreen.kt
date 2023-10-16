@@ -116,7 +116,10 @@ fun AddCardScreen_Ui(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = pv.calculateTopPadding() + 16.dp, bottom = pv.calculateBottomPadding() + 16.dp, start = 24.dp, end = 24.dp
+                    top = pv.calculateTopPadding() + 16.dp,
+                    bottom = pv.calculateBottomPadding() + 40.dp,
+                    start = 24.dp,
+                    end = 24.dp
                 )
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
@@ -147,7 +150,7 @@ fun AddCardScreen_Ui(
                                     fontSize = 12.sp,
                                     fontFamily = primaryFontFamily,
                                     fontWeight = FontWeight.Normal,
-                                    color = Color(0xFF020614),
+                                    color = Color(0xFF808289),
                                 ), modifier = Modifier.padding(top = 8.dp)
                             )
 
@@ -194,6 +197,8 @@ fun AddCardScreen_Ui(
                             color = Color(0xFF333333),
                         )
                     )
+
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     FormField(
                         title = "Address Line 1",
@@ -293,7 +298,7 @@ private fun FormField(
                 fontSize = 12.sp,
                 fontFamily = primaryFontFamily,
                 fontWeight = FontWeight.Normal,
-                color = Color(0xFF020614),
+                color = Color(0xFF808289),
             ),
             modifier = Modifier.padding(top = 8.dp)
         )

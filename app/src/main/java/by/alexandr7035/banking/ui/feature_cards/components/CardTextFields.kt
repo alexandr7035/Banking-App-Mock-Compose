@@ -44,7 +44,7 @@ fun CardNumberField(
                 fontSize = 12.sp,
                 fontFamily = primaryFontFamily,
                 fontWeight = FontWeight.Normal,
-                color = Color(0xFF020614),
+                color = Color(0xFF808289),
             ),
             modifier = Modifier.padding(top = 8.dp)
         )
