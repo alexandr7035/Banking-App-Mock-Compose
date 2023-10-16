@@ -27,7 +27,7 @@ data class AddCardState(
                     addressSecondLine = UiField(""),
                     cvvCode = UiField("123"),
                     expirationDateTimestamp =  mockExpiration,
-                    expirationDate = UiField(mockExpiration.getFormattedDate("dd MMM yy"))
+                    expirationDate = UiField(mockExpiration.getFormattedDate("dd MMM yyyy"))
                 ),
                 isLoading = isLoading,
                 showDatePicker = showDatePicker
