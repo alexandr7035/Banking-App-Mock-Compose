@@ -33,13 +33,17 @@ import by.alexandr7035.banking.ui.components.SecondaryButton
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
+import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
+import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.core.navigation.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -92,22 +96,28 @@ fun CardDetailsScreen(
                         FullscreenProgressBar()
                     }
 
-
                     val ctx = LocalContext.current
+                    val snackbarState = LocalScopedSnackbarState.current
+
                     EventEffect(
                         event = state.cardDeletedResultEvent,
                         onConsumed = viewModel::consumeDeleteResultEvent,
                     ) { result ->
-                        ctx.showToast("Delete: ${result.isSuccess()}")
-
                         when (result) {
                             is OperationResult.Success -> {
+                                snackbarState.show(
+                                    message = "Card deleted",
+                                    snackBarMode = SnackBarMode.Positive
+                                )
+
                                 onBack.invoke()
                             }
 
                             is OperationResult.Failure -> {
-                                ctx.showToast(result.error.errorType.asUiTextError().asString(ctx))
-                                // TODO error snack
+                                snackbarState.show(
+                                    message = result.error.errorType.asUiTextError().asString(ctx),
+                                    snackBarMode = SnackBarMode.Negative
+                                )
                             }
                         }
 

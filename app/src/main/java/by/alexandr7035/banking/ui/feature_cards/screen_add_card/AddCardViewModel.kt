@@ -3,6 +3,7 @@ package by.alexandr7035.banking.ui.feature_cards.screen_add_card
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.BuildConfig
+import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpirationUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseCase
@@ -86,7 +87,10 @@ class AddCardViewModel(
                     if (!formValid) {
                         _state.update { curr ->
                             curr.copy(
-                                isLoading = false, cardSavedEvent = triggered(false)
+                                isLoading = false,
+                                cardSavedEvent = triggered(
+                                    OperationResult.Failure(error = AppError(ErrorType.GENERIC_VALIDATION_ERROR))
+                                )
                             )
                         }
                     } else {
@@ -105,14 +109,14 @@ class AddCardViewModel(
                             is OperationResult.Success -> {
                                 _state.update { curr ->
                                     curr.copy(
-                                        isLoading = false, cardSavedEvent = triggered(true)
+                                        isLoading = false, cardSavedEvent = triggered(res)
                                     )
                                 }
                             }
                             is OperationResult.Failure -> {
                                 _state.update { curr ->
                                     curr.copy(
-                                        isLoading = false, cardSavedEvent = triggered(false)
+                                        isLoading = false, cardSavedEvent = triggered(res)
                                     )
                                 }
                             }

@@ -43,13 +43,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.PrimaryTextField
 import by.alexandr7035.banking.ui.components.ReadonlyTextField
 import by.alexandr7035.banking.ui.components.dialogs.DatePickerDialog
 import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.core.navigation.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.feature_cards.components.CardNumberField
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
@@ -68,16 +72,28 @@ fun AddCardScreen(
     }
 
     val ctx = LocalContext.current
+    val snackbarState = LocalScopedSnackbarState.current
 
     EventEffect(
         event = state.cardSavedEvent,
         onConsumed = viewModel::consumeSaveCardEvent,
-        action = { isCardAdded ->
-            if (isCardAdded) {
-                ctx.showToast("Card has been added!")
-                onBack.invoke()
-            } else {
-                ctx.showToast("Failed to save card")
+        action = { result ->
+            when (result) {
+                is OperationResult.Success -> {
+                    snackbarState.show(
+                        message = "Card added",
+                        snackBarMode = SnackBarMode.Positive
+                    )
+
+                    onBack.invoke()
+                }
+
+                is OperationResult.Failure -> {
+                    snackbarState.show(
+                        message = result.error.errorType.asUiTextError().asString(ctx),
+                        snackBarMode = SnackBarMode.Negative
+                    )
+                }
             }
         }
     )
