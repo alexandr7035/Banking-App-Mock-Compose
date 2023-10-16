@@ -24,6 +24,12 @@ class CardListViewModel(
     fun emitIntent(intent: CardListIntent) {
         when (intent) {
             is CardListIntent.EnterScreen -> load()
+            is CardListIntent.ToggleFloatingAddCardButton -> {
+                val currState = _state.value
+                if (currState is CardListState.Success) {
+                    _state.value = currState.copy(floatingAddCardShown = intent.isShown)
+                }
+            }
         }
     }
 

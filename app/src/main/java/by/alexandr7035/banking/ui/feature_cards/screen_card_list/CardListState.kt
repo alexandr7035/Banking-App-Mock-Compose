@@ -4,7 +4,11 @@ import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 
 sealed class CardListState {
-    data class Success(val cards: List<CardUi>) : CardListState()
+    data class Success(
+        val cards: List<CardUi>,
+        val floatingAddCardShown: Boolean = true
+    ) : CardListState()
+
     data class Error(val error: UiText) : CardListState()
-    object Loading: CardListState()
+    object Loading : CardListState()
 }
