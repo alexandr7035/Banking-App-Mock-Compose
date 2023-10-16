@@ -1,7 +1,9 @@
 package by.alexandr7035.banking.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -35,6 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
+import by.alexandr7035.banking.ui.theme.Gray15
 import by.alexandr7035.banking.ui.theme.Gray25
 import by.alexandr7035.banking.ui.theme.Gray5
 import by.alexandr7035.banking.ui.theme.Gray60
@@ -67,7 +72,10 @@ fun PrimaryTextField(
     singleLine: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
+    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = Color(0xFFCFCFD3)
+    ),
     shape: Shape = RoundedCornerShape(4.dp),
 ) {
     BasicTextField(
@@ -181,7 +189,7 @@ fun DecoratedTextField(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             containerColor = backgroundColor.value,
             unfocusedBorderColor = Gray5,
-            focusedBorderColor = Gray25
+            focusedBorderColor = Gray15
         ),
         shape = shape
     )
@@ -257,6 +265,34 @@ fun DecoratedPasswordTextField(
 
 }
 
+@Composable
+fun ReadonlyTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    error: String? = null
+) {
+    Box(modifier = modifier) {
+        PrimaryTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = visualTransformation,
+            error = error
+        )
+
+        // TODO ripple
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .alpha(0f)
+                .clickable(onClick = onClick),
+        )
+    }
+}
+
 @Preview
 @Composable
 fun TextField_Preview() {
@@ -306,6 +342,15 @@ fun TextField_Preview() {
                 modifier = Modifier.fillMaxWidth(),
                 value = "Test test test",
                 onValueChange = {}
+            )
+
+            Text("Other")
+
+            ReadonlyTextField(
+                value = "Test",
+                onValueChange = {},
+                onClick = { },
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

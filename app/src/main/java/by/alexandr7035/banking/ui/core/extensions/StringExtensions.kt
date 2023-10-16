@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.extensions
+package by.alexandr7035.banking.ui.core.extensions
 
 fun String.formatCardNumber(): String {
     val formattedStringBuilder = StringBuilder()

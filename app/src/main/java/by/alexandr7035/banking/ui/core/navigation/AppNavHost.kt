@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core
+package by.alexandr7035.banking.ui.core.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,6 +14,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -32,15 +32,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.components.snackbar.showResultSnackBar
-import by.alexandr7035.banking.ui.feature_home.HomeScreen
+import by.alexandr7035.banking.ui.core.AppViewModel
+import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
+import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsScreen
+import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
+import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_profile.logout_dialog.LogoutDialog
@@ -49,7 +55,7 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+// TODO split nav graph
 @Composable
 fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
     val navController = rememberNavController()
@@ -81,93 +87,145 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
     Scaffold(snackbarHost = {
         SnackbarHost(hostState = snackBarHostState) { ResultSnackBar(snackbarData = it) }
     }, bottomBar = { if (shouldShowBottomNav) BottomNav(navController) }) { pv ->
-        // TODO app routes model
-        NavHost(
-            navController = navController, startDestination = NavEntries.Graphs.HomeGraph.route, modifier = Modifier.padding(pv)
-        ) {
-            composable(NavEntries.Wizard.route) {
-                WizardScreen(onGoToLogin = {
-                    navController.navigate(NavEntries.Login.route)
-                }, onWizardCompleted = {
-                    viewModel.setWizardViewed()
-                })
-            }
 
-            composable(NavEntries.Login.route) {
-                LoginScreen(onLoginCompleted = {
-                    viewModel.onLoginCompleted()
+        CompositionLocalProvider(LocalScopedSnackbarState provides ScopedSnackBarState(
+            value = snackBarHostState,
+            coroutineScope = hostCoroutineScope
+        )) {
 
-                    navController.navigate(NavEntries.Graphs.HomeGraph.route) {
-                        popUpTo(NavEntries.Login.route) {
-                            inclusive = true
-                        }
-                    }
-                }, onShowSnackBar = { msg, mode ->
-                    hostCoroutineScope.launch {
-                        snackBarHostState.showResultSnackBar(msg, mode)
-                    }
-                })
-            }
-
-            navigation(
-                startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
+            // TODO app routes model
+            NavHost(
+                navController = navController, startDestination = NavEntries.Graphs.HomeGraph.route, modifier = Modifier.padding(pv)
             ) {
-                composable(NavEntries.Home.route) {
-                    HomeScreen()
+                composable(NavEntries.Wizard.route) {
+                    WizardScreen(onGoToLogin = {
+                        navController.navigate(NavEntries.Login.route)
+                    }, onWizardCompleted = {
+                        viewModel.setWizardViewed()
+                    })
                 }
 
-                composable(NavEntries.History.route) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = NavEntries.History.label, textAlign = TextAlign.Center
-                        )
-                    }
-                }
+                composable(NavEntries.Login.route) {
+                    LoginScreen(onLoginCompleted = {
+                        viewModel.onLoginCompleted()
 
-                composable(NavEntries.Statistics.route) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = NavEntries.Statistics.label, textAlign = TextAlign.Center
-                        )
-                    }
-                }
-
-                composable(NavEntries.Profile.route) { navBackResult ->
-                    ProfileScreen(
-                        onLogoutClick = {
-                            navController.navigate(NavEntries.LogoutDialog.route)
+                        navController.navigate(NavEntries.Graphs.HomeGraph.route) {
+                            popUpTo(NavEntries.Login.route) {
+                                inclusive = true
+                            }
                         }
-                    )
+                    }, onShowSnackBar = { msg, mode ->
+                        hostCoroutineScope.launch {
+                            snackBarHostState.showResultSnackBar(msg, mode)
+                        }
+                    })
+                }
 
-                    // logout dialog result
-                    val shouldTryLogout = navBackResult.savedStateHandle.get<Boolean>(NavResult.SHOULD_LOGOUT.name) ?: false
-                    LaunchedEffect(shouldTryLogout) {
-                        if (shouldTryLogout) {
-                            viewModel.logOut()
+                navigation(
+                    startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
+                ) {
+                    composable(NavEntries.Home.route) {
+                        HomeScreen(
+                            onGoToDestination = { navEntry ->
+                                if (navEntry in listOf(
+                                        NavEntries.CardList,
+                                        NavEntries.AddCard
+                                        // TODO other destinations
+                                    )
+                                ) {
+                                    navController.navigate(navEntry.route)
+                                }
+                            },
+                            onCardDetails = { cardId ->
+                                navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                            }
+                        )
+                    }
 
-                            navController.navigate(NavEntries.Login.route) {
-                                popUpTo(NavEntries.Graphs.HomeGraph.route) {
-                                    inclusive = true
+                    composable(NavEntries.History.route) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = NavEntries.History.label, textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    composable(NavEntries.Statistics.route) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = NavEntries.Statistics.label, textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    composable(NavEntries.Profile.route) { navBackResult ->
+                        ProfileScreen(
+                            onLogoutClick = {
+                                navController.navigate(NavEntries.LogoutDialog.route)
+                            }
+                        )
+
+                        // logout dialog result
+                        val shouldTryLogout = navBackResult.savedStateHandle.get<Boolean>(NavResult.SHOULD_LOGOUT.name) ?: false
+                        LaunchedEffect(shouldTryLogout) {
+                            if (shouldTryLogout) {
+                                viewModel.logOut()
+
+                                navController.navigate(NavEntries.Login.route) {
+                                    popUpTo(NavEntries.Graphs.HomeGraph.route) {
+                                        inclusive = true
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                dialog(route = NavEntries.LogoutDialog.route) {
-                    LogoutDialog(onDismiss = { shouldLogout ->
-                        navController.previousBackStackEntry?.savedStateHandle?.set(NavResult.SHOULD_LOGOUT.name, shouldLogout)
-                        navController.popBackStack()
-                    })
+                    dialog(route = NavEntries.LogoutDialog.route) {
+                        LogoutDialog(onDismiss = { shouldLogout ->
+                            navController.previousBackStackEntry?.savedStateHandle?.set(NavResult.SHOULD_LOGOUT.name, shouldLogout)
+                            navController.popBackStack()
+                        })
+                    }
+
+                    composable(NavEntries.CardList.route) {
+                        CardListScreen(
+                            onAddCard = {
+                                navController.navigate(NavEntries.AddCard.route)
+                            },
+                            onCardDetails = { cardId ->
+                                navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                            },
+                            onBack = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+
+                    composable(NavEntries.AddCard.route) {
+                        AddCardScreen(onBack = {
+                            navController.popBackStack()
+                        })
+                    }
+
+                    composable(
+                        route = "${NavEntries.CardDetails.route}/{cardId}",
+                        arguments = listOf(navArgument("cardId") { type = NavType.StringType })
+                    ) {
+                        CardDetailsScreen(
+                            cardId = it.arguments?.getString("cardId")!!,
+                            onBack = {
+                                navController.popBackStack()
+                            },
+                        )
+                    }
                 }
             }
         }
     }
-
 }
 
 

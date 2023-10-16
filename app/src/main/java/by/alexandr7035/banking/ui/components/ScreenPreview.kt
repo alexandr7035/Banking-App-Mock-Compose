@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core
+package by.alexandr7035.banking.ui.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme

@@ -1,10 +1,12 @@
-package by.alexandr7035.banking.ui.feature_home
+package by.alexandr7035.banking.ui.feature_home.components
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,13 +41,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.ui.components.DashedButton
-import by.alexandr7035.banking.ui.components.ErrorFullScreen
+import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
-import by.alexandr7035.banking.ui.core.ScreenPreview
-import by.alexandr7035.banking.ui.extensions.showToast
+import by.alexandr7035.banking.ui.core.navigation.NavEntries
+import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import by.alexandr7035.banking.ui.feature_home.AccountActionPanel
+import by.alexandr7035.banking.ui.feature_home.AccountActionPanel_Skeleton
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
 import by.alexandr7035.banking.ui.feature_home.model.HomeViewModel
@@ -55,7 +60,11 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeScreen(
+    viewModel: HomeViewModel = koinViewModel(),
+    onGoToDestination: (navEntry: NavEntries) -> Unit = {},
+    onCardDetails: (cardId: String) -> Unit = {}
+) {
 
     LaunchedEffect(Unit) {
         viewModel.emitIntent(HomeIntent.EnterScreen)
@@ -63,16 +72,28 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
     when (state) {
-        is HomeState.Success -> HomeScreen_Ui(state = state)
+        is HomeState.Success -> HomeScreen_Ui(
+            state = state,
+            onGoToDestination = onGoToDestination,
+            onCardDetails = onCardDetails
+        )
+
         is HomeState.Loading -> HomeScreen_Skeleton()
-        is HomeState.Error -> ErrorFullScreen(error = state.error, onRetry = {
-            viewModel.emitIntent(HomeIntent.EnterScreen)
-        })
+        is HomeState.Error -> ErrorFullScreen(
+            error = state.error,
+            onRetry = {
+                viewModel.emitIntent(HomeIntent.EnterScreen)
+            }
+        )
     }
 }
 
 @Composable
-fun HomeScreen_Ui(state: HomeState.Success) {
+fun HomeScreen_Ui(
+    state: HomeState.Success,
+    onGoToDestination: (navEntry: NavEntries) -> Unit = {},
+    onCardDetails: (cardId: String) -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -99,7 +120,7 @@ fun HomeScreen_Ui(state: HomeState.Success) {
         Spacer(Modifier.height(8.dp))
 
         SectionTitle(stringResource(R.string.your_cards)) {
-            ctx.showToast("TODO")
+            onGoToDestination.invoke(NavEntries.CardList)
         }
 
 
@@ -112,13 +133,16 @@ fun HomeScreen_Ui(state: HomeState.Success) {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 state.cards.forEach {
-                    PaymentCard(cardUi = it)
+                    PaymentCard(
+                        cardUi = it,
+                        onCLick = { onCardDetails.invoke(it) }
+                    )
                 }
             }
         } else {
             DashedButton(
                 onClick = {
-                    ctx.showToast("TODO")
+                    onGoToDestination.invoke(NavEntries.AddCard)
                 },
                 modifier = Modifier
                     .padding(horizontal = 24.dp)

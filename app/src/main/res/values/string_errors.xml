@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="field_is_empty">This field cannot be empty</string>
+    <string name="invalid_card_number">Invalid card number</string>
+    <string name="card_has_expired">Card has expired</string>
+    <string name="invalid_cvv">CVV should have 3 or 4 digits</string>
+    <string name="date_not_specified">Please, specify date</string>
+    <string name="card_not_found">Card not found</string>
+    <string name="card_already_added">Card already added</string>
+    <string name="generic_validation_error">Check correctness of the input</string>
+    <string name="unknown_error">An unknown error happened</string>
+</resources>

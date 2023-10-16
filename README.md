@@ -15,7 +15,7 @@ For example, for banking profile the app uses local mock Repositories with stati
 - Ksprefs
 - Jetpack Navigation
 
-### Features
+### Implemented features
 1. Onboarding, Sign in and user profile
 <p align="left">
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/f6436798-c655-45fd-940f-909108f0cd8f" width="20%"/>
@@ -24,3 +24,8 @@ For example, for banking profile the app uses local mock Repositories with stati
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/498d3dcc-a79f-4575-8bf5-bf678777683a" width="20%"/>
 </p>
 
+2. Cards
+<p align="left">
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/aacaeac3-24f7-491d-a69f-604d06d8de5a" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/bbb1c8ad-e1cd-4958-9da1-b4c32c88f67a" width="20%"/>
+</p>

@@ -1,27 +1,28 @@
-package by.alexandr7035.banking.ui.core
+package by.alexandr7035.banking.ui.core.navigation
 
 import by.alexandr7035.banking.R
 
 sealed class NavEntries(
     val route: String,
     val navIcons: NavIconPair?,
+    // TODO make label optional
     val label: String,
 ) {
 
-    object Wizard: NavEntries(
+    object Wizard : NavEntries(
         route = "wizard",
         navIcons = null,
         label = "wizard",
     )
 
-    object Login: NavEntries(
+    object Login : NavEntries(
         route = "login",
         navIcons = null,
         label = "Login",
     )
 
 
-    object Profile: NavEntries(
+    object Profile : NavEntries(
         route = "profile",
         navIcons = NavIconPair(
             unselected = R.drawable.ic_profile,
@@ -30,7 +31,7 @@ sealed class NavEntries(
         label = "Profile",
     )
 
-    object Statistics: NavEntries(
+    object Statistics : NavEntries(
         route = "statistics",
         navIcons = NavIconPair(
             unselected = R.drawable.ic_statistics,
@@ -39,7 +40,7 @@ sealed class NavEntries(
         label = "Statistics",
     )
 
-    object Home: NavEntries(
+    object Home : NavEntries(
         route = "home",
         navIcons = NavIconPair(
             unselected = R.drawable.ic_home,
@@ -48,7 +49,7 @@ sealed class NavEntries(
         label = "Home",
     )
 
-    object History: NavEntries(
+    object History : NavEntries(
         route = "history",
         navIcons = NavIconPair(
             unselected = R.drawable.ic_history,
@@ -57,14 +58,32 @@ sealed class NavEntries(
         label = "History",
     )
 
-    object LogoutDialog: NavEntries(
+    object LogoutDialog : NavEntries(
         route = "logout_dialog",
         navIcons = null,
         label = "Log out"
     )
 
+    object CardList : NavEntries(
+        route = "card_list",
+        navIcons = null,
+        label = "Card List"
+    )
+
+    object AddCard: NavEntries(
+        route = "add_card",
+        navIcons = null,
+        label = "Add Card"
+    )
+
+    object CardDetails: NavEntries(
+        route = "card_details",
+        navIcons = null,
+        label = "Card Details"
+    )
+
     sealed class Graphs(val route: String) {
-        object HomeGraph: Graphs("homeGraph")
+        object HomeGraph : Graphs("homeGraph")
     }
 
     companion object {

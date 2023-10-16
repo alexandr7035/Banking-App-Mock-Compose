@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.data.profile.ProfileRepository
-import by.alexandr7035.banking.ui.components.error.UiError
+import by.alexandr7035.banking.domain.core.AppError
+import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -17,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val profileRepository: ProfileRepository,
+    private val getHomeCardsUseCase: GetHomeCardsUseCase
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(
@@ -26,7 +30,15 @@ class HomeViewModel(
     val state = _state.asStateFlow()
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        reduceError(exception)
+        when (exception) {
+            is AppError -> {
+                reduceError(exception.errorType)
+            }
+
+            else -> {
+                reduceError(ErrorType.UNKNOWN_ERROR)
+            }
+        }
     }
 
     private fun loadData() {
@@ -41,15 +53,15 @@ class HomeViewModel(
             }
 
             val cardsJob = async() {
-                delay(1500)
-                // TODO repo
-                List(2) {
-                    CardUi.mock()
+                val res = getHomeCardsUseCase.execute()
+
+                res.map {
+                    CardUi.mapFromDomain(it)
                 }
             }
 
             val savingsJob = async() {
-                delay(1000)
+                delay(200)
                 // TODO repo
                 List(2) {
                     SavingUi.mock()
@@ -78,14 +90,10 @@ class HomeViewModel(
         }
     }
 
-    // TODO business logic errors
-    private fun reduceError(error: Throwable) {
+    private fun reduceError(error: ErrorType) {
         _state.update {
             HomeState.Error(
-                error = UiError(
-                    title = "An error occurred",
-                    message = "Error: ${error.message}"
-                )
+                error = error.asUiTextError()
             )
         }
     }

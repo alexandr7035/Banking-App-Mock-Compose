@@ -36,6 +36,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.6'
@@ -75,7 +76,7 @@ dependencies {
 
     def nav_version = "2.7.3"
     implementation("androidx.navigation:navigation-compose:$nav_version")
-    implementation 'com.github.leonard-palm:compose-state-events:2.0.3'
+    implementation 'com.github.leonard-palm:compose-state-events:2.1.0'
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha01")
 
     implementation 'com.github.cioccarellia:ksprefs:2.4.0'
@@ -87,4 +88,11 @@ dependencies {
     implementation("io.coil-kt:coil-svg:2.4.0")
 
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
+
+    // Room
+    def room_version = "2.5.2"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 }

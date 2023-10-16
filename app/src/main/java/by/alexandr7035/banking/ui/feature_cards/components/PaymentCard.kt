@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
 import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
-import by.alexandr7035.banking.ui.extensions.formatCardNumber
+import by.alexandr7035.banking.ui.core.extensions.formatCardNumber
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -105,7 +105,7 @@ fun PaymentCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(54.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
                 Column(
                     modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.End
