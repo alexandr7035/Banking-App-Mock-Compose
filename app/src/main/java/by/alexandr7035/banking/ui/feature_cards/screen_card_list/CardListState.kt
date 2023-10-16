@@ -6,7 +6,7 @@ import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 sealed class CardListState {
     data class Success(
         val cards: List<CardUi>,
-        val floatingAddCardShown: Boolean = true
+        val floatingAddCardShown: Boolean = false
     ) : CardListState()
 
     data class Error(val error: UiText) : CardListState()
