@@ -5,12 +5,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
+import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
@@ -72,7 +77,7 @@ fun SavingsScreen(
                 }
 
                 // TODO skeleton
-                is SavingsListState.Loading -> FullscreenProgressBar()
+                is SavingsListState.Loading -> SavingsScreen_Skeleton()
 
                 is SavingsListState.Error -> ErrorFullScreen(error = state.error)
             }
@@ -84,7 +89,6 @@ fun SavingsScreen(
 @Composable
 private fun SavingsScreen_Ui(
     savings: List<SavingUi>,
-    onBack: () -> Unit = {},
 ) {
 
     val scope = rememberCoroutineScope()
@@ -120,7 +124,7 @@ private fun SavingsScreen_Ui(
             ) {
             PagerTab(
                 isSelected = pagerState.currentPage == 0,
-                text = "On Progress",
+                text = stringResource(R.string.on_progress),
                 onClick = {
                     scope.launch {
                         pagerState.animateScrollToPage(0)
@@ -129,7 +133,7 @@ private fun SavingsScreen_Ui(
             )
             PagerTab(
                 isSelected = pagerState.currentPage == 1,
-                text = "Done",
+                text = stringResource(R.string.done),
                 onClick = {
                     scope.launch {
                         pagerState.animateScrollToPage(1)
@@ -174,6 +178,28 @@ private fun SavingsList(savings: List<SavingUi>) {
     ) {
         items(savings) { savingUi ->
             SavingCard(savingUi = savingUi)
+        }
+    }
+}
+
+@Composable
+private fun SavingsScreen_Skeleton() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 24.dp,
+                end = 24.dp,
+                top = 24.dp
+            )
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        repeat(4) {
+            SkeletonShape(
+                Modifier
+                    .fillMaxWidth()
+                    .height(80.dp))
         }
     }
 }
