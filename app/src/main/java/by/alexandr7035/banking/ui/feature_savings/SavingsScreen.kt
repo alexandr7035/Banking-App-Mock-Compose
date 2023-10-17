@@ -94,7 +94,7 @@ private fun SavingsScreen_Ui(
     val scope = rememberCoroutineScope()
 
     Column(Modifier.fillMaxSize()) {
-
+        // TODO core code for pager and tablayout
         val pagerState = rememberPagerState(
             initialPage = 0,
             initialPageOffsetFraction = 0f,
@@ -103,6 +103,7 @@ private fun SavingsScreen_Ui(
 
         TabRow(
             selectedTabIndex = pagerState.currentPage,
+            // TODO make indicator more close to design
             indicator = { tabPositions ->
                 if (pagerState.currentPage < tabPositions.size) {
                     TabRowDefaults.Indicator(
@@ -115,9 +116,9 @@ private fun SavingsScreen_Ui(
             containerColor = MaterialTheme.colorScheme.background,
             divider = @Composable {
                 Divider(
-                    color = Color(0xFFC4C4C4),
+                    color = Color(0xFFF2F2F2),
                     thickness = 2.dp,
-                    modifier = Modifier.offset(y = -1.dp)
+                    modifier = Modifier.offset(y = (-1).dp)
                 )
             },
 
