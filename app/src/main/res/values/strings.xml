@@ -46,4 +46,6 @@
     <string name="remove_card">Remove card</string>
     <string name="billing_address">Billing Address</string>
     <string name="added_on">Added On</string>
+    <string name="done">Done</string>
+    <string name="on_progress">On Progress</string>
 </resources>

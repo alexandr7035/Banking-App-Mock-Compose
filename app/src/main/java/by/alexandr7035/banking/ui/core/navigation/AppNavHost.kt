@@ -50,6 +50,7 @@ import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_profile.logout_dialog.LogoutDialog
+import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_wizard.WizardScreen
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.launch
@@ -129,8 +130,8 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                             onGoToDestination = { navEntry ->
                                 if (navEntry in listOf(
                                         NavEntries.CardList,
-                                        NavEntries.AddCard
-                                        // TODO other destinations
+                                        NavEntries.AddCard,
+                                        NavEntries.SavingsList
                                     )
                                 ) {
                                     navController.navigate(navEntry.route)
@@ -220,6 +221,16 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                             onBack = {
                                 navController.popBackStack()
                             },
+                        )
+                    }
+
+                    composable(
+                        route = NavEntries.SavingsList.route
+                    ) {
+                        SavingsScreen(
+                            onBack = {
+                                navController.popBackStack()
+                            }
                         )
                     }
                 }

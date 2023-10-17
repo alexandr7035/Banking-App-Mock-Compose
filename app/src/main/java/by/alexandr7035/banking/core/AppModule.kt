@@ -10,12 +10,16 @@ import by.alexandr7035.banking.data.login.LoginRepository
 import by.alexandr7035.banking.data.login.LoginRepositoryImpl
 import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
+import by.alexandr7035.banking.data.savings.SavingsRepositoryMock
 import by.alexandr7035.banking.domain.repository.cards.CardsRepository
+import by.alexandr7035.banking.domain.repository.savings.SavingsRepository
 import by.alexandr7035.banking.domain.usecases.cards.AddCardUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetAllCardsUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetCardByNumberUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.domain.usecases.cards.RemoveCardUseCase
+import by.alexandr7035.banking.domain.usecases.savings.GetAllSavingsUseCase
+import by.alexandr7035.banking.domain.usecases.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpirationUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseCase
@@ -25,9 +29,10 @@ import by.alexandr7035.banking.ui.core.AppViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
-import by.alexandr7035.banking.ui.feature_home.model.HomeViewModel
+import by.alexandr7035.banking.ui.feature_home.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
 import by.alexandr7035.banking.ui.feature_profile.ProfileViewModel
+import by.alexandr7035.banking.ui.feature_savings.SavingsViewModel
 import com.cioccarellia.ksprefs.KsPrefs
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
@@ -42,7 +47,8 @@ val appModule = module {
     viewModel {
         HomeViewModel(
             profileRepository = get(),
-            getHomeCardsUseCase = get()
+            getHomeCardsUseCase = get(),
+            getHomeSavingsUseCase = get()
         )
     }
     viewModel { CardListViewModel(getAllCardsUseCase = get()) }
@@ -64,17 +70,27 @@ val appModule = module {
         )
     }
 
+    viewModel {
+        SavingsViewModel(
+            getAllSavingsUseCase = get()
+        )
+    }
+
     // Use cases
     factory { ValidateCardNumberUseCase() }
     factory { ValidateCvvCodeUseCase() }
     factory { ValidateCardExpirationUseCase() }
     factory { ValidateBillingAddressUseCase() }
     factory { ValidateCardHolderUseCase() }
+
     factory { GetAllCardsUseCase(cardsRepository = get()) }
     factory { AddCardUseCase(cardsRepository = get()) }
     factory { GetHomeCardsUseCase(cardsRepository = get()) }
     factory { GetCardByNumberUseCase(cardsRepository = get()) }
     factory { RemoveCardUseCase(cardsRepository = get()) }
+
+    factory { GetAllSavingsUseCase(savingsRepository = get()) }
+    factory { GetHomeSavingsUseCase(savingsRepository = get()) }
 
     single<CacheDatabase> {
         Room.databaseBuilder(
@@ -105,6 +121,13 @@ val appModule = module {
         CardsRepositoryMock(
             cacheDao = get(),
             coroutineDispatcher = Dispatchers.IO
+        )
+    }
+
+    single<SavingsRepository> {
+        SavingsRepositoryMock(
+            coroutineDispatcher = Dispatchers.IO,
+            context = androidApplication().applicationContext
         )
     }
 
