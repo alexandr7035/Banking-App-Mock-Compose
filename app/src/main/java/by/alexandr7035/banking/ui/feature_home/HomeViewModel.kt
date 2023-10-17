@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_home.model
+package by.alexandr7035.banking.ui.feature_home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,8 +7,11 @@ import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
+import by.alexandr7035.banking.domain.usecases.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
+import by.alexandr7035.banking.ui.feature_home.model.HomeState
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.async
@@ -20,7 +23,8 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val profileRepository: ProfileRepository,
-    private val getHomeCardsUseCase: GetHomeCardsUseCase
+    private val getHomeCardsUseCase: GetHomeCardsUseCase,
+    private val getHomeSavingsUseCase: GetHomeSavingsUseCase
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(
@@ -61,10 +65,10 @@ class HomeViewModel(
             }
 
             val savingsJob = async() {
-                delay(200)
-                // TODO repo
-                List(2) {
-                    SavingUi.mock()
+                val res = getHomeSavingsUseCase.execute()
+
+                res.map {
+                    SavingUi.mapFromDomain(it)
                 }
             }
 
