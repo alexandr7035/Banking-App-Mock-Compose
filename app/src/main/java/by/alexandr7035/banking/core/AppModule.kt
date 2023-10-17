@@ -126,7 +126,8 @@ val appModule = module {
 
     single<SavingsRepository> {
         SavingsRepositoryMock(
-            coroutineDispatcher = Dispatchers.IO
+            coroutineDispatcher = Dispatchers.IO,
+            context = androidApplication().applicationContext
         )
     }
 

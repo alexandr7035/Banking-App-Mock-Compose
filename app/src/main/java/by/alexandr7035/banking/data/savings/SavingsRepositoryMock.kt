@@ -1,5 +1,6 @@
 package by.alexandr7035.banking.data.savings
 
+import android.content.Context
 import by.alexandr7035.banking.domain.repository.savings.Saving
 import by.alexandr7035.banking.domain.repository.savings.SavingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -7,7 +8,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class SavingsRepositoryMock(
-    private val coroutineDispatcher: CoroutineDispatcher
+    private val coroutineDispatcher: CoroutineDispatcher,
+    private val context: Context
 ) : SavingsRepository {
     override suspend fun getSavings(): List<Saving> = withContext(coroutineDispatcher) {
         delay(MOCK_DELAY_MILLS)
@@ -17,36 +19,43 @@ class SavingsRepositoryMock(
                 title = "Buy Playstation",
                 description = "Slim 1 TB 56 Games",
                 completedPercentage = 0.7f,
-                iconUrl = "https://svgur.com/i/y7P.svg"
+                iconUrl = getMockImageUrl( "ic_playstation")
             ),
             Saving(
                 title = "Buy Car Remote",
                 description = "Mercedez Benz 001",
                 completedPercentage = 0.8f,
-                iconUrl = "https://svgur.com/i/y7P.svg"
+                iconUrl = getMockImageUrl( "ic_car")
             ),
             Saving(
                 title = "Buy Bicycle",
                 description = "Mountain bike R7",
                 completedPercentage = 0.6f,
-                iconUrl = "https://svgur.com/i/y7P.svg"
+                iconUrl = getMockImageUrl( "ic_bike")
             ),
             Saving(
                 title = "Buy Mini Vespa",
-                description = "",
+                description = "Mini Vespa Scooter 6v",
                 completedPercentage = 1f,
-                iconUrl = "https://svgur.com/i/y7P.svg"
+                iconUrl = getMockImageUrl( "ic_scooter")
             ),
             Saving(
                 title = "Buy Barbie Doll",
                 description = "One Set Purple",
                 completedPercentage = 1f,
-                iconUrl = "https://svgur.com/i/y7P.svg"
+                iconUrl = getMockImageUrl( "ic_doll")
             ),
         )
     }
 
+    private fun getMockImageUrl(
+        drawableName: String
+    ): String {
+        val packageName = context.packageName
+        return "android.resource://$packageName/drawable/$drawableName"
+    }
+
     companion object {
-        private const val MOCK_DELAY_MILLS = 700L
+        private const val MOCK_DELAY_MILLS = 400L
     }
 }
