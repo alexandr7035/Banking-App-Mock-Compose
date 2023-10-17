@@ -6,7 +6,7 @@ import by.alexandr7035.banking.domain.repository.savings.SavingsRepository
 class GetHomeSavingsUseCase(
     private val savingsRepository: SavingsRepository
 ) {
-    fun execute(): List<Saving> {
+    suspend fun execute(): List<Saving> {
         val all = savingsRepository.getSavings()
 
         val completed = all.filter {

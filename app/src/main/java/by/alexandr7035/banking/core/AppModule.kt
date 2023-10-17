@@ -32,6 +32,7 @@ import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewMod
 import by.alexandr7035.banking.ui.feature_home.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
 import by.alexandr7035.banking.ui.feature_profile.ProfileViewModel
+import by.alexandr7035.banking.ui.feature_savings.SavingsViewModel
 import com.cioccarellia.ksprefs.KsPrefs
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
@@ -66,6 +67,12 @@ val appModule = module {
             validateCardHolderUseCase = get(),
             validateBillingAddressUseCase = get(),
             addCardUseCase = get()
+        )
+    }
+
+    viewModel {
+        SavingsViewModel(
+            getAllSavingsUseCase = get()
         )
     }
 
@@ -118,7 +125,9 @@ val appModule = module {
     }
 
     single<SavingsRepository> {
-        SavingsRepositoryMock()
+        SavingsRepositoryMock(
+            coroutineDispatcher = Dispatchers.IO
+        )
     }
 
     single {

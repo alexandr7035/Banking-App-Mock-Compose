@@ -20,6 +20,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,19 +30,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
+import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SavingsScreen(
+    viewModel: SavingsViewModel = koinViewModel(),
     onBack: () -> Unit,
 ) {
+    val state = viewModel.state.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(Unit) {
+        viewModel.emitIntent(SavingsListIntent.EnterScreen)
+    }
+
     Scaffold(
         topBar = {
             SecondaryToolBar(onBack = onBack, title = UiText.StringResource(R.string.your_saving))
@@ -54,6 +66,16 @@ fun SavingsScreen(
                     top = pv.calculateTopPadding(),
                     bottom = pv.calculateBottomPadding()
                 )) {
+            when (state) {
+                is SavingsListState.Success -> {
+                    SavingsScreen_Ui(savings = state.savings)
+                }
+
+                // TODO skeleton
+                is SavingsListState.Loading -> FullscreenProgressBar()
+
+                is SavingsListState.Error -> ErrorFullScreen(error = state.error)
+            }
         }
     }
 }
@@ -203,6 +225,6 @@ private fun PagerTab(
 @Preview
 fun SavingsScreen_Preview() {
     ScreenPreview {
-        SavingsScreen_Ui(savings = List(10) { SavingUi.mock() })
+        SavingsScreen_Ui(savings = List(5) { SavingUi.mock() })
     }
 }

@@ -155,7 +155,7 @@ fun HomeScreen_Ui(
             Spacer(Modifier.height(8.dp))
 
             SectionTitle(stringResource(R.string.your_saving)) {
-                ctx.showToast("TODO")
+                onGoToDestination.invoke(NavEntries.SavingsList)
             }
 
             Column(
