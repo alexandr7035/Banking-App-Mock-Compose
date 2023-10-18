@@ -18,7 +18,9 @@ import by.alexandr7035.banking.domain.usecases.cards.GetAllCardsUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetCardByNumberUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.domain.usecases.cards.RemoveCardUseCase
+import by.alexandr7035.banking.domain.usecases.login.CheckIfLoggedInUseCase
 import by.alexandr7035.banking.domain.usecases.login.LoginWithEmailUseCase
+import by.alexandr7035.banking.domain.usecases.login.LogoutUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetAllSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
@@ -42,9 +44,23 @@ import org.koin.dsl.module
 
 // TODO separate module
 val appModule = module {
-    viewModel { LoginViewModel(get()) }
-    viewModel { AppViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
+    viewModel {
+        LoginViewModel(
+            loginWithEmailUseCase = get()
+        )
+    }
+    viewModel {
+        AppViewModel(
+            appRepository = get(),
+            checkIfLoggedInUseCase = get(),
+            logoutUseCase = get()
+        )
+    }
+    viewModel {
+        ProfileViewModel(
+            repository = get()
+        )
+    }
     viewModel {
         HomeViewModel(
             profileRepository = get(),
@@ -92,7 +108,11 @@ val appModule = module {
 
     factory { GetAllSavingsUseCase(savingsRepository = get()) }
     factory { GetHomeSavingsUseCase(savingsRepository = get()) }
+
     factory { LoginWithEmailUseCase(loginRepository = get()) }
+    factory { LogoutUseCase(loginRepository = get()) }
+    factory { CheckIfLoggedInUseCase(loginRepository = get()) }
+
 
     single<CacheDatabase> {
         Room.databaseBuilder(
@@ -113,7 +133,8 @@ val appModule = module {
 
     single<LoginRepository> {
         LoginRepositoryMock(
-            coroutineDispatcher = Dispatchers.IO
+            coroutineDispatcher = Dispatchers.IO,
+            prefs = get()
         )
     }
 

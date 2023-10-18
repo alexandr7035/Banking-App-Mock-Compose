@@ -108,8 +108,6 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
 
                 composable(NavEntries.Login.route) {
                     LoginScreen(onLoginCompleted = {
-                        viewModel.onLoginCompleted()
-
                         navController.navigate(NavEntries.Graphs.HomeGraph.route) {
                             popUpTo(NavEntries.Login.route) {
                                 inclusive = true
