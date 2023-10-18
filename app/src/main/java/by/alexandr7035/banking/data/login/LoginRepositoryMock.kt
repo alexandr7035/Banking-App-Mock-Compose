@@ -29,7 +29,8 @@ class LoginRepositoryMock(
         }
     }
 
-    override fun checkIfLoggedIn(): Boolean {
+    override suspend fun checkIfLoggedIn(): Boolean {
+        delay(MOCK_DELAY)
         return prefs.pull(PrefKeys.IS_LOGGED_IN.name, false)
     }
 

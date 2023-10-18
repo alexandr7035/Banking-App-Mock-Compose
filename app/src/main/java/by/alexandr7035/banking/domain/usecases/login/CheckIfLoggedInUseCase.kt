@@ -5,7 +5,7 @@ import by.alexandr7035.banking.data.login.LoginRepository
 class CheckIfLoggedInUseCase(
     private val loginRepository: LoginRepository
 ) {
-    fun execute(): Boolean {
+    suspend fun execute(): Boolean {
         return loginRepository.checkIfLoggedIn()
     }
 }

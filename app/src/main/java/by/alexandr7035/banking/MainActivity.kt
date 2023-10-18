@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import by.alexandr7035.banking.ui.core.navigation.AppNavHost
+import by.alexandr7035.banking.ui.core.AppContainerScreen
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
             BankingAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    AppNavHost()
+                    AppContainerScreen()
                 }
             }
         }
