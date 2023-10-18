@@ -27,12 +27,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -57,16 +54,16 @@ import by.alexandr7035.banking.ui.components.DecoratedPasswordTextField
 import by.alexandr7035.banking.ui.components.DecoratedTextField
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
-import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.core.navigation.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.Gray30
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
-import by.alexandr7035.banking.ui.validation.FieldValidationResult
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
 
@@ -74,12 +71,10 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
     onLoginCompleted: () -> Unit = {},
-    onShowSnackBar: (message: String, mode: SnackBarMode) -> Unit = { _, _ -> }
 ) {
-    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-
     val state = viewModel.loginState.collectAsStateWithLifecycle().value
+    val snackBarState = LocalScopedSnackbarState.current
 
     EventEffect(
         event = state.loginEvent,
@@ -90,8 +85,7 @@ fun LoginScreen(
             is OperationResult.Success -> onLoginCompleted.invoke()
             is OperationResult.Failure -> {
                 val error = loginResult.error.errorType.asUiTextError().asString(context)
-                // TODO use local composition
-                onShowSnackBar.invoke(error, SnackBarMode.Negative)
+                snackBarState.show(error, SnackBarMode.Negative)
             }
         }
     }

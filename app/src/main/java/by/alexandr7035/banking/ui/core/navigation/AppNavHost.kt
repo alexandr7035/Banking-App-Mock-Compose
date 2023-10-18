@@ -83,18 +83,19 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val shouldShowBottomNav = NavEntries.primaryDestinations.contains(navBackStackEntry?.destination?.route)
-//    val shouldShowBottomNav = false
 
-    Scaffold(snackbarHost = {
-        SnackbarHost(hostState = snackBarHostState) { ResultSnackBar(snackbarData = it) }
-    }, bottomBar = { if (shouldShowBottomNav) BottomNav(navController) }) { pv ->
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState) { ResultSnackBar(snackbarData = it) }
+        },
+        bottomBar = { if (shouldShowBottomNav) BottomNav(navController) }
+    ) { pv ->
 
         CompositionLocalProvider(LocalScopedSnackbarState provides ScopedSnackBarState(
             value = snackBarHostState,
             coroutineScope = hostCoroutineScope
         )) {
 
-            // TODO app routes model
             NavHost(
                 navController = navController, startDestination = NavEntries.Graphs.HomeGraph.route, modifier = Modifier.padding(pv)
             ) {
@@ -112,10 +113,6 @@ fun AppNavHost(viewModel: AppViewModel = koinViewModel()) {
                             popUpTo(NavEntries.Login.route) {
                                 inclusive = true
                             }
-                        }
-                    }, onShowSnackBar = { msg, mode ->
-                        hostCoroutineScope.launch {
-                            snackBarHostState.showResultSnackBar(msg, mode)
                         }
                     })
                 }
