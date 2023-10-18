@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background layer to define the total size -->
+    <item
+        android:width="288dp"
+        android:height="288dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#00000000" />
+        </shape>
+    </item>
+
+    <!-- Inner layer with your PNG drawable -->
+    <item
+        android:drawable="@drawable/ic_splash_inner"
+        android:width="160dp"
+        android:height="160dp"
+        android:gravity="center" />
+</layer-list>
