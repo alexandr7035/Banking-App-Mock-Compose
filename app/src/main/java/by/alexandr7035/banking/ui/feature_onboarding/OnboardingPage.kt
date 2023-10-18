@@ -1,33 +1,29 @@
-package by.alexandr7035.banking.ui.feature_wizard
+package by.alexandr7035.banking.ui.feature_onboarding
 
 import android.content.Context
-import android.graphics.Paint
-import androidx.annotation.IdRes
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import by.alexandr7035.banking.R
 
-data class WizardPage(
+data class OnboardingPage(
     val title: String,
     val description: String,
     val imgRes: Int
 ) {
     companion object {
-        fun getPages(context: Context): List<WizardPage> {
+        fun getPages(context: Context): List<OnboardingPage> {
             return listOf(
-                WizardPage(
+                OnboardingPage(
                     title = context.getString(R.string.wizard_title_1),
                     description = context.getString(R.string.wizard_desc_1),
                     imgRes = R.drawable.img_wizard_1
                 ),
 
-                WizardPage(
+                OnboardingPage(
                     title = context.getString(R.string.wizard_title_2),
                     description = context.getString(R.string.wizard_desc_2),
                     imgRes = R.drawable.img_wizard_2
                 ),
 
-                WizardPage(
+                OnboardingPage(
                     title = context.getString(R.string.wizard_title_3),
                     description = context.getString(R.string.wizard_desc_3),
                     imgRes = R.drawable.img_wizard_3

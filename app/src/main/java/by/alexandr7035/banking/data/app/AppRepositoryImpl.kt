@@ -4,12 +4,12 @@ import com.cioccarellia.ksprefs.KsPrefs
 
 class AppRepositoryImpl(
     private val prefs: KsPrefs
-) : AppRepository {
-    override fun setWizardViewed(viewed: Boolean) {
+) : AppSettignsRepository {
+    override fun setOnboardingPassed(viewed: Boolean) {
         prefs.push(PrefKeys.IS_WIZARD_VIEWED.name, viewed)
     }
 
-    override fun isWizardViewed(): Boolean {
+    override fun isOnboardingPassed(): Boolean {
         return prefs.pull(PrefKeys.IS_WIZARD_VIEWED.name, false)
     }
 }

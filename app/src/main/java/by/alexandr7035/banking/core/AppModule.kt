@@ -1,7 +1,7 @@
 package by.alexandr7035.banking.core
 
 import androidx.room.Room
-import by.alexandr7035.banking.data.app.AppRepository
+import by.alexandr7035.banking.data.app.AppSettignsRepository
 import by.alexandr7035.banking.data.app.AppRepositoryImpl
 import by.alexandr7035.banking.data.cards.CardsRepositoryMock
 import by.alexandr7035.banking.data.cards.cache.CardsDao
@@ -21,6 +21,8 @@ import by.alexandr7035.banking.domain.usecases.cards.RemoveCardUseCase
 import by.alexandr7035.banking.domain.usecases.login.CheckIfLoggedInUseCase
 import by.alexandr7035.banking.domain.usecases.login.LoginWithEmailUseCase
 import by.alexandr7035.banking.domain.usecases.login.LogoutUseCase
+import by.alexandr7035.banking.domain.usecases.onboarding.CheckIfPassedOnboardingUseCase
+import by.alexandr7035.banking.domain.usecases.onboarding.PassOnboardingUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetAllSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
@@ -36,6 +38,7 @@ import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsV
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
 import by.alexandr7035.banking.ui.feature_home.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
+import by.alexandr7035.banking.ui.feature_onboarding.OnboardingViewModel
 import by.alexandr7035.banking.ui.feature_profile.ProfileViewModel
 import by.alexandr7035.banking.ui.feature_savings.SavingsViewModel
 import com.cioccarellia.ksprefs.KsPrefs
@@ -46,6 +49,13 @@ import org.koin.dsl.module
 
 // TODO separate module
 val appModule = module {
+
+    viewModel {
+        OnboardingViewModel(
+            passOnboardingUseCase = get()
+        )
+    }
+
     viewModel {
         LoginViewModel(
             loginWithEmailUseCase = get(),
@@ -55,9 +65,8 @@ val appModule = module {
     }
     viewModel {
         AppViewModel(
-            appRepository = get(),
             checkIfLoggedInUseCase = get(),
-            logoutUseCase = get()
+            checkIfPassedOnboardingUseCase = get()
         )
     }
     viewModel {
@@ -98,6 +107,17 @@ val appModule = module {
     }
 
     // Use cases
+    factory {
+        CheckIfPassedOnboardingUseCase(
+            settignsRepository = get()
+        )
+    }
+    factory {
+        PassOnboardingUseCase(
+            settignsRepository = get()
+        )
+    }
+
     factory { ValidateCardNumberUseCase() }
     factory { ValidateCvvCodeUseCase() }
     factory { ValidateCardExpirationUseCase() }
@@ -133,7 +153,7 @@ val appModule = module {
         db.getCardsDao()
     }
 
-    single<AppRepository> {
+    single<AppSettignsRepository> {
         AppRepositoryImpl(get())
     }
 

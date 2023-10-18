@@ -2,7 +2,6 @@ package by.alexandr7035.banking.ui.core.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +23,7 @@ import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_profile.logout_dialog.LogoutDialog
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
-import by.alexandr7035.banking.ui.feature_wizard.WizardScreen
+import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 
 // TODO split nav graph
 @Composable
@@ -58,12 +57,14 @@ fun AppNavHost(
 //        modifier = Modifier.padding(pv)
     ) {
         composable(NavEntries.Wizard.route) {
-            WizardScreen(onGoToLogin = {
-                navController.navigate(NavEntries.Login.route)
-            }, onWizardCompleted = {
-                // TODO fixme
-//                        viewModel.setWizardViewed()
-            })
+            OnboardingScreen(
+                onGoToLogin = {
+                    navController.navigate(NavEntries.Login.route)
+                },
+                onSignUp = {
+                    // TODO
+                }
+            )
         }
 
         composable(NavEntries.Login.route) {

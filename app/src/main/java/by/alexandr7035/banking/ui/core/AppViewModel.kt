@@ -2,11 +2,10 @@ package by.alexandr7035.banking.ui.core
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import by.alexandr7035.banking.data.app.AppRepository
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.usecases.login.CheckIfLoggedInUseCase
-import by.alexandr7035.banking.domain.usecases.login.LogoutUseCase
+import by.alexandr7035.banking.domain.usecases.onboarding.CheckIfPassedOnboardingUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,9 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AppViewModel(
-    private val appRepository: AppRepository,
     private val checkIfLoggedInUseCase: CheckIfLoggedInUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val checkIfPassedOnboardingUseCase: CheckIfPassedOnboardingUseCase
 ) : ViewModel() {
 
     private val _appState: MutableStateFlow<AppState> = MutableStateFlow(AppState.Loading)
@@ -40,7 +38,7 @@ class AppViewModel(
 
                     when (isLoggedIn) {
                         is OperationResult.Success -> {
-                            val hasPassedOnboarding = appRepository.isWizardViewed()
+                            val hasPassedOnboarding = checkIfPassedOnboardingUseCase.execute()
 
                             reduceAppReady(
                                 isLoggedIn = isLoggedIn.data,
