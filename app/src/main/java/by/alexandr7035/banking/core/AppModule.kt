@@ -7,7 +7,7 @@ import by.alexandr7035.banking.data.cards.CardsRepositoryMock
 import by.alexandr7035.banking.data.cards.cache.CardsDao
 import by.alexandr7035.banking.data.db.CacheDatabase
 import by.alexandr7035.banking.data.login.LoginRepository
-import by.alexandr7035.banking.data.login.LoginRepositoryImpl
+import by.alexandr7035.banking.data.login.LoginRepositoryMock
 import by.alexandr7035.banking.data.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.data.savings.SavingsRepositoryMock
@@ -18,6 +18,7 @@ import by.alexandr7035.banking.domain.usecases.cards.GetAllCardsUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetCardByNumberUseCase
 import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.domain.usecases.cards.RemoveCardUseCase
+import by.alexandr7035.banking.domain.usecases.login.LoginWithEmailUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetAllSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
@@ -91,6 +92,7 @@ val appModule = module {
 
     factory { GetAllSavingsUseCase(savingsRepository = get()) }
     factory { GetHomeSavingsUseCase(savingsRepository = get()) }
+    factory { LoginWithEmailUseCase(loginRepository = get()) }
 
     single<CacheDatabase> {
         Room.databaseBuilder(
@@ -110,7 +112,9 @@ val appModule = module {
     }
 
     single<LoginRepository> {
-        LoginRepositoryImpl()
+        LoginRepositoryMock(
+            coroutineDispatcher = Dispatchers.IO
+        )
     }
 
     single<ProfileRepository> {
