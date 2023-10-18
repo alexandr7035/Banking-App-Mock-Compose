@@ -28,6 +28,8 @@ import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpiration
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCardNumberUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateCvvCodeUseCase
+import by.alexandr7035.banking.domain.usecases.validation.ValidateEmailUseCase
+import by.alexandr7035.banking.domain.usecases.validation.ValidatePasswordUseCase
 import by.alexandr7035.banking.ui.core.AppViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
@@ -46,7 +48,9 @@ import org.koin.dsl.module
 val appModule = module {
     viewModel {
         LoginViewModel(
-            loginWithEmailUseCase = get()
+            loginWithEmailUseCase = get(),
+            validateEmailUseCase = get(),
+            validatePasswordUseCase = get()
         )
     }
     viewModel {
@@ -99,6 +103,8 @@ val appModule = module {
     factory { ValidateCardExpirationUseCase() }
     factory { ValidateBillingAddressUseCase() }
     factory { ValidateCardHolderUseCase() }
+    factory { ValidatePasswordUseCase() }
+    factory { ValidateEmailUseCase() }
 
     factory { GetAllCardsUseCase(cardsRepository = get()) }
     factory { AddCardUseCase(cardsRepository = get()) }

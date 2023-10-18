@@ -6,9 +6,10 @@ import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.usecases.login.LoginWithEmailUseCase
-import by.alexandr7035.banking.ui.core.resources.UiText
+import by.alexandr7035.banking.domain.usecases.validation.ValidateEmailUseCase
+import by.alexandr7035.banking.domain.usecases.validation.ValidatePasswordUseCase
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
-import by.alexandr7035.banking.ui.validation.FormValidators
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val loginWithEmailUseCase: LoginWithEmailUseCase
+    private val loginWithEmailUseCase: LoginWithEmailUseCase,
+    private val validatePasswordUseCase: ValidatePasswordUseCase,
+    private val validateEmailUseCase: ValidateEmailUseCase
 ) : ViewModel() {
     private val _loginState = MutableStateFlow(LoginScreenState())
     val loginState = _loginState.asStateFlow()
@@ -42,13 +45,16 @@ class LoginViewModel(
 
                 var formValidFlag = true
 
-                if (!FormValidators.isEmailValid(email)) {
-                    reduceFieldError(LoginFieldType.EMAIL, ErrorType.INVALID_EMAIL_FIELD)
+                val mailValidation = validateEmailUseCase.execute(email)
+                val passwordValidation = validatePasswordUseCase.execute(password)
+
+                if (!mailValidation.isValid) {
+                    reduceFieldError(LoginFieldType.EMAIL, mailValidation.validationError)
                     formValidFlag = false
                 }
 
-                if (!FormValidators.isPasswordValid(password)) {
-                    reduceFieldError(LoginFieldType.PASSWORD, ErrorType.INVALID_PASSWORD_FIELD)
+                if (!passwordValidation.isValid) {
+                    reduceFieldError(LoginFieldType.PASSWORD, passwordValidation.validationError)
                     formValidFlag = false
                 }
 
@@ -76,11 +82,11 @@ class LoginViewModel(
         if (errorType != null) {
             val updatedFields = when (fieldType) {
                 LoginFieldType.EMAIL -> {
-                    currentFields.copy(loginField = currentFields.loginField.copy(error = UiText.DynamicString("TODO MAIL ERROR")))
+                    currentFields.copy(loginField = currentFields.loginField.copy(error = errorType.asUiTextError()))
                 }
 
                 LoginFieldType.PASSWORD -> {
-                    currentFields.copy(passwordField = currentFields.passwordField.copy(error = UiText.DynamicString("TODO MAIL ERROR")))
+                    currentFields.copy(passwordField = currentFields.passwordField.copy(error = errorType.asUiTextError()))
                 }
             }
 
