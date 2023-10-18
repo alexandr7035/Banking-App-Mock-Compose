@@ -1,6 +1,9 @@
 package by.alexandr7035.banking.domain.core
 
 enum class ErrorType {
+    USER_NOT_FOUND,
+    WRONG_PASSWORD,
+
     FIELD_IS_EMPTY,
     INVALID_CARD_NUMBER,
     CARD_EXPIRED,
@@ -8,7 +11,10 @@ enum class ErrorType {
     DATE_UNSPECIFIED,
     CARD_NOT_FOUND,
     CARD_ALREADY_ADDED,
+    INVALID_PASSWORD_FIELD,
+    INVALID_EMAIL_FIELD,
 
     GENERIC_VALIDATION_ERROR,
+
     UNKNOWN_ERROR,
 }

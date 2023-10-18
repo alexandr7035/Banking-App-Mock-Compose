@@ -8,5 +8,9 @@
     <string name="card_not_found">Card not found</string>
     <string name="card_already_added">Card already added</string>
     <string name="generic_validation_error">Check correctness of the input</string>
+    <string name="user_not_found">User not found</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="invalid_password_field">Wrong password format. At least 8 charters, both latin symbols and numbers</string>
+    <string name="invalid_email_field">Invalid e-mail address</string>
     <string name="unknown_error">An unknown error happened</string>
 </resources>
