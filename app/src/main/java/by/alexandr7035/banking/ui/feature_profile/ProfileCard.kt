@@ -33,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import coil.compose.AsyncImage
