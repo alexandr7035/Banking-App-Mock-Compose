@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
@@ -22,10 +21,9 @@ import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsS
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
-import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
-import by.alexandr7035.banking.ui.feature_profile.LogoutDialog
-import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
+import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
+import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 
 // TODO split nav graph
 @Composable
@@ -36,8 +34,8 @@ fun AppNavHost(
     paddingValues: PaddingValues
 ) {
 
-    // Fixme keys
-    LaunchedEffect(Unit) {
+    // Conditional navigation
+    LaunchedEffect(isLoggedIn, hasPassedOnboarding) {
         if (!isLoggedIn) {
             navController.navigate(NavEntries.Login.route) {
                 popUpTo(NavEntries.Graphs.HomeGraph.route) {
