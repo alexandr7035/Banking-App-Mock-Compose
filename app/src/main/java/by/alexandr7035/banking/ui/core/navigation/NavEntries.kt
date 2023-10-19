@@ -58,12 +58,6 @@ sealed class NavEntries(
         label = "History",
     )
 
-    object LogoutDialog : NavEntries(
-        route = "logout_dialog",
-        navIcons = null,
-        label = "Log out"
-    )
-
     object CardList : NavEntries(
         route = "card_list",
         navIcons = null,

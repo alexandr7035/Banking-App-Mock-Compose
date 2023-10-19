@@ -3,6 +3,7 @@ package by.alexandr7035.banking.data.login
 import by.alexandr7035.banking.data.app.PrefKeys
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.usecases.login.LoginRepository
 import com.cioccarellia.ksprefs.KsPrefs
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -34,7 +35,9 @@ class LoginRepositoryMock(
         return prefs.pull(PrefKeys.IS_LOGGED_IN.name, false)
     }
 
-    override fun logOut() {
+    override suspend fun logOut() = withContext(coroutineDispatcher) {
+        // here may be some logic like cleanup and logout api call
+        delay(MOCK_DELAY)
         prefs.push(PrefKeys.IS_LOGGED_IN.name, false)
     }
 

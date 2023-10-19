@@ -6,7 +6,7 @@ import by.alexandr7035.banking.data.app.AppRepositoryImpl
 import by.alexandr7035.banking.data.cards.CardsRepositoryMock
 import by.alexandr7035.banking.data.cards.cache.CardsDao
 import by.alexandr7035.banking.data.db.CacheDatabase
-import by.alexandr7035.banking.data.login.LoginRepository
+import by.alexandr7035.banking.domain.usecases.login.LoginRepository
 import by.alexandr7035.banking.data.login.LoginRepositoryMock
 import by.alexandr7035.banking.domain.usecases.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
@@ -72,7 +72,8 @@ val appModule = module {
     }
     viewModel {
         ProfileViewModel(
-            getCompactProfileUseCase = get()
+            getCompactProfileUseCase = get(),
+            logoutUseCase = get()
         )
     }
     viewModel {

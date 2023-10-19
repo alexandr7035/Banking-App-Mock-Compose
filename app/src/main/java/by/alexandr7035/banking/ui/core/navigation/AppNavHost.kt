@@ -23,7 +23,7 @@ import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
-import by.alexandr7035.banking.ui.feature_profile.logout_dialog.LogoutDialog
+import by.alexandr7035.banking.ui.feature_profile.LogoutDialog
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 
@@ -36,6 +36,7 @@ fun AppNavHost(
     paddingValues: PaddingValues
 ) {
 
+    // Fixme keys
     LaunchedEffect(Unit) {
         if (!isLoggedIn) {
             navController.navigate(NavEntries.Login.route) {
@@ -117,30 +118,12 @@ fun AppNavHost(
             }
 
             composable(NavEntries.Profile.route) { navBackResult ->
-                ProfileScreen(onLogoutClick = {
-                    navController.navigate(NavEntries.LogoutDialog.route)
-                })
-
-                // logout dialog result
-                val shouldTryLogout = navBackResult.savedStateHandle.get<Boolean>(NavResult.SHOULD_LOGOUT.name) ?: false
-                LaunchedEffect(shouldTryLogout) {
-                    if (shouldTryLogout) {
-//                        viewModel.logOut()
-                        // TODO fixme
-
-                        navController.navigate(NavEntries.Login.route) {
-                            popUpTo(NavEntries.Graphs.HomeGraph.route) {
-                                inclusive = true
-                            }
+                ProfileScreen(onLogoutCompleted = {
+                    navController.navigate(NavEntries.Login.route) {
+                        popUpTo(NavEntries.Graphs.HomeGraph.route) {
+                            inclusive = true
                         }
                     }
-                }
-            }
-
-            dialog(route = NavEntries.LogoutDialog.route) {
-                LogoutDialog(onDismiss = { shouldLogout ->
-                    navController.previousBackStackEntry?.savedStateHandle?.set(NavResult.SHOULD_LOGOUT.name, shouldLogout)
-                    navController.popBackStack()
                 })
             }
 

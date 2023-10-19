@@ -7,7 +7,14 @@ import de.palm.composestateevents.consumed
 
 data class ProfileScreenState(
     val profile: ProfileUi? = null,
-    val isLoading: Boolean = true,
+    val isProfileLoading: Boolean = true,
     val error: UiText? = null,
-    val logoutEvent: StateEventWithContent<OperationResult<Unit>> = consumed()
-)
+    val logoutState: LogoutState = LogoutState()
+) {
+    data class LogoutState(
+        val isLoading: Boolean = false,
+        val showLogoutDialog: Boolean = false,
+        val logoutEvent: StateEventWithContent<OperationResult<Unit>> = consumed()
+    )
+}
+
