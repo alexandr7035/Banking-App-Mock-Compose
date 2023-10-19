@@ -52,6 +52,7 @@ import by.alexandr7035.banking.ui.feature_home.AccountActionPanel_Skeleton
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
 import by.alexandr7035.banking.ui.feature_home.HomeViewModel
+import by.alexandr7035.banking.ui.feature_profile.ProfileUi
 import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -109,10 +110,13 @@ fun HomeScreen_Ui(
                 )
             }, panelVerticalOffset = 24.dp
         ) {
-            AccountActionPanel(balance = 2000f, onActionClick = {
-                // TODO
-                ctx.showToast("TODO")
-            })
+            AccountActionPanel(
+                balance = state.profile.balance,
+                onActionClick = {
+                    // TODO
+                    ctx.showToast("TODO")
+                }
+            )
         }
 
         Spacer(Modifier.height(8.dp))
@@ -312,11 +316,15 @@ private fun HomeScreen_Skeleton() {
 @Composable
 fun HomeScreen_Preview() {
     ScreenPreview {
-        HomeScreen_Ui(HomeState.Success(profile = Profile.mock(), cards = List(3) {
-            CardUi.mock()
-        }, savings = List(3) {
-            SavingUi.mock()
-        }))
+        HomeScreen_Ui(HomeState.Success(
+            profile = ProfileUi.mock(),
+            cards = List(3) {
+                CardUi.mock()
+            },
+            savings = List(3) {
+                SavingUi.mock()
+            }
+        ))
     }
 }
 
@@ -335,7 +343,9 @@ fun HomeScreen_Empty() {
     ScreenPreview {
         HomeScreen_Ui(
             HomeState.Success(
-                profile = Profile.mock(), cards = emptyList(), savings = emptyList()
+                profile = ProfileUi.mock(),
+                cards = emptyList(),
+                savings = emptyList()
             )
         )
     }

@@ -77,9 +77,9 @@ val appModule = module {
     }
     viewModel {
         HomeViewModel(
-            profileRepository = get(),
             getHomeCardsUseCase = get(),
-            getHomeSavingsUseCase = get()
+            getHomeSavingsUseCase = get(),
+            getCompactProfileUseCase = get()
         )
     }
     viewModel { CardListViewModel(getAllCardsUseCase = get()) }
