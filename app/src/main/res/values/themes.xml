@@ -6,7 +6,7 @@
         <!-- Set the splash screen background, animated icon, and animation
         duration. -->
         <item name="windowSplashScreenBackground">#FF100D40</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_inner</item>
 
         <!-- Set the theme of the Activity that directly follows your splash
         screen. This is required. -->
