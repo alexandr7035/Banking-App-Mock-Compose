@@ -1,6 +1,6 @@
 package by.alexandr7035.banking.core.di.presentation
 
-import by.alexandr7035.banking.ui.core.AppViewModel
+import by.alexandr7035.banking.ui.app_host.AppViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel

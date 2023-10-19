@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core.navigation
+package by.alexandr7035.banking.ui.app_host.host_utils
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf

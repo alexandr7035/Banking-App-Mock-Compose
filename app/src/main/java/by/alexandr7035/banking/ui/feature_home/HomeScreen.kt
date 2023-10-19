@@ -41,7 +41,7 @@ import by.alexandr7035.banking.ui.components.DashedButton
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
-import by.alexandr7035.banking.ui.core.navigation.NavEntries
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard

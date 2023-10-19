@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core.navigation
+package by.alexandr7035.banking.ui.app_host.navigation
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +23,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable

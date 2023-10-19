@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core.navigation
+package by.alexandr7035.banking.ui.app_host.navigation.model
 
 import by.alexandr7035.banking.R
 

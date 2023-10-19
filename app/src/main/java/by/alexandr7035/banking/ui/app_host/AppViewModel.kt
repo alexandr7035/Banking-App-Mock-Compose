@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core
+package by.alexandr7035.banking.ui.app_host
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

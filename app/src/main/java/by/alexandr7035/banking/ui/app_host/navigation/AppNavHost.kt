@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core.navigation
+package by.alexandr7035.banking.ui.app_host.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
@@ -83,16 +84,19 @@ fun AppNavHost(
             startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
         ) {
             composable(NavEntries.Home.route) {
-                HomeScreen(onGoToDestination = { navEntry ->
-                    if (navEntry in listOf(
-                            NavEntries.CardList, NavEntries.AddCard, NavEntries.SavingsList
-                        )
-                    ) {
-                        navController.navigate(navEntry.route)
+                HomeScreen(
+                    onGoToDestination = { navEntry ->
+                        if (navEntry in listOf(
+                                NavEntries.CardList, NavEntries.AddCard, NavEntries.SavingsList
+                            )
+                        ) {
+                            navController.navigate(navEntry.route)
+                        }
+                    },
+                    onCardDetails = { cardId ->
+                        navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
                     }
-                }, onCardDetails = { cardId ->
-                    navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
-                })
+                )
             }
 
             composable(NavEntries.History.route) {
@@ -100,7 +104,8 @@ fun AppNavHost(
                     modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = NavEntries.History.label, textAlign = TextAlign.Center
+                        text = NavEntries.History.label,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -110,29 +115,35 @@ fun AppNavHost(
                     modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = NavEntries.Statistics.label, textAlign = TextAlign.Center
+                        text = NavEntries.Statistics.label,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
 
             composable(NavEntries.Profile.route) { navBackResult ->
-                ProfileScreen(onLogoutCompleted = {
-                    navController.navigate(NavEntries.Login.route) {
-                        popUpTo(NavEntries.Graphs.HomeGraph.route) {
-                            inclusive = true
+                ProfileScreen(
+                    onLogoutCompleted = {
+                        navController.navigate(NavEntries.Login.route) {
+                            popUpTo(NavEntries.Graphs.HomeGraph.route) {
+                                inclusive = true
+                            }
                         }
-                    }
-                })
+                    })
             }
 
             composable(NavEntries.CardList.route) {
-                CardListScreen(onAddCard = {
-                    navController.navigate(NavEntries.AddCard.route)
-                }, onCardDetails = { cardId ->
-                    navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
-                }, onBack = {
-                    navController.popBackStack()
-                })
+                CardListScreen(
+                    onAddCard = {
+                        navController.navigate(NavEntries.AddCard.route)
+                    },
+                    onCardDetails = { cardId ->
+                        navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             composable(NavEntries.AddCard.route) {
