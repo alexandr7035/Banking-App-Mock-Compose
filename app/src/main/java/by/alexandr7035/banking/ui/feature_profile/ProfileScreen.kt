@@ -63,7 +63,7 @@ fun ProfileScreen(
         )
 
         LaunchedEffect(Unit) {
-            viewModel.emitIntent(ProfileScreenIntent.LoadScreen)
+            viewModel.emitIntent(ProfileScreenIntent.EnterScreen)
         }
     }
 }

@@ -43,7 +43,7 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun ProfileCard(
-    profile: Profile?,
+    profile: ProfileUi?,
     isLoading: Boolean
 ) {
     val shape = RoundedCornerShape(size = 10.dp)
@@ -71,7 +71,7 @@ fun ProfileCard(
 }
 
 @Composable
-private fun ProfileCard_Content(profile: Profile) {
+private fun ProfileCard_Content(profile: ProfileUi) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         // Avatar container
         Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.BottomEnd) {
@@ -197,7 +197,7 @@ fun ProfileCard_Skeleton() {
 @Composable
 fun ProfileCard_Preview() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        ProfileCard(Profile.mock(), false)
+        ProfileCard(ProfileUi.mock(), false)
         ProfileCard(null, true)
     }
 }

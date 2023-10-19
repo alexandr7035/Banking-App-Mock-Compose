@@ -8,7 +8,7 @@ import by.alexandr7035.banking.data.cards.cache.CardsDao
 import by.alexandr7035.banking.data.db.CacheDatabase
 import by.alexandr7035.banking.data.login.LoginRepository
 import by.alexandr7035.banking.data.login.LoginRepositoryMock
-import by.alexandr7035.banking.data.profile.ProfileRepository
+import by.alexandr7035.banking.domain.usecases.profile.ProfileRepository
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.data.savings.SavingsRepositoryMock
 import by.alexandr7035.banking.domain.repository.cards.CardsRepository
@@ -23,6 +23,7 @@ import by.alexandr7035.banking.domain.usecases.login.LoginWithEmailUseCase
 import by.alexandr7035.banking.domain.usecases.login.LogoutUseCase
 import by.alexandr7035.banking.domain.usecases.onboarding.CheckIfPassedOnboardingUseCase
 import by.alexandr7035.banking.domain.usecases.onboarding.PassOnboardingUseCase
+import by.alexandr7035.banking.domain.usecases.profile.GetCompactProfileUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetAllSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
@@ -71,7 +72,7 @@ val appModule = module {
     }
     viewModel {
         ProfileViewModel(
-            repository = get()
+            getCompactProfileUseCase = get()
         )
     }
     viewModel {
@@ -125,6 +126,10 @@ val appModule = module {
     factory { ValidateCardHolderUseCase() }
     factory { ValidatePasswordUseCase() }
     factory { ValidateEmailUseCase() }
+
+    factory {  GetCompactProfileUseCase(
+        profileRepository = get()
+    ) }
 
     factory { GetAllCardsUseCase(cardsRepository = get()) }
     factory { AddCardUseCase(cardsRepository = get()) }

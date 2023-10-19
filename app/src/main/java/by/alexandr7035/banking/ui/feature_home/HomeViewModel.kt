@@ -3,7 +3,7 @@ package by.alexandr7035.banking.ui.feature_home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.data.profile.Profile
-import by.alexandr7035.banking.data.profile.ProfileRepository
+import by.alexandr7035.banking.domain.usecases.profile.ProfileRepository
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
@@ -15,7 +15,6 @@ import by.alexandr7035.banking.ui.feature_home.model.HomeState
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -53,7 +52,7 @@ class HomeViewModel(
         viewModelScope.launch(coroutineExceptionHandler) {
 
             val profileJob = async() {
-                profileRepository.getProfile()
+                profileRepository.getCompactProfile()
             }
 
             val cardsJob = async() {
@@ -76,7 +75,8 @@ class HomeViewModel(
             val cards = cardsJob.await()
             val saving = savingsJob.await()
 
-            reduceData(profile, cards, saving)
+            // fixme
+            reduceData(Profile.mock(), cards, saving)
         }
     }
 
