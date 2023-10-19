@@ -1,9 +1,11 @@
 package by.alexandr7035.banking.ui.feature_savings
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -70,7 +72,8 @@ fun SavingsScreen(
                 .padding(
                     top = pv.calculateTopPadding(),
                     bottom = pv.calculateBottomPadding()
-                )) {
+                )
+        ) {
             when (state) {
                 is SavingsListState.Success -> {
                     SavingsScreen_Ui(savings = state.savings)
@@ -169,13 +172,13 @@ private fun SavingsScreen_Ui(
 private fun SavingsList(savings: List<SavingUi>) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                start = 24.dp,
-                end = 24.dp,
-                top = 24.dp
-            ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(
+            start = 24.dp,
+            end = 24.dp,
+            top = 24.dp
+        )
     ) {
         items(savings) { savingUi ->
             SavingCard(savingUi = savingUi)
@@ -183,27 +186,6 @@ private fun SavingsList(savings: List<SavingUi>) {
     }
 }
 
-@Composable
-private fun SavingsScreen_Skeleton() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                start = 24.dp,
-                end = 24.dp,
-                top = 24.dp
-            )
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        repeat(4) {
-            SkeletonShape(
-                Modifier
-                    .fillMaxWidth()
-                    .height(80.dp))
-        }
-    }
-}
 
 @Composable
 private fun PagerTab(
@@ -244,6 +226,29 @@ private fun PagerTab(
                     )
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun SavingsScreen_Skeleton() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 24.dp,
+                end = 24.dp,
+                top = 24.dp
+            )
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        repeat(4) {
+            SkeletonShape(
+                Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+            )
         }
     }
 }
