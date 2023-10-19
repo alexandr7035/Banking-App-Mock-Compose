@@ -1,7 +1,9 @@
 package by.alexandr7035.banking.ui.core.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +32,8 @@ import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 fun AppNavHost(
     navController: NavHostController,
     isLoggedIn: Boolean,
-    hasPassedOnboarding: Boolean
+    hasPassedOnboarding: Boolean,
+    paddingValues: PaddingValues
 ) {
 
     LaunchedEffect(Unit) {
@@ -54,7 +57,7 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination = NavEntries.Graphs.HomeGraph.route,
-//        modifier = Modifier.padding(pv)
+        modifier = Modifier.padding(paddingValues)
     ) {
         composable(NavEntries.Wizard.route) {
             OnboardingScreen(

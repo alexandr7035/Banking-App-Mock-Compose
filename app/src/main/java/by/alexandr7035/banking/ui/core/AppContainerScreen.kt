@@ -56,7 +56,8 @@ fun AppContainerScreen(viewModel: AppViewModel = koinViewModel()) {
                     AppNavHost(
                         navController = navController,
                         isLoggedIn = state.isLoggedIn,
-                        hasPassedOnboarding = state.passedOnboarding
+                        hasPassedOnboarding = state.passedOnboarding,
+                        paddingValues = pv
                     )
                 }
             }
