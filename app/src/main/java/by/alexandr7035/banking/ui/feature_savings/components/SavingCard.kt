@@ -59,8 +59,7 @@ fun SavingCard(
                     color = Color.White, shape = shape
                 )
                 .clickable {
-                    // TODO
-                    onClick.invoke(0)
+                    onClick.invoke(savingUi.id)
                 }
                 .padding(16.dp)
         )

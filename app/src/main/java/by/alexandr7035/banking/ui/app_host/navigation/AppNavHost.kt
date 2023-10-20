@@ -174,7 +174,7 @@ fun AppNavHost(
                     onBack = {
                         navController.popBackStack()
                     },
-                    onSavingDetails = {
+                    onSavingDetails = { id ->
                         navController.navigate("${NavEntries.SavingDetails.route}/${id}")
                     }
                 )
@@ -182,14 +182,14 @@ fun AppNavHost(
 
             composable(
                 route = "${NavEntries.SavingDetails.route}/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.StringType })
+                arguments = listOf(navArgument("id") { type = NavType.LongType })
             ) {
                 SavingDetailsScreen(
                     savingId = it.arguments?.getLong("id")!!,
                     onBack = {
                         navController.popBackStack()
                     },
-                    onLinkedCardDetails = {cardId ->
+                    onLinkedCardDetails = { cardId ->
                         navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
                     }
                 )
