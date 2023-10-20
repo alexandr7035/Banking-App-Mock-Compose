@@ -1,10 +1,11 @@
 package by.alexandr7035.banking.ui.feature_savings.screen_saving_details
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -101,15 +103,11 @@ fun SavingDetailsScreen(
                 )
             }
 
-            is SavingDetailsState.Loading -> {
-                // TODO skeleton
-                FullscreenProgressBar()
-            }
+            is SavingDetailsState.Loading -> SavingDetailsScreen_Skeleton(pv)
         }
     }
 }
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun SavingDetailsScreen_Ui(
     modifier: Modifier = Modifier,
@@ -130,7 +128,7 @@ fun SavingDetailsScreen_Ui(
         horizontalAlignment = Alignment.Start,
     ) {
 
-        BoxWithConstraints(
+        Box(
             Modifier
                 .fillMaxWidth()
                 .height(250.dp),
@@ -276,6 +274,41 @@ fun SavingDetailsScreen_Preview() {
     }
 }
 
+@Composable
+private fun SavingDetailsScreen_Skeleton(pv: PaddingValues = PaddingValues()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(pv)
+            .padding(
+                vertical = 16.dp,
+                horizontal = 24.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Box(Modifier.size(200.dp)) {
+            SkeletonShape(
+                modifier = Modifier.size(300.dp),
+                shape = CircleShape
+            )
+        }
+
+        SkeletonShape(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(72.dp),
+        )
+
+        SkeletonShape(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp),
+        )
+    }
+}
+
 @Preview
 @Composable
 fun SavingDetailsScreen_CardLoading_Preview() {
@@ -285,5 +318,13 @@ fun SavingDetailsScreen_CardLoading_Preview() {
             cardUi = null,
             isCardLoading = true
         )
+    }
+}
+
+@Preview
+@Composable
+fun SavingDetailsScreen_Skeleton_Preview() {
+    ScreenPreview {
+        SavingDetailsScreen_Skeleton()
     }
 }
