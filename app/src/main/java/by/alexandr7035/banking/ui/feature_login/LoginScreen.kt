@@ -4,19 +4,18 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
@@ -114,21 +113,45 @@ private fun LoginScreen_Ui(
                 })
             }
     ) {
-        Cover(
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-        )
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
+        Column(
+            Modifier
+                .width(maxWidth)
+                .height(maxHeight)
+                .verticalScroll(rememberScrollState())
         ) {
-            LoginForm(
-                state = state,
-                onIntent = onIntent,
+            Text(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(
+                        start = 24.dp,
+                        end = 24.dp,
+                        top = 40.dp,
+                        bottom = 16.dp
+                    )
+                    .fillMaxWidth(),
+                text = "SHIELDPAY",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
             )
+
+            Cover(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                LoginForm(
+                    state = state,
+                    onIntent = onIntent,
+                )
+            }
         }
 
         if (state.isLoading) {
@@ -149,7 +172,6 @@ private fun LoginForm(
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
             .padding(
                 start = 24.dp,
                 end = 24.dp,
@@ -287,49 +309,40 @@ private fun LoginForm(
 private fun Cover(
     modifier: Modifier
 ) {
-    Column(
-        modifier = modifier
-            .then(Modifier.background(MaterialTheme.colorScheme.primary))
-            .padding(top = 48.dp, bottom = 16.dp),
-        verticalArrangement = Arrangement.Top
+    Row(
+        modifier = modifier.then(
+            Modifier
+                .wrapContentHeight(
+                    unbounded = true,
+                    align = Alignment.Top
+                )
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(bottom = 16.dp)
+                .fillMaxWidth()
+        ),
+        verticalAlignment = Alignment.Bottom
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            text = "SHIELDPAY",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary
+
+        Image(
+            modifier = Modifier
+                .height(110.dp)
+                .offset(x = (-56).dp),
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(Color(0xFF585679)),
         )
 
-        // TODO vector images
-        Row(
+        Spacer(modifier = Modifier.weight(1f))
+
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
             modifier = Modifier
                 .height(160.dp)
-                .fillMaxWidth(), verticalAlignment = Alignment.Bottom
-        ) {
-
-
-            Image(
-                modifier = Modifier
-                    .fillMaxHeight(0.7F)
-                    .offset(x = -56.dp),
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(Color(0xFF585679)),
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .offset(x = 32.dp)
-                    .rotate(-45F),
-                colorFilter = ColorFilter.tint(Color(0xFF585679))
-            )
-        }
+                .offset(x = 32.dp)
+                .rotate(-45F),
+            colorFilter = ColorFilter.tint(Color(0xFF585679))
+        )
     }
 }
 
