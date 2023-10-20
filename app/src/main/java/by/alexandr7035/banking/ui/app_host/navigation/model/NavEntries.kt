@@ -82,6 +82,12 @@ sealed class NavEntries(
         label = "Savings List"
     )
 
+    object SavingDetails: NavEntries(
+        route = "saving_details",
+        navIcons = null,
+        label = "Saving Details"
+    )
+
     sealed class Graphs(val route: String) {
         object HomeGraph : Graphs("homeGraph")
     }

@@ -41,7 +41,7 @@ import coil.request.ImageRequest
 fun SavingCard(
     modifier: Modifier = Modifier,
     savingUi: SavingUi,
-    onClick: (savingId: String) -> Unit = {}
+    onClick: (savingId: Long) -> Unit = {}
 ) {
 
     val shape = RoundedCornerShape(10.dp)
@@ -59,7 +59,8 @@ fun SavingCard(
                     color = Color.White, shape = shape
                 )
                 .clickable {
-                    onClick.invoke("todo ID")
+                    // TODO
+                    onClick.invoke(0)
                 }
                 .padding(16.dp)
         )

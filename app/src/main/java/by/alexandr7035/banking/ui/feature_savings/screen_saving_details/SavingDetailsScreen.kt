@@ -53,6 +53,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SavingDetailsScreen(
+    savingId: Long,
     onBack: () -> Unit = {},
     onLinkedCardDetails: (id: String) -> Unit = {}
 ) {

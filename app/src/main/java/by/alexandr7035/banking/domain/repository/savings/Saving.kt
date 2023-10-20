@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.domain.repository.savings
 
 data class Saving(
+    val id: Long,
     val title: String,
     val description: String,
     val completedPercentage: Float,

@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_home.components
+package by.alexandr7035.banking.ui.feature_home
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -46,11 +46,8 @@ import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
-import by.alexandr7035.banking.ui.feature_home.AccountActionPanel
-import by.alexandr7035.banking.ui.feature_home.AccountActionPanel_Skeleton
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
-import by.alexandr7035.banking.ui.feature_home.HomeViewModel
 import by.alexandr7035.banking.ui.feature_profile.ProfileUi
 import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
@@ -61,7 +58,8 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     onGoToDestination: (navEntry: NavEntries) -> Unit = {},
-    onCardDetails: (cardId: String) -> Unit = {}
+    onCardDetails: (cardId: String) -> Unit = {},
+    onSavingDetails: (id: Long) -> Unit = {}
 ) {
 
     LaunchedEffect(Unit) {
@@ -73,7 +71,8 @@ fun HomeScreen(
         is HomeState.Success -> HomeScreen_Ui(
             state = state,
             onGoToDestination = onGoToDestination,
-            onCardDetails = onCardDetails
+            onCardDetails = onCardDetails,
+            onSavingDetails = onSavingDetails
         )
 
         is HomeState.Loading -> HomeScreen_Skeleton()
@@ -90,7 +89,8 @@ fun HomeScreen(
 fun HomeScreen_Ui(
     state: HomeState.Success,
     onGoToDestination: (navEntry: NavEntries) -> Unit = {},
-    onCardDetails: (cardId: String) -> Unit = {}
+    onCardDetails: (cardId: String) -> Unit = {},
+    onSavingDetails: (id: Long) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -157,6 +157,7 @@ fun HomeScreen_Ui(
 
             Spacer(Modifier.height(8.dp))
 
+            // TODO component for section tittle
             SectionTitle(stringResource(R.string.your_saving)) {
                 onGoToDestination.invoke(NavEntries.SavingsList)
             }
@@ -169,7 +170,10 @@ fun HomeScreen_Ui(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 state.savings.forEach {
-                    SavingCard(savingUi = it)
+                    SavingCard(
+                        savingUi = it,
+                        onClick = onSavingDetails
+                    )
                 }
             }
         }
@@ -345,7 +349,7 @@ fun HomeScreen_Empty() {
                 profile = ProfileUi.mock(),
                 cards = emptyList(),
                 savings = emptyList()
-            )
+            ),
         )
     }
 }

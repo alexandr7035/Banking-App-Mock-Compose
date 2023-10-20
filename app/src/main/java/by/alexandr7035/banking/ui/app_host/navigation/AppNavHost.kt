@@ -20,11 +20,12 @@ import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
-import by.alexandr7035.banking.ui.feature_home.components.HomeScreen
+import by.alexandr7035.banking.ui.feature_home.HomeScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
+import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsScreen
 
 // TODO split nav graph
 @Composable
@@ -95,6 +96,9 @@ fun AppNavHost(
                     },
                     onCardDetails = { cardId ->
                         navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                    },
+                    onSavingDetails = { id ->
+                        navController.navigate("${NavEntries.SavingDetails.route}/${id}")
                     }
                 )
             }
@@ -166,9 +170,25 @@ fun AppNavHost(
             composable(
                 route = NavEntries.SavingsList.route
             ) {
-                SavingsScreen(onBack = {
-                    navController.popBackStack()
-                })
+                SavingsScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onSavingDetails = {
+                        navController.navigate("${NavEntries.SavingDetails.route}/${id}")
+                    }
+                )
+            }
+
+            composable(
+                route = "${NavEntries.SavingDetails.route}/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.StringType })
+            ) {
+                SavingDetailsScreen(
+                    savingId = it.arguments?.getLong("id")!!,
+                    onBack = {
+                        navController.popBackStack()
+                    })
             }
         }
     }

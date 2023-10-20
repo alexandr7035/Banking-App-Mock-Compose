@@ -53,7 +53,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SavingsScreen(
     viewModel: SavingsViewModel = koinViewModel(),
     onBack: () -> Unit,
-    onSavingDetails: (id: String) -> Unit,
+    onSavingDetails: (id: Long) -> Unit,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -95,7 +95,7 @@ fun SavingsScreen(
 @Composable
 private fun SavingsScreen_Ui(
     savings: List<SavingUi>,
-    onSavingDetails: (id: String) -> Unit = {},
+    onSavingDetails: (id: Long) -> Unit = {},
 ) {
 
     val scope = rememberCoroutineScope()
@@ -155,7 +155,7 @@ private fun SavingsScreen_Ui(
             modifier = Modifier.fillMaxSize()
         ) { page ->
 
-            val onClick: (id: String) -> Unit = {
+            val onClick: (id: Long) -> Unit = {
                 onSavingDetails.invoke(it)
             }
 
@@ -186,7 +186,7 @@ private fun SavingsScreen_Ui(
 @Composable
 private fun SavingsList(
     savings: List<SavingUi>,
-    onSavingDetails: (id: String) -> Unit = {}
+    onSavingDetails: (id: Long) -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier
