@@ -49,4 +49,5 @@
     <string name="done">Done</string>
     <string name="on_progress">On Progress</string>
     <string name="edit">Edit</string>
+    <string name="linked_card">Linked card</string>
 </resources>

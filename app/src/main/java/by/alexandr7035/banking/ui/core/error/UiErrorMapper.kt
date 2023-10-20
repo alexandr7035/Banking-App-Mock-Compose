@@ -23,5 +23,7 @@ fun ErrorType.asUiTextError(): UiText {
         ErrorType.INVALID_EMAIL_FIELD ->  UiText.StringResource(R.string.invalid_email_field)
 
         ErrorType.UNKNOWN_ERROR ->  UiText.StringResource(R.string.unknown_error)
+
+        ErrorType.GENERIC_NOT_FOUND_ERROR -> UiText.StringResource(R.string.generic_not_found_error)
     }
 }

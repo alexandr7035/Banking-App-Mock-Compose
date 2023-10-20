@@ -1,7 +1,6 @@
 package by.alexandr7035.banking.ui.feature_savings.screen_saving_details
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -17,13 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,11 +34,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.HorseshoeProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
+import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
+import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
@@ -48,15 +51,23 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import org.koin.androidx.compose.koinViewModel
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
 @Composable
 fun SavingDetailsScreen(
+    viewModel: SavingDetailsViewModel = koinViewModel(),
     savingId: Long,
     onBack: () -> Unit = {},
     onLinkedCardDetails: (id: String) -> Unit = {}
 ) {
+    val state = viewModel.state.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(Unit) {
+        viewModel.emitIntent(SavingDetailsIntent.EnterScreen(savingId))
+    }
+
     Scaffold(
         topBar = {
             SecondaryToolBar(
@@ -65,17 +76,36 @@ fun SavingDetailsScreen(
             )
         }
     ) { pv ->
-        BoxWithConstraints(Modifier.fillMaxSize()) {
-            // TODO states
-            SavingDetailsScreen_Ui(
-                modifier = Modifier
-                    .width(maxWidth)
-                    .height(maxHeight)
-                    .padding(pv),
-                savingUi = SavingUi.mock(),
-                cardUi = CardUi.mock(),
-                onLinkedCardDetails = onLinkedCardDetails
-            )
+
+        when (state) {
+            is SavingDetailsState.Success -> {
+                BoxWithConstraints(Modifier.fillMaxSize()) {
+                    SavingDetailsScreen_Ui(
+                        modifier = Modifier
+                            .width(maxWidth)
+                            .height(maxHeight)
+                            .padding(pv),
+                        savingUi = state.saving,
+                        isCardLoading = state.isCardLoading,
+                        cardUi = state.linkedCard,
+                        onLinkedCardDetails = onLinkedCardDetails
+                    )
+                }
+            }
+
+            is SavingDetailsState.Error -> {
+                ErrorFullScreen(
+                    error = state.error,
+                    onRetry = {
+                        viewModel.emitIntent(SavingDetailsIntent.EnterScreen(savingId))
+                    }
+                )
+            }
+
+            is SavingDetailsState.Loading -> {
+                // TODO skeleton
+                FullscreenProgressBar()
+            }
         }
     }
 }
@@ -85,6 +115,7 @@ fun SavingDetailsScreen(
 fun SavingDetailsScreen_Ui(
     modifier: Modifier = Modifier,
     savingUi: SavingUi,
+    isCardLoading: Boolean,
     cardUi: CardUi?,
     onLinkedCardDetails: (id: String) -> Unit = {}
 ) {
@@ -187,7 +218,7 @@ fun SavingDetailsScreen_Ui(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Linked card", style = TextStyle(
+                    text = stringResource(R.string.linked_card), style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = primaryFontFamily,
                         fontWeight = FontWeight.SemiBold,
@@ -215,6 +246,10 @@ fun SavingDetailsScreen_Ui(
                 cardUi = cardUi,
                 onCLick = { onLinkedCardDetails.invoke(cardUi.cardNumber) }
             )
+        }
+        else if (isCardLoading) {
+            Spacer(Modifier.height(20.dp))
+            SkeletonShape(modifier = Modifier.fillMaxWidth().height(160.dp))
         }
     }
 }
@@ -249,7 +284,20 @@ fun SavingDetailsScreen_Preview() {
     ScreenPreview {
         SavingDetailsScreen_Ui(
             savingUi = SavingUi.mock(donePercentage = 0f),
-            cardUi = CardUi.mock()
+            cardUi = CardUi.mock(),
+            isCardLoading = false
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SavingDetailsScreen_CardLoading_Preview() {
+    ScreenPreview {
+        SavingDetailsScreen_Ui(
+            savingUi = SavingUi.mock(donePercentage = 0f),
+            cardUi = null,
+            isCardLoading = true
         )
     }
 }

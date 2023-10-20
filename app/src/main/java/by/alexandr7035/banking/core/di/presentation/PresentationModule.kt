@@ -9,6 +9,7 @@ import by.alexandr7035.banking.ui.feature_login.LoginViewModel
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingViewModel
 import by.alexandr7035.banking.ui.feature_profile.ProfileViewModel
 import by.alexandr7035.banking.ui.feature_savings.SavingsViewModel
+import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -67,6 +68,13 @@ val presentationModule = module {
     viewModel {
         SavingsViewModel(
             getAllSavingsUseCase = get()
+        )
+    }
+
+    viewModel {
+        SavingDetailsViewModel(
+            getSavingByIdUseCase = get(),
+            getCardByNumberUseCase = get()
         )
     }
 }

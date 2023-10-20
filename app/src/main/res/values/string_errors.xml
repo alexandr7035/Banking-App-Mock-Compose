@@ -13,4 +13,5 @@
     <string name="invalid_password_field">Wrong password format. At least 8 charters, both latin symbols and numbers</string>
     <string name="invalid_email_field">Invalid e-mail address</string>
     <string name="unknown_error">An unknown error happened</string>
+    <string name="generic_not_found_error">Item not found</string>
 </resources>

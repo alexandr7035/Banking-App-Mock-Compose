@@ -57,7 +57,8 @@ val dataModule = module {
     single<SavingsRepository> {
         SavingsRepositoryMock(
             coroutineDispatcher = Dispatchers.IO,
-            context = androidApplication().applicationContext
+            context = androidApplication().applicationContext,
+            cardsRepository = get()
         )
     }
 
