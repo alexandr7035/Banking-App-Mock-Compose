@@ -57,7 +57,7 @@ class SavingsRepositoryMock(
                 description = "One Set Purple",
                 completedPercentage = 1f,
                 iconUrl = getMockImageUrl( "ic_doll"),
-                linkedCardId = mockLinkedCard
+                linkedCardId = null
             ),
         )
     }

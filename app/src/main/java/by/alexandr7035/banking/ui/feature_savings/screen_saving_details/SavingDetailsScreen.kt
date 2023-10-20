@@ -20,14 +20,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,6 +37,7 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.HorseshoeProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.ScreenSectionDivider
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
@@ -211,45 +210,32 @@ fun SavingDetailsScreen_Ui(
         if (cardUi != null) {
             Spacer(Modifier.height(20.dp))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = stringResource(R.string.linked_card), style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF100D40),
-                    )
-                )
-
-                TextButton(
-                    onClick = { },
-                    enabled = false
-                ) {
-                    Text(
-                        text = stringResource(R.string.edit), style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = primaryFontFamily,
-                            fontWeight = FontWeight(500),
-                            color = Color(0xFF100D40),
-                        )
-                    )
-                }
-            }
+            ScreenSectionDivider(
+                modifier = Modifier.fillMaxWidth(),
+                title = UiText.StringResource(R.string.linked_card),
+                actionLabel = UiText.StringResource(R.string.edit),
+                actionEnabled = false
+            )
 
             PaymentCard(
                 cardUi = cardUi,
                 onCLick = { onLinkedCardDetails.invoke(cardUi.cardNumber) }
             )
-        }
-        else if (isCardLoading) {
+        } else if (isCardLoading) {
             Spacer(Modifier.height(20.dp))
-            SkeletonShape(modifier = Modifier.fillMaxWidth().height(160.dp))
+
+            ScreenSectionDivider(
+                modifier = Modifier.fillMaxWidth(),
+                title = UiText.StringResource(R.string.linked_card),
+                actionLabel = null,
+                actionEnabled = false
+            )
+
+            SkeletonShape(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+            )
         }
     }
 }
