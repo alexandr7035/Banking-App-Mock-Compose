@@ -1,7 +1,6 @@
 package by.alexandr7035.banking.ui.feature_savings
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,6 +53,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SavingsScreen(
     viewModel: SavingsViewModel = koinViewModel(),
     onBack: () -> Unit,
+    onSavingDetails: (id: String) -> Unit,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -76,7 +76,10 @@ fun SavingsScreen(
         ) {
             when (state) {
                 is SavingsListState.Success -> {
-                    SavingsScreen_Ui(savings = state.savings)
+                    SavingsScreen_Ui(
+                        savings = state.savings,
+                        onSavingDetails = onSavingDetails
+                    )
                 }
 
                 // TODO skeleton
@@ -92,6 +95,7 @@ fun SavingsScreen(
 @Composable
 private fun SavingsScreen_Ui(
     savings: List<SavingUi>,
+    onSavingDetails: (id: String) -> Unit = {},
 ) {
 
     val scope = rememberCoroutineScope()
@@ -150,17 +154,28 @@ private fun SavingsScreen_Ui(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
+
+            val onClick: (id: String) -> Unit = {
+                onSavingDetails.invoke(it)
+            }
+
             when (page) {
                 0 -> {
-                    SavingsList(savings = savings.filter {
-                        !it.isCompleted
-                    })
+                    SavingsList(
+                        savings = savings.filter {
+                            !it.isCompleted
+                        },
+                        onSavingDetails = onClick
+                    )
                 }
 
                 1 -> {
-                    SavingsList(savings = savings.filter {
-                        it.isCompleted
-                    })
+                    SavingsList(
+                        savings = savings.filter {
+                            it.isCompleted
+                        },
+                        onSavingDetails = onClick
+                    )
                 }
             }
         }
@@ -169,7 +184,10 @@ private fun SavingsScreen_Ui(
 }
 
 @Composable
-private fun SavingsList(savings: List<SavingUi>) {
+private fun SavingsList(
+    savings: List<SavingUi>,
+    onSavingDetails: (id: String) -> Unit = {}
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
@@ -181,7 +199,12 @@ private fun SavingsList(savings: List<SavingUi>) {
         )
     ) {
         items(savings) { savingUi ->
-            SavingCard(savingUi = savingUi)
+            SavingCard(
+                savingUi = savingUi,
+                onClick = {
+                    onSavingDetails.invoke(it)
+                }
+            )
         }
     }
 }

@@ -10,12 +10,12 @@ data class SavingUi(
     val isCompleted: Boolean
 ) {
     companion object {
-        fun mock(): SavingUi {
+        fun mock(donePercentage: Float = 0.75F): SavingUi {
             return SavingUi(
                 title = "Buy Playstation",
                 description = "Slim 1 TB 56 Games",
                 imageUrl = "https://svgur.com/i/y7P.svg",
-                donePercentage = 0.75F,
+                donePercentage = donePercentage,
                 isCompleted = false
             )
         }

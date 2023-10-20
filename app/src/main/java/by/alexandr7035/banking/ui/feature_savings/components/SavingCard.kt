@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.ui.feature_savings.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -40,7 +40,8 @@ import coil.request.ImageRequest
 @Composable
 fun SavingCard(
     modifier: Modifier = Modifier,
-    savingUi: SavingUi
+    savingUi: SavingUi,
+    onClick: (savingId: String) -> Unit = {}
 ) {
 
     val shape = RoundedCornerShape(10.dp)
@@ -57,6 +58,9 @@ fun SavingCard(
                 .background(
                     color = Color.White, shape = shape
                 )
+                .clickable {
+                    onClick.invoke("todo ID")
+                }
                 .padding(16.dp)
         )
     ) {
