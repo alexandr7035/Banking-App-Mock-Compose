@@ -188,7 +188,11 @@ fun AppNavHost(
                     savingId = it.arguments?.getLong("id")!!,
                     onBack = {
                         navController.popBackStack()
-                    })
+                    },
+                    onLinkedCardDetails = {cardId ->
+                        navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                    }
+                )
             }
         }
     }
