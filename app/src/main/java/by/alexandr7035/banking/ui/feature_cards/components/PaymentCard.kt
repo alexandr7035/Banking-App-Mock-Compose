@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
 import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
-import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -38,7 +37,7 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 @Composable
 fun PaymentCard(
     cardUi: CardUi,
-    onCLick: (cardNumber: String) -> Unit = {}
+    onCLick: (cardId: String) -> Unit = {}
 ) {
     Card(
         backgroundColor = MaterialTheme.colorScheme.primary,
@@ -84,7 +83,7 @@ fun PaymentCard(
                     Spacer(Modifier.height(30.dp))
 
                     Text(
-                        text = cardUi.cardNumber.splitStringWithDivider(), style = TextStyle(
+                        text = cardUi.cardNumber, style = TextStyle(
                             fontSize = 16.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight.Medium,

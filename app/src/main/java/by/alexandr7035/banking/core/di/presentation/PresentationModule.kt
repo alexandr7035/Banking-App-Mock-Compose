@@ -49,7 +49,7 @@ val presentationModule = module {
     viewModel { CardListViewModel(getAllCardsUseCase = get()) }
     viewModel {
         CardDetailsViewModel(
-            getCardByNumberUseCase = get(),
+            getCardByIdUseCase = get(),
             deleteCardByNumberUseCase = get()
         )
     }
@@ -74,7 +74,7 @@ val presentationModule = module {
     viewModel {
         SavingDetailsViewModel(
             getSavingByIdUseCase = get(),
-            getCardByNumberUseCase = get()
+            getCardByIdUseCase = get()
         )
     }
 }

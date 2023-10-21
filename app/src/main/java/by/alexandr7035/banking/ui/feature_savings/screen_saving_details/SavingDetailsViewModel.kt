@@ -6,7 +6,7 @@ import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.repository.cards.PaymentCard
 import by.alexandr7035.banking.domain.repository.savings.Saving
-import by.alexandr7035.banking.domain.usecases.cards.GetCardByNumberUseCase
+import by.alexandr7035.banking.domain.usecases.cards.GetCardByIdUseCase
 import by.alexandr7035.banking.domain.usecases.savings.GetSavingByIdUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class SavingDetailsViewModel(
     private val getSavingByIdUseCase: GetSavingByIdUseCase,
-    private val getCardByNumberUseCase: GetCardByNumberUseCase
+    private val getCardByIdUseCase: GetCardByIdUseCase
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<SavingDetailsState> = MutableStateFlow(SavingDetailsState.Loading)
@@ -58,7 +58,7 @@ class SavingDetailsViewModel(
                     delay(2000L)
 
                     val cardRes = OperationResult.runWrapped {
-                        getCardByNumberUseCase.execute(intent.cardId)
+                        getCardByIdUseCase.execute(intent.cardId)
                     }
 
                     when (cardRes) {

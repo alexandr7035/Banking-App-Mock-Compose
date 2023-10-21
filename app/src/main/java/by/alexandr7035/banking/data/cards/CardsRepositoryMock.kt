@@ -37,13 +37,14 @@ class CardsRepositoryMock(
         }
     }
 
-    override suspend fun getCardByNumber(number: String): PaymentCard = withContext(coroutineDispatcher) {
-        val cardEntity = cacheDao.getCardByNumber(number) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+    override suspend fun getCardById(id: String): PaymentCard = withContext(coroutineDispatcher) {
+        val cardEntity = cacheDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
         delay(MOCK_DELAY)
         return@withContext mapCachedCardToDomain(cardEntity)
     }
 
     private fun mapCachedCardToDomain(cardEntity: CardEntity) = PaymentCard(
+        cardId = cardEntity.number,
         cardNumber = cardEntity.number,
         cardHolder = cardEntity.cardHolder,
         addressFirstLine = cardEntity.addressFirstLine,

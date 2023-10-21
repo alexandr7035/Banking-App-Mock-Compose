@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.repository.cards.PaymentCard
-import by.alexandr7035.banking.domain.usecases.cards.GetCardByNumberUseCase
+import by.alexandr7035.banking.domain.usecases.cards.GetCardByIdUseCase
 import by.alexandr7035.banking.domain.usecases.cards.RemoveCardUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CardDetailsViewModel(
-    private val getCardByNumberUseCase: GetCardByNumberUseCase,
+    private val getCardByIdUseCase: GetCardByIdUseCase,
     private val deleteCardByNumberUseCase: RemoveCardUseCase
 ) : ViewModel() {
     private val _state: MutableStateFlow<CardDetailsState> = MutableStateFlow(CardDetailsState.Loading)
@@ -29,7 +29,7 @@ class CardDetailsViewModel(
 
                 viewModelScope.launch {
                     val cardResult = OperationResult.runWrapped {
-                        getCardByNumberUseCase.execute(intent.cardNumber)
+                        getCardByIdUseCase.execute(intent.cardNumber)
                     }
 
                     when (cardResult) {

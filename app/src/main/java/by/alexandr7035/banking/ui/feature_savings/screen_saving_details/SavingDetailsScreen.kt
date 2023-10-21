@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.HorseshoeProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.ScreenSectionDivider
@@ -217,7 +216,7 @@ fun SavingDetailsScreen_Ui(
 
             PaymentCard(
                 cardUi = cardUi,
-                onCLick = { onLinkedCardDetails.invoke(cardUi.cardNumber) }
+                onCLick = { onLinkedCardDetails.invoke(cardUi.id) }
             )
         } else if (isCardLoading) {
             Spacer(Modifier.height(20.dp))

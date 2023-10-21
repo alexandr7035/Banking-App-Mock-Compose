@@ -133,10 +133,10 @@ fun HomeScreen_Ui(
                     .padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                state.cards.forEach {
+                state.cards.forEach { card ->
                     PaymentCard(
-                        cardUi = it,
-                        onCLick = { onCardDetails.invoke(it) }
+                        cardUi = card,
+                        onCLick = { onCardDetails.invoke(card.id) }
                     )
                 }
             }

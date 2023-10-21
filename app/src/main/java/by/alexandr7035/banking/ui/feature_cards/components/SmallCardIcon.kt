@@ -63,7 +63,7 @@ fun SmallCardIcon() {
                     Spacer(Modifier.height(4.dp))
 
                     Text(
-                        text = cardUi.cardNumber.splitStringWithDivider(), style = TextStyle(
+                        text = cardUi.cardNumber, style = TextStyle(
                             fontSize = 3.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight.Medium,

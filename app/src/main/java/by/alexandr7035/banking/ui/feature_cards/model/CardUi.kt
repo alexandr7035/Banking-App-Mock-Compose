@@ -2,9 +2,10 @@ package by.alexandr7035.banking.ui.feature_cards.model
 
 import by.alexandr7035.banking.domain.repository.cards.PaymentCard
 import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
+import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 
 data class CardUi(
-    // TODO Consider adding some ID (which guaranteed to be unformatted)
+    val id: String,
     val cardNumber: String,
     val expiration: String,
     val balance: String,
@@ -14,8 +15,11 @@ data class CardUi(
 ) {
     companion object {
         fun mock(): CardUi {
+            val mockNumber = "2298126833989874"
+
             return CardUi(
-                cardNumber = "2298126833989874",
+                id = mockNumber,
+                cardNumber = mockNumber.splitStringWithDivider(),
                 expiration = "02/24",
                 balance = "\$2887.65",
                 addressFirstLine = "2890 Pangandaran Street",
@@ -28,7 +32,8 @@ data class CardUi(
             val date = card.expiration.getFormattedDate("MM/yy")
 
             return CardUi(
-                cardNumber = card.cardNumber,
+                id = card.cardId,
+                cardNumber = card.cardNumber.splitStringWithDivider(),
                 expiration = date,
                 balance = "\$${card.usdBalance}$",
                 addressFirstLine = card.addressFirstLine,
