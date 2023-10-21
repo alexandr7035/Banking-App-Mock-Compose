@@ -29,4 +29,5 @@ For example, for banking profile the app uses local mock Repositories with stati
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/aacaeac3-24f7-491d-a69f-604d06d8de5a" width="20%"/>
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/bbb1c8ad-e1cd-4958-9da1-b4c32c88f67a" width="20%"/>
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/edee3a09-940a-4c18-b8c6-8ceec1c017fb" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/7b25851e-68ef-416e-bbdc-d37e67156f43" width="20%"/>
 </p>
