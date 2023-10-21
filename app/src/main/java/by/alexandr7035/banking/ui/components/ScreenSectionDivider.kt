@@ -30,7 +30,7 @@ fun ScreenSectionDivider(
     actionLabel: UiText? = UiText.StringResource(R.string.view_all),
     actionEnabled: Boolean = true,
     onAction: () -> Unit = {},
-    backgroundColor: Color = MaterialTheme.colorScheme.background
+    backgroundColor: Color = Color.Transparent
 ) {
     Row(
         modifier = Modifier
@@ -80,13 +80,15 @@ fun ScreenSectionDivider_Preview() {
         ) {
             ScreenSectionDivider(
                 modifier = Modifier.fillMaxWidth(),
-                title = UiText.DynamicString("Your Cards")
+                title = UiText.DynamicString("Your Cards"),
+                backgroundColor = MaterialTheme.colorScheme.background
             )
 
             ScreenSectionDivider(
                 modifier = Modifier.fillMaxWidth(),
                 title = UiText.DynamicString("Your Cards"),
-                actionLabel = null
+                actionLabel = null,
+                backgroundColor = MaterialTheme.colorScheme.background
             )
         }
     }
