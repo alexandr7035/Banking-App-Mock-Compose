@@ -9,10 +9,10 @@ import by.alexandr7035.banking.data.db.CacheDatabase
 import by.alexandr7035.banking.data.login.LoginRepositoryMock
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.data.savings.SavingsRepositoryMock
-import by.alexandr7035.banking.domain.repository.cards.CardsRepository
-import by.alexandr7035.banking.domain.repository.savings.SavingsRepository
-import by.alexandr7035.banking.domain.usecases.login.LoginRepository
-import by.alexandr7035.banking.domain.usecases.profile.ProfileRepository
+import by.alexandr7035.banking.domain.features.cards.CardsRepository
+import by.alexandr7035.banking.domain.features.savings.SavingsRepository
+import by.alexandr7035.banking.domain.features.login.LoginRepository
+import by.alexandr7035.banking.domain.features.profile.ProfileRepository
 import com.cioccarellia.ksprefs.KsPrefs
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication

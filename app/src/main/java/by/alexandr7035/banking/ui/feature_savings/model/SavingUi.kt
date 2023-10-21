@@ -1,6 +1,6 @@
 package by.alexandr7035.banking.ui.feature_savings.model
 
-import by.alexandr7035.banking.domain.repository.savings.Saving
+import by.alexandr7035.banking.domain.features.savings.model.Saving
 
 data class SavingUi(
     val id: Long,

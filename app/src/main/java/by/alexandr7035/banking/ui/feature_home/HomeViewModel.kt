@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
-import by.alexandr7035.banking.domain.usecases.cards.GetHomeCardsUseCase
-import by.alexandr7035.banking.domain.usecases.profile.GetCompactProfileUseCase
-import by.alexandr7035.banking.domain.usecases.savings.GetHomeSavingsUseCase
+import by.alexandr7035.banking.domain.features.cards.GetHomeCardsUseCase
+import by.alexandr7035.banking.domain.features.profile.GetCompactProfileUseCase
+import by.alexandr7035.banking.domain.features.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent

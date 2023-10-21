@@ -1,8 +1,8 @@
 package by.alexandr7035.banking.core.di.domain
 
-import by.alexandr7035.banking.domain.usecases.login.CheckIfLoggedInUseCase
-import by.alexandr7035.banking.domain.usecases.login.LoginWithEmailUseCase
-import by.alexandr7035.banking.domain.usecases.login.LogoutUseCase
+import by.alexandr7035.banking.domain.features.login.CheckIfLoggedInUseCase
+import by.alexandr7035.banking.domain.features.login.LoginWithEmailUseCase
+import by.alexandr7035.banking.domain.features.login.LogoutUseCase
 import org.koin.dsl.module
 
 val loginUseCasesModule = module {

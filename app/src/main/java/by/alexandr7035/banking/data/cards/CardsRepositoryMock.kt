@@ -4,9 +4,9 @@ import by.alexandr7035.banking.data.cards.cache.CardEntity
 import by.alexandr7035.banking.data.cards.cache.CardsDao
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
-import by.alexandr7035.banking.domain.repository.cards.AddCardPayload
-import by.alexandr7035.banking.domain.repository.cards.CardsRepository
-import by.alexandr7035.banking.domain.repository.cards.PaymentCard
+import by.alexandr7035.banking.domain.features.cards.model.AddCardPayload
+import by.alexandr7035.banking.domain.features.cards.CardsRepository
+import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

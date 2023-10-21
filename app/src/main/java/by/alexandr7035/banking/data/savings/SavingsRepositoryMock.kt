@@ -3,9 +3,9 @@ package by.alexandr7035.banking.data.savings
 import android.content.Context
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
-import by.alexandr7035.banking.domain.repository.cards.CardsRepository
-import by.alexandr7035.banking.domain.repository.savings.Saving
-import by.alexandr7035.banking.domain.repository.savings.SavingsRepository
+import by.alexandr7035.banking.domain.features.cards.CardsRepository
+import by.alexandr7035.banking.domain.features.savings.model.Saving
+import by.alexandr7035.banking.domain.features.savings.SavingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

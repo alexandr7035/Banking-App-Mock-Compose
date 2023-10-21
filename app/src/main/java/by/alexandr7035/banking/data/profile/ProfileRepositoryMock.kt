@@ -1,8 +1,8 @@
 package by.alexandr7035.banking.data.profile
 
-import by.alexandr7035.banking.domain.usecases.profile.CompactProfile
-import by.alexandr7035.banking.domain.usecases.profile.ProfileRepository
-import by.alexandr7035.banking.domain.usecases.profile.ProfileTier
+import by.alexandr7035.banking.domain.features.profile.model.CompactProfile
+import by.alexandr7035.banking.domain.features.profile.ProfileRepository
+import by.alexandr7035.banking.domain.features.profile.model.ProfileTier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

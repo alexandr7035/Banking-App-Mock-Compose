@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
-import by.alexandr7035.banking.domain.usecases.login.LoginWithEmailUseCase
-import by.alexandr7035.banking.domain.usecases.validation.ValidateEmailUseCase
-import by.alexandr7035.banking.domain.usecases.validation.ValidatePasswordUseCase
+import by.alexandr7035.banking.domain.features.login.LoginWithEmailUseCase
+import by.alexandr7035.banking.domain.features.validation.ValidateEmailUseCase
+import by.alexandr7035.banking.domain.features.validation.ValidatePasswordUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import de.palm.composestateevents.consumed

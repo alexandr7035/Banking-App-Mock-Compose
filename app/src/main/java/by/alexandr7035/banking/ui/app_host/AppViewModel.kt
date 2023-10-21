@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
-import by.alexandr7035.banking.domain.usecases.login.CheckIfLoggedInUseCase
-import by.alexandr7035.banking.domain.usecases.onboarding.CheckIfPassedOnboardingUseCase
+import by.alexandr7035.banking.domain.features.login.CheckIfLoggedInUseCase
+import by.alexandr7035.banking.domain.features.onboarding.CheckIfPassedOnboardingUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

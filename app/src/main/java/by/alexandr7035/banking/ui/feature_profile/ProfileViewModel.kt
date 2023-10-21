@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
-import by.alexandr7035.banking.domain.usecases.login.LogoutUseCase
-import by.alexandr7035.banking.domain.usecases.profile.CompactProfile
-import by.alexandr7035.banking.domain.usecases.profile.GetCompactProfileUseCase
+import by.alexandr7035.banking.domain.features.login.LogoutUseCase
+import by.alexandr7035.banking.domain.features.profile.model.CompactProfile
+import by.alexandr7035.banking.domain.features.profile.GetCompactProfileUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered

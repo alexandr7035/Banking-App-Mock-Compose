@@ -3,7 +3,7 @@ package by.alexandr7035.banking.data.login
 import by.alexandr7035.banking.data.app.PrefKeys
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
-import by.alexandr7035.banking.domain.usecases.login.LoginRepository
+import by.alexandr7035.banking.domain.features.login.LoginRepository
 import com.cioccarellia.ksprefs.KsPrefs
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay

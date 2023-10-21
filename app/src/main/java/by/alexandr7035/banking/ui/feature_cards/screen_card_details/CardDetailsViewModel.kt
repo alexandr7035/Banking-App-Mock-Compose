@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
-import by.alexandr7035.banking.domain.repository.cards.PaymentCard
-import by.alexandr7035.banking.domain.usecases.cards.GetCardByIdUseCase
-import by.alexandr7035.banking.domain.usecases.cards.RemoveCardUseCase
+import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
+import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
+import by.alexandr7035.banking.domain.features.cards.RemoveCardUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import de.palm.composestateevents.consumed
