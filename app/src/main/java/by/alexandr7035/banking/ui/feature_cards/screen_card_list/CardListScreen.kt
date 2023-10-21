@@ -119,7 +119,7 @@ fun CardListScreen(
 fun CardListScreen_Ui(
     cards: List<CardUi>,
     onAddCard: () -> Unit = {},
-    onCardDetails: (cardNumber: String) -> Unit = {},
+    onCardDetails: (cardId: String) -> Unit = {},
     onToggleFab: (isVisible: Boolean) -> Unit = {}
 ) {
 
@@ -154,7 +154,7 @@ fun CardListScreen_Ui(
             ) { _, card ->
                 PaymentCard(
                     cardUi = card,
-                    onCLick = { onCardDetails.invoke(card.cardNumber) }
+                    onCLick = { onCardDetails.invoke(card.id) }
                 )
             }
 

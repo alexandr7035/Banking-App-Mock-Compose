@@ -4,9 +4,9 @@ import by.alexandr7035.banking.data.cards.cache.CardEntity
 import by.alexandr7035.banking.data.cards.cache.CardsDao
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
-import by.alexandr7035.banking.domain.repository.cards.AddCardPayload
-import by.alexandr7035.banking.domain.repository.cards.CardsRepository
-import by.alexandr7035.banking.domain.repository.cards.PaymentCard
+import by.alexandr7035.banking.domain.features.cards.model.AddCardPayload
+import by.alexandr7035.banking.domain.features.cards.CardsRepository
+import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -37,13 +37,14 @@ class CardsRepositoryMock(
         }
     }
 
-    override suspend fun getCardByNumber(number: String): PaymentCard = withContext(coroutineDispatcher) {
-        val cardEntity = cacheDao.getCardByNumber(number) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+    override suspend fun getCardById(id: String): PaymentCard = withContext(coroutineDispatcher) {
+        val cardEntity = cacheDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
         delay(MOCK_DELAY)
         return@withContext mapCachedCardToDomain(cardEntity)
     }
 
     private fun mapCachedCardToDomain(cardEntity: CardEntity) = PaymentCard(
+        cardId = cardEntity.number,
         cardNumber = cardEntity.number,
         cardHolder = cardEntity.cardHolder,
         addressFirstLine = cardEntity.addressFirstLine,

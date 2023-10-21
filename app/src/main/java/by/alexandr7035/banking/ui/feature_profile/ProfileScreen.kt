@@ -37,40 +37,89 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
+import by.alexandr7035.banking.ui.components.FullscreenProgressBar
+import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SettingButton
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
-import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = koinViewModel(), onLogoutClick: () -> Unit = {}, onSettingEntry: (entry: SettingEntry) -> Unit = {}
+    viewModel: ProfileViewModel = koinViewModel(),
+    onSettingEntry: (entry: SettingEntry) -> Unit = {},
+    onLogoutCompleted: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val context = LocalContext.current
+    val snackBarState = LocalScopedSnackbarState.current
 
-    BoxWithConstraints() {
-        ProfileScreen_Ui(modifier = Modifier
-            .width(maxWidth)
-            .height(maxHeight), onLogOutClick = {
-            onLogoutClick.invoke()
-        }, onSettingEntryClick = {
-            context.showToast("TODO")
-            onSettingEntry.invoke(it)
-        }, state = state
+    LaunchedEffect(Unit) {
+        viewModel.emitIntent(ProfileScreenIntent.EnterScreen)
+    }
+
+    BoxWithConstraints {
+        ProfileScreen_Ui(
+            modifier = Modifier
+                .width(maxWidth)
+                .height(maxHeight),
+            onSettingEntryClick = {
+                context.showToast("TODO")
+                onSettingEntry.invoke(it)
+            },
+            onIntent = {
+                viewModel.emitIntent(it)
+            },
+            state = state
         )
 
-        LaunchedEffect(Unit) {
-            viewModel.emitIntent(ProfileScreenIntent.LoadScreen)
+        if (state.logoutState.showLogoutDialog) {
+            LogoutDialog(
+                onDismiss = {
+                    viewModel.emitIntent(ProfileScreenIntent.ToggleLogoutDialog(isShown = false))
+                },
+                onConfirmLogout = {
+                    viewModel.emitIntent(ProfileScreenIntent.ConfirmLogOut)
+                }
+            )
+        }
+
+        if (state.logoutState.isLoading) {
+            FullscreenProgressBar()
+        }
+
+        EventEffect(
+            event = state.logoutState.logoutEvent,
+            onConsumed = viewModel::consumeLogoutEvent,
+        ) { result ->
+
+            when (result) {
+                is OperationResult.Success -> {
+                    onLogoutCompleted.invoke()
+                }
+                is OperationResult.Failure -> {
+                    snackBarState.show(
+                        message = result.error.errorType.asUiTextError().asString(context),
+                        snackBarMode = SnackBarMode.Negative
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
 private fun ProfileScreen_Ui(
-    modifier: Modifier, state: ProfileScreenState, onLogOutClick: () -> Unit = {}, onSettingEntryClick: (entry: SettingEntry) -> Unit = {}
+    modifier: Modifier,
+    state: ProfileScreenState,
+    onIntent: (intent: ProfileScreenIntent) -> Unit = {},
+    onSettingEntryClick: (entry: SettingEntry) -> Unit = {},
 ) {
     Column(
         modifier = modifier.then(
@@ -78,7 +127,7 @@ private fun ProfileScreen_Ui(
         )
     ) {
         ScreenHeader(toolbar = { ProfileToolBar() }) {
-            ProfileCard(profile = state.profile, isLoading = state.isLoading)
+            ProfileCard(profile = state.profile, isLoading = state.isProfileLoading)
         }
 
         Column(
@@ -185,7 +234,11 @@ private fun ProfileScreen_Ui(
 
                 TextButton(
                     onClick = {
-                        onLogOutClick.invoke()
+                        onIntent.invoke(
+                            ProfileScreenIntent.ToggleLogoutDialog(
+                                isShown = true
+                            )
+                        )
                     },
                 ) {
                     Text(
@@ -200,8 +253,6 @@ private fun ProfileScreen_Ui(
                     )
                 }
             }
-
-
         }
     }
 
@@ -229,7 +280,26 @@ private fun ProfileToolBar() {
 fun ProfileScreen_Preview() {
     ScreenPreview {
         ProfileScreen_Ui(
-            modifier = Modifier.fillMaxSize(), state = ProfileScreenState()
+            modifier = Modifier.fillMaxSize(),
+            state = ProfileScreenState(
+                profile = ProfileUi.mock()
+            )
+        )
+    }
+}
+
+
+@Preview
+@Composable
+fun ProfileScreen_Logout_Preview() {
+    ScreenPreview {
+        ProfileScreen_Ui(
+            modifier = Modifier.fillMaxSize(),
+            state = ProfileScreenState(
+                logoutState = ProfileScreenState.LogoutState(
+                    showLogoutDialog = true
+                )
+            )
         )
     }
 }

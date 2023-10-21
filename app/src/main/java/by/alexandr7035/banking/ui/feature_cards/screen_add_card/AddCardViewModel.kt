@@ -4,15 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.BuildConfig
 import by.alexandr7035.banking.domain.core.AppError
-import by.alexandr7035.banking.domain.usecases.validation.ValidateBillingAddressUseCase
-import by.alexandr7035.banking.domain.usecases.validation.ValidateCardExpirationUseCase
-import by.alexandr7035.banking.domain.usecases.validation.ValidateCardHolderUseCase
-import by.alexandr7035.banking.domain.usecases.validation.ValidateCardNumberUseCase
-import by.alexandr7035.banking.domain.usecases.validation.ValidateCvvCodeUseCase
+import by.alexandr7035.banking.domain.features.validation.ValidateBillingAddressUseCase
+import by.alexandr7035.banking.domain.features.validation.ValidateCardExpirationUseCase
+import by.alexandr7035.banking.domain.features.validation.ValidateCardHolderUseCase
+import by.alexandr7035.banking.domain.features.validation.ValidateCardNumberUseCase
+import by.alexandr7035.banking.domain.features.validation.ValidateCvvCodeUseCase
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
-import by.alexandr7035.banking.domain.repository.cards.AddCardPayload
-import by.alexandr7035.banking.domain.usecases.cards.AddCardUseCase
+import by.alexandr7035.banking.domain.features.cards.model.AddCardPayload
+import by.alexandr7035.banking.domain.features.cards.AddCardUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
 import de.palm.composestateevents.consumed
@@ -102,7 +102,8 @@ class AddCardViewModel(
                                 addressFirstLine = currentState.formFields.addressFirstLine.value,
                                 addressSecondLine = currentState.formFields.addressSecondLine.value,
                                 cvvCode =   currentState.formFields.cvvCode.value
-                            ))
+                            )
+                            )
                         }
 
                         when (res) {

@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
-import by.alexandr7035.banking.domain.repository.savings.Saving
-import by.alexandr7035.banking.domain.usecases.savings.GetAllSavingsUseCase
+import by.alexandr7035.banking.domain.features.savings.model.Saving
+import by.alexandr7035.banking.domain.features.savings.GetAllSavingsUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.flow.MutableStateFlow

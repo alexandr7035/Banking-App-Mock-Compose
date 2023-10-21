@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.PrimaryTextField
@@ -52,7 +53,6 @@ import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.dialogs.DatePickerDialog
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
-import by.alexandr7035.banking.ui.core.navigation.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.feature_cards.components.CardNumberField
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect

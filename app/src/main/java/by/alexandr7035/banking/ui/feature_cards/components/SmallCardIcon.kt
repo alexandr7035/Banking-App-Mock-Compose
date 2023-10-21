@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.core.extensions.formatCardNumber
+import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -63,7 +63,7 @@ fun SmallCardIcon() {
                     Spacer(Modifier.height(4.dp))
 
                     Text(
-                        text = cardUi.cardNumber.formatCardNumber(), style = TextStyle(
+                        text = cardUi.cardNumber, style = TextStyle(
                             fontSize = 3.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight.Medium,

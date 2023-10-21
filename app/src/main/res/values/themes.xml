@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.BankingApp" parent="android:Theme.Material.Light.NoActionBar"/>
 
-    <style name="Theme.BankingApp" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background, animated icon, and animation
+        duration. -->
+        <item name="windowSplashScreenBackground">#FF100D40</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_inner</item>
+
+        <!-- Set the theme of the Activity that directly follows your splash
+        screen. This is required. -->
+        <item name="postSplashScreenTheme">@style/Theme.BankingApp</item>
+    </style>
 </resources>

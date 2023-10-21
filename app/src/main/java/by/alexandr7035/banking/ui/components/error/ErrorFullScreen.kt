@@ -1,5 +1,6 @@
 package by.alexandr7035.banking.ui.components.error
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -7,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -18,7 +20,6 @@ import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 
 
-//TODO design
 @Composable
 fun ErrorFullScreen(
     error: UiText,
@@ -32,6 +33,14 @@ fun ErrorFullScreen(
             .fillMaxSize()
             .then(modifier)
     ) {
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_error),
+            contentDescription = null,
+            modifier = Modifier.size(100.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = stringResource(R.string.error_happened),

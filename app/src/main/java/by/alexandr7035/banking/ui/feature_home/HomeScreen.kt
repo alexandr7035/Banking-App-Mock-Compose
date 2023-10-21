@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_home.components
+package by.alexandr7035.banking.ui.feature_home
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -37,21 +37,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.data.profile.Profile
 import by.alexandr7035.banking.ui.components.DashedButton
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
-import by.alexandr7035.banking.ui.core.navigation.NavEntries
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.ScreenSectionDivider
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
-import by.alexandr7035.banking.ui.feature_home.AccountActionPanel
-import by.alexandr7035.banking.ui.feature_home.AccountActionPanel_Skeleton
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
-import by.alexandr7035.banking.ui.feature_home.HomeViewModel
+import by.alexandr7035.banking.ui.feature_profile.ProfileUi
 import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -61,7 +60,8 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     onGoToDestination: (navEntry: NavEntries) -> Unit = {},
-    onCardDetails: (cardId: String) -> Unit = {}
+    onCardDetails: (cardId: String) -> Unit = {},
+    onSavingDetails: (id: Long) -> Unit = {}
 ) {
 
     LaunchedEffect(Unit) {
@@ -73,7 +73,8 @@ fun HomeScreen(
         is HomeState.Success -> HomeScreen_Ui(
             state = state,
             onGoToDestination = onGoToDestination,
-            onCardDetails = onCardDetails
+            onCardDetails = onCardDetails,
+            onSavingDetails = onSavingDetails
         )
 
         is HomeState.Loading -> HomeScreen_Skeleton()
@@ -90,7 +91,8 @@ fun HomeScreen(
 fun HomeScreen_Ui(
     state: HomeState.Success,
     onGoToDestination: (navEntry: NavEntries) -> Unit = {},
-    onCardDetails: (cardId: String) -> Unit = {}
+    onCardDetails: (cardId: String) -> Unit = {},
+    onSavingDetails: (id: Long) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -109,18 +111,24 @@ fun HomeScreen_Ui(
                 )
             }, panelVerticalOffset = 24.dp
         ) {
-            AccountActionPanel(balance = 2000f, onActionClick = {
-                // TODO
-                ctx.showToast("TODO")
-            })
+            AccountActionPanel(
+                balance = state.profile.balance,
+                onActionClick = {
+                    // TODO
+                    ctx.showToast("TODO")
+                }
+            )
         }
 
         Spacer(Modifier.height(8.dp))
 
-        SectionTitle(stringResource(R.string.your_cards)) {
-            onGoToDestination.invoke(NavEntries.CardList)
-        }
-
+        ScreenSectionDivider(
+            modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+            title = UiText.StringResource(R.string.your_cards),
+            onAction = {
+                onGoToDestination.invoke(NavEntries.CardList)
+            }
+        )
 
         if (state.cards.isNotEmpty()) {
             Row(
@@ -130,10 +138,10 @@ fun HomeScreen_Ui(
                     .padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                state.cards.forEach {
+                state.cards.forEach { card ->
                     PaymentCard(
-                        cardUi = it,
-                        onCLick = { onCardDetails.invoke(it) }
+                        cardUi = card,
+                        onCLick = { onCardDetails.invoke(card.id) }
                     )
                 }
             }
@@ -151,12 +159,15 @@ fun HomeScreen_Ui(
         }
 
         if (state.savings.isNotEmpty()) {
-
             Spacer(Modifier.height(8.dp))
 
-            SectionTitle(stringResource(R.string.your_saving)) {
-                onGoToDestination.invoke(NavEntries.SavingsList)
-            }
+            ScreenSectionDivider(
+                modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+                title = UiText.StringResource(R.string.your_saving),
+                onAction = {
+                    onGoToDestination.invoke(NavEntries.SavingsList)
+                }
+            )
 
             Column(
                 modifier = Modifier
@@ -166,45 +177,12 @@ fun HomeScreen_Ui(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 state.savings.forEach {
-                    SavingCard(savingUi = it)
+                    SavingCard(
+                        savingUi = it,
+                        onClick = onSavingDetails
+                    )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun SectionTitle(
-    title: String, onViewMore: (() -> Unit)? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = title, style = TextStyle(
-                fontSize = 16.sp,
-                fontFamily = primaryFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF100D40),
-            )
-        )
-
-        TextButton(
-            onClick = { onViewMore?.invoke() }, enabled = onViewMore != null
-        ) {
-            Text(
-                text = stringResource(R.string.view_all), style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF100D40),
-                )
-            )
         }
     }
 }
@@ -277,7 +255,11 @@ private fun HomeScreen_Skeleton() {
 
         Spacer(Modifier.height(8.dp))
 
-        SectionTitle(stringResource(R.string.your_cards))
+        ScreenSectionDivider(
+            modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+            title = UiText.StringResource(R.string.your_cards),
+            actionLabel = null
+        )
 
         SkeletonShape(
             modifier = Modifier
@@ -288,7 +270,11 @@ private fun HomeScreen_Skeleton() {
 
         Spacer(Modifier.height(8.dp))
 
-        SectionTitle(stringResource(R.string.your_saving))
+        ScreenSectionDivider(
+            modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+            title = UiText.StringResource(R.string.your_saving),
+            actionLabel = null
+        )
 
         Column(
             modifier = Modifier
@@ -312,11 +298,15 @@ private fun HomeScreen_Skeleton() {
 @Composable
 fun HomeScreen_Preview() {
     ScreenPreview {
-        HomeScreen_Ui(HomeState.Success(profile = Profile.mock(), cards = List(3) {
-            CardUi.mock()
-        }, savings = List(3) {
-            SavingUi.mock()
-        }))
+        HomeScreen_Ui(HomeState.Success(
+            profile = ProfileUi.mock(),
+            cards = List(3) {
+                CardUi.mock()
+            },
+            savings = List(3) {
+                SavingUi.mock()
+            }
+        ))
     }
 }
 
@@ -335,8 +325,10 @@ fun HomeScreen_Empty() {
     ScreenPreview {
         HomeScreen_Ui(
             HomeState.Success(
-                profile = Profile.mock(), cards = emptyList(), savings = emptyList()
-            )
+                profile = ProfileUi.mock(),
+                cards = emptyList(),
+                savings = emptyList()
+            ),
         )
     }
 }

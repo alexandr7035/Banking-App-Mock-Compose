@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,6 +53,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SavingsScreen(
     viewModel: SavingsViewModel = koinViewModel(),
     onBack: () -> Unit,
+    onSavingDetails: (id: Long) -> Unit,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -59,27 +61,32 @@ fun SavingsScreen(
         viewModel.emitIntent(SavingsListIntent.EnterScreen)
     }
 
-    Scaffold(
-        topBar = {
-            SecondaryToolBar(onBack = onBack, title = UiText.StringResource(R.string.your_saving))
-        }
-    ) { pv ->
+    Scaffold(topBar = {
+        SecondaryToolBar(onBack = onBack, title = UiText.StringResource(R.string.your_saving))
+    }) { pv ->
         Box(
             Modifier
                 .fillMaxSize()
                 .padding(
-                    top = pv.calculateTopPadding(),
-                    bottom = pv.calculateBottomPadding()
-                )) {
+                    top = pv.calculateTopPadding(), bottom = pv.calculateBottomPadding()
+                )
+        ) {
             when (state) {
                 is SavingsListState.Success -> {
-                    SavingsScreen_Ui(savings = state.savings)
+                    SavingsScreen_Ui(
+                        savings = state.savings, onSavingDetails = onSavingDetails
+                    )
                 }
 
                 // TODO skeleton
                 is SavingsListState.Loading -> SavingsScreen_Skeleton()
 
-                is SavingsListState.Error -> ErrorFullScreen(error = state.error)
+                is SavingsListState.Error -> ErrorFullScreen(
+                    error = state.error,
+                    onRetry = {
+                        viewModel.emitIntent(SavingsListIntent.EnterScreen)
+                    }
+                )
             }
         }
     }
@@ -89,17 +96,14 @@ fun SavingsScreen(
 @Composable
 private fun SavingsScreen_Ui(
     savings: List<SavingUi>,
+    onSavingDetails: (id: Long) -> Unit = {},
 ) {
 
     val scope = rememberCoroutineScope()
 
     Column(Modifier.fillMaxSize()) {
         // TODO core code for pager and tablayout
-        val pagerState = rememberPagerState(
-            initialPage = 0,
-            initialPageOffsetFraction = 0f,
-            pageCount = { 2 }
-        )
+        val pagerState = rememberPagerState(initialPage = 0, initialPageOffsetFraction = 0f, pageCount = { 2 })
 
         TabRow(
             selectedTabIndex = pagerState.currentPage,
@@ -107,8 +111,7 @@ private fun SavingsScreen_Ui(
             indicator = { tabPositions ->
                 if (pagerState.currentPage < tabPositions.size) {
                     TabRowDefaults.Indicator(
-                        modifier = Modifier
-                            .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
                         height = 4.dp,
                     )
                 }
@@ -116,48 +119,46 @@ private fun SavingsScreen_Ui(
             containerColor = MaterialTheme.colorScheme.background,
             divider = @Composable {
                 Divider(
-                    color = Color(0xFFF2F2F2),
-                    thickness = 2.dp,
-                    modifier = Modifier.offset(y = (-1).dp)
+                    color = Color(0xFFF2F2F2), thickness = 2.dp, modifier = Modifier.offset(y = (-1).dp)
                 )
             },
 
             ) {
-            PagerTab(
-                isSelected = pagerState.currentPage == 0,
-                text = stringResource(R.string.on_progress),
-                onClick = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(0)
-                    }
+            PagerTab(isSelected = pagerState.currentPage == 0, text = stringResource(R.string.on_progress), onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(0)
                 }
-            )
-            PagerTab(
-                isSelected = pagerState.currentPage == 1,
-                text = stringResource(R.string.done),
-                onClick = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(1)
-                    }
+            })
+            PagerTab(isSelected = pagerState.currentPage == 1, text = stringResource(R.string.done), onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(1)
                 }
-            )
+            })
         }
 
         HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            state = pagerState, modifier = Modifier.fillMaxSize()
         ) { page ->
+
+            val onClick: (id: Long) -> Unit = {
+                onSavingDetails.invoke(it)
+            }
+
             when (page) {
                 0 -> {
-                    SavingsList(savings = savings.filter {
-                        !it.isCompleted
-                    })
+                    SavingsList(
+                        savings = savings.filter {
+                            !it.isCompleted
+                        }, onSavingDetails = onClick
+                    )
                 }
 
                 1 -> {
-                    SavingsList(savings = savings.filter {
-                        it.isCompleted
-                    })
+                    SavingsList(
+                        savings = savings.filter {
+                            it.isCompleted
+                        }, onSavingDetails = onClick
+                    )
                 }
             }
         }
@@ -166,19 +167,56 @@ private fun SavingsScreen_Ui(
 }
 
 @Composable
-private fun SavingsList(savings: List<SavingUi>) {
+private fun SavingsList(
+    savings: List<SavingUi>, onSavingDetails: (id: Long) -> Unit = {}
+) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                start = 24.dp,
-                end = 24.dp,
-                top = 24.dp
-            ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(16.dp), contentPadding = PaddingValues(
+            start = 24.dp, end = 24.dp, top = 24.dp
+        )
     ) {
         items(savings) { savingUi ->
-            SavingCard(savingUi = savingUi)
+            SavingCard(savingUi = savingUi, onClick = {
+                onSavingDetails.invoke(it)
+            })
+        }
+    }
+}
+
+
+@Composable
+private fun PagerTab(
+    isSelected: Boolean, text: String, onClick: () -> Unit = {}
+) {
+    Tab(
+        selected = isSelected, onClick = onClick
+    ) {
+
+        Box(
+            modifier = Modifier.padding(vertical = 16.dp), contentAlignment = Alignment.Center
+        ) {
+
+            if (isSelected) {
+                Text(
+                    text = text, style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF100D40),
+                    )
+                )
+            } else {
+                Text(
+                    text = text, style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xFFCCCCCC),
+                    )
+                )
+            }
         }
     }
 }
@@ -189,61 +227,16 @@ private fun SavingsScreen_Skeleton() {
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                start = 24.dp,
-                end = 24.dp,
-                top = 24.dp
+                start = 24.dp, end = 24.dp, top = 24.dp
             )
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         repeat(4) {
             SkeletonShape(
                 Modifier
                     .fillMaxWidth()
-                    .height(80.dp))
-        }
-    }
-}
-
-@Composable
-private fun PagerTab(
-    isSelected: Boolean,
-    text: String,
-    onClick: () -> Unit = {}
-) {
-    Tab(
-        selected = isSelected,
-        onClick = onClick
-    ) {
-
-        Box(
-            modifier = Modifier.padding(vertical = 16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-
-            if (isSelected) {
-                Text(
-                    text = text,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF100D40),
-                    )
-                )
-            } else {
-                Text(
-                    text = text,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        color = Color(0xFFCCCCCC),
-                    )
-                )
-            }
+                    .height(80.dp)
+            )
         }
     }
 }

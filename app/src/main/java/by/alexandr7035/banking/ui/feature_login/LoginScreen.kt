@@ -1,22 +1,21 @@
 package by.alexandr7035.banking.ui.feature_login
 
-import android.content.Context
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
@@ -27,12 +26,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -52,17 +48,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.DecoratedPasswordTextField
 import by.alexandr7035.banking.ui.components.DecoratedTextField
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
-import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.core.resources.UiText
+import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.Gray30
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
-import by.alexandr7035.banking.ui.validation.FieldValidationResult
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
 
@@ -70,80 +70,88 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
     onLoginCompleted: () -> Unit = {},
-    onShowSnackBar: (message: String, mode: SnackBarMode) -> Unit = { _, _ -> }
 ) {
-    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-
     val state = viewModel.loginState.collectAsStateWithLifecycle().value
+    val snackBarState = LocalScopedSnackbarState.current
 
     EventEffect(
-        event = state.onLoginEvent, onConsumed = viewModel::onLoginEventTriggered
+        event = state.loginEvent,
+        onConsumed = viewModel::onLoginEventConsumed
     ) { loginResult ->
 
         when (loginResult) {
-            is LoginResult.Success -> onLoginCompleted.invoke()
-            is LoginResult.Error -> onShowSnackBar.invoke("Login failed ${loginResult.errorUi}", SnackBarMode.Negative)
+            is OperationResult.Success -> onLoginCompleted.invoke()
+            is OperationResult.Failure -> {
+                val error = loginResult.error.errorType.asUiTextError().asString(context)
+                snackBarState.show(error, SnackBarMode.Negative)
+            }
         }
     }
 
-    LoginScreen_Ui(focusManager = focusManager, context = context, state = state, onLogin = { login, password ->
-        viewModel.login(login, password)
-    }, onClearValidation = {
-        viewModel.clearFormValidationErrors()
-    })
+    LoginScreen_Ui(
+        state = state,
+        onIntent = { viewModel.emitIntent(it) },
+    )
 }
 
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun LoginScreen_Ui(
     state: LoginScreenState,
-    focusManager: FocusManager,
-    context: Context,
-    onLogin: (email: String, password: String) -> Unit,
-    onClearValidation: () -> Unit
+    onIntent: (intent: LoginIntent) -> Unit = {}
 ) {
+    val focusManager = LocalFocusManager.current
+
     BoxWithConstraints(
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.TopCenter,
+        modifier = Modifier
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            }
     ) {
-        Cover(
+
+        Column(
             Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-        )
-
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            LoginForm(
-                focusManager = focusManager,
-                context = context,
-                state = state,
-                onLogin = onLogin,
-                onClearValidation = onClearValidation,
-            )
-        }
-
-        Column(verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .height(this@BoxWithConstraints.maxHeight)
+                .width(maxWidth)
+                .height(maxHeight)
                 .verticalScroll(rememberScrollState())
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        focusManager.clearFocus()
-                    })
-                }) {
+        ) {
+            Text(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(
+                        start = 24.dp,
+                        end = 24.dp,
+                        top = 40.dp,
+                        bottom = 16.dp
+                    )
+                    .fillMaxWidth(),
+                text = "SHIELDPAY",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
 
+            Cover(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
 
-//            LoginForm(
-//                focusManager = focusManager,
-//                context = context,
-//                state = state,
-//                onLogin = onLogin,
-//                onClearValidation = onClearValidation,
-//            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                LoginForm(
+                    state = state,
+                    onIntent = onIntent,
+                )
+            }
         }
 
         if (state.isLoading) {
@@ -156,15 +164,14 @@ private fun LoginScreen_Ui(
 @Composable
 private fun LoginForm(
     state: LoginScreenState,
-    onLogin: (email: String, password: String) -> Unit,
-    onClearValidation: () -> Unit,
-    focusManager: FocusManager,
-    context: Context,
+    onIntent: (intent: LoginIntent) -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
             .padding(
                 start = 24.dp,
                 end = 24.dp,
@@ -191,15 +198,20 @@ private fun LoginForm(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        val login = rememberSaveable {
-            mutableStateOf("")
-        }
-
+        // TODO Refactoring of fields
         DecoratedTextField(
-            modifier = Modifier.fillMaxWidth(), value = login.value, onValueChange = {
-                login.value = it
-                onClearValidation.invoke()
-            }, singleLine = true, error = state.loginField.error
+            modifier = Modifier.fillMaxWidth(),
+            value = state.formFields.loginField.value,
+            onValueChange = {
+                onIntent.invoke(
+                    LoginIntent.LoginFieldChanged(
+                        fieldType = LoginFieldType.EMAIL,
+                        fieldValue = it
+                    )
+                )
+            },
+            singleLine = true,
+            error = state.formFields.loginField.error?.asString()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -213,15 +225,18 @@ private fun LoginForm(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-
-        val password = rememberSaveable {
-            mutableStateOf("")
-        }
-
         DecoratedPasswordTextField(
-            modifier = Modifier.fillMaxWidth(), value = password.value, onValueChange = {
-                password.value = it
-            }, error = state.passwordField.error
+            modifier = Modifier.fillMaxWidth(),
+            value = state.formFields.passwordField.value,
+            onValueChange = {
+                onIntent.invoke(
+                    LoginIntent.LoginFieldChanged(
+                        fieldType = LoginFieldType.PASSWORD,
+                        fieldValue = it
+                    )
+                )
+            },
+            error = state.formFields.passwordField.error?.asString()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -244,8 +259,10 @@ private fun LoginForm(
             PrimaryButton(
                 onClick = {
                     focusManager.clearFocus()
-                    onLogin.invoke(login.value, password.value)
-                }, modifier = Modifier.fillMaxWidth(), text = stringResource(R.string.sign_in)
+                    onIntent.invoke(LoginIntent.SubmitForm)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.sign_in)
             )
         }
 
@@ -292,49 +309,40 @@ private fun LoginForm(
 private fun Cover(
     modifier: Modifier
 ) {
-    Column(
-        modifier = modifier
-            .then(Modifier.background(MaterialTheme.colorScheme.primary))
-            .padding(top = 48.dp, bottom = 16.dp),
-        verticalArrangement = Arrangement.Top
+    Row(
+        modifier = modifier.then(
+            Modifier
+                .wrapContentHeight(
+                    unbounded = true,
+                    align = Alignment.Top
+                )
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(bottom = 16.dp)
+                .fillMaxWidth()
+        ),
+        verticalAlignment = Alignment.Bottom
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            text = "SHIELDPAY",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary
+
+        Image(
+            modifier = Modifier
+                .height(110.dp)
+                .offset(x = (-56).dp),
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(Color(0xFF585679)),
         )
 
-        // TODO vector images
-        Row(
+        Spacer(modifier = Modifier.weight(1f))
+
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
             modifier = Modifier
                 .height(160.dp)
-                .fillMaxWidth(), verticalAlignment = Alignment.Bottom
-        ) {
-
-
-            Image(
-                modifier = Modifier
-                    .fillMaxHeight(0.7F)
-                    .offset(x = -56.dp),
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(Color(0xFF585679)),
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .offset(x = 32.dp)
-                    .rotate(-45F),
-                colorFilter = ColorFilter.tint(Color(0xFF585679))
-            )
-        }
+                .offset(x = 32.dp)
+                .rotate(-45F),
+            colorFilter = ColorFilter.tint(Color(0xFF585679))
+        )
     }
 }
 
@@ -343,10 +351,9 @@ private fun Cover(
 @Composable
 fun LoginScreen_Preview() {
     ScreenPreview {
-        val focusManager = LocalFocusManager.current
-        val context = LocalContext.current
-
-        LoginScreen_Ui(LoginScreenState(), focusManager, context, { _, _ -> }, {})
+        LoginScreen_Ui(
+            LoginScreenState(),
+        )
     }
 }
 
@@ -355,15 +362,8 @@ fun LoginScreen_Preview() {
 fun LoginForm_Preview() {
     BankingAppTheme {
         Surface {
-            val focusManager = LocalFocusManager.current
-            val context = LocalContext.current
-
             LoginForm(
                 state = LoginScreenState(),
-                onLogin = { _, _ -> },
-                onClearValidation = {},
-                focusManager = focusManager,
-                context = context
             )
         }
     }
@@ -373,12 +373,14 @@ fun LoginForm_Preview() {
 @Composable
 fun LoginScreen_Error_Preview() {
     ScreenPreview {
-        val focusManager = LocalFocusManager.current
-        val context = LocalContext.current
-
-        LoginScreen_Ui(LoginScreenState(
-            loginField = FieldValidationResult("Wrong e-mail format"), passwordField = FieldValidationResult("Wrong password format")
-        ), focusManager, context, { _, _ -> }, {})
+        LoginScreen_Ui(
+            LoginScreenState(
+                formFields = LoginFormFields(
+                    loginField = UiField("ex@com.2", UiText.DynamicString("Wrong e-mail format")),
+                    passwordField = UiField("1223", UiText.DynamicString("Wrong password format"))
+                )
+            ),
+        )
     }
 }
 
@@ -386,11 +388,10 @@ fun LoginScreen_Error_Preview() {
 @Composable
 fun LoginScreen_Progress_Preview() {
     ScreenPreview {
-        val focusManager = LocalFocusManager.current
-        val context = LocalContext.current
-
-        LoginScreen_Ui(LoginScreenState(
-            isLoading = true
-        ), focusManager, context, { _, _ -> }, {})
+        LoginScreen_Ui(
+            LoginScreenState(
+                isLoading = true
+            ),
+        )
     }
 }

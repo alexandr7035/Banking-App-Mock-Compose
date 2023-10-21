@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -30,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
 import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
-import by.alexandr7035.banking.ui.core.extensions.formatCardNumber
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -39,7 +37,7 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 @Composable
 fun PaymentCard(
     cardUi: CardUi,
-    onCLick: (cardNumber: String) -> Unit = {}
+    onCLick: (cardId: String) -> Unit = {}
 ) {
     Card(
         backgroundColor = MaterialTheme.colorScheme.primary,
@@ -85,7 +83,7 @@ fun PaymentCard(
                     Spacer(Modifier.height(30.dp))
 
                     Text(
-                        text = cardUi.cardNumber.formatCardNumber(), style = TextStyle(
+                        text = cardUi.cardNumber, style = TextStyle(
                             fontSize = 16.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight.Medium,
