@@ -43,7 +43,9 @@ import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.ScreenSectionDivider
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
@@ -120,10 +122,13 @@ fun HomeScreen_Ui(
 
         Spacer(Modifier.height(8.dp))
 
-        SectionTitle(stringResource(R.string.your_cards)) {
-            onGoToDestination.invoke(NavEntries.CardList)
-        }
-
+        ScreenSectionDivider(
+            modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+            title = UiText.StringResource(R.string.your_cards),
+            onAction = {
+                onGoToDestination.invoke(NavEntries.CardList)
+            }
+        )
 
         if (state.cards.isNotEmpty()) {
             Row(
@@ -154,13 +159,15 @@ fun HomeScreen_Ui(
         }
 
         if (state.savings.isNotEmpty()) {
-
             Spacer(Modifier.height(8.dp))
 
-            // TODO component for section tittle
-            SectionTitle(stringResource(R.string.your_saving)) {
-                onGoToDestination.invoke(NavEntries.SavingsList)
-            }
+            ScreenSectionDivider(
+                modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+                title = UiText.StringResource(R.string.your_saving),
+                onAction = {
+                    onGoToDestination.invoke(NavEntries.SavingsList)
+                }
+            )
 
             Column(
                 modifier = Modifier
@@ -176,42 +183,6 @@ fun HomeScreen_Ui(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun SectionTitle(
-    title: String, onViewMore: (() -> Unit)? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = title, style = TextStyle(
-                fontSize = 16.sp,
-                fontFamily = primaryFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF100D40),
-            )
-        )
-
-        TextButton(
-            onClick = { onViewMore?.invoke() }, enabled = onViewMore != null
-        ) {
-            Text(
-                text = stringResource(R.string.view_all), style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF100D40),
-                )
-            )
         }
     }
 }
@@ -284,7 +255,11 @@ private fun HomeScreen_Skeleton() {
 
         Spacer(Modifier.height(8.dp))
 
-        SectionTitle(stringResource(R.string.your_cards))
+        ScreenSectionDivider(
+            modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+            title = UiText.StringResource(R.string.your_cards),
+            actionLabel = null
+        )
 
         SkeletonShape(
             modifier = Modifier
@@ -295,7 +270,11 @@ private fun HomeScreen_Skeleton() {
 
         Spacer(Modifier.height(8.dp))
 
-        SectionTitle(stringResource(R.string.your_saving))
+        ScreenSectionDivider(
+            modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+            title = UiText.StringResource(R.string.your_saving),
+            actionLabel = null
+        )
 
         Column(
             modifier = Modifier
