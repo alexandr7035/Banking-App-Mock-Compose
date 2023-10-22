@@ -32,15 +32,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.CustomCheckBox
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.forms.DecoratedFormField
 import by.alexandr7035.banking.ui.components.forms.DecoratedPasswordFormField
+import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.components.text.SpannableText
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -49,11 +53,27 @@ fun InitSignUpScreen(
     onGoToSignIn: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
+    val snackBarState = LocalScopedSnackbarState.current
 
     SignUpStartScreen_Ui(
         state = state,
-        onGoToSignIn = onGoToSignIn
+        onGoToSignIn = onGoToSignIn,
+        onIntent = { viewModel.emitIntent(it) }
     )
+
+    EventEffect(
+        event = state.initSignUpEvent,
+        onConsumed = viewModel::consumeInitSignUpEvent,
+    ) { res ->
+        when (res) {
+            is OperationResult.Success -> {
+                snackBarState.show("TODO success", SnackBarMode.Positive)
+            }
+            is OperationResult.Failure -> {
+                snackBarState.show("TODO failed", SnackBarMode.Negative)
+            }
+        }
+    }
 }
 
 @Composable
@@ -96,21 +116,57 @@ fun SignUpStartScreen_Ui(
             )
 
             Spacer(modifier = Modifier.height(40.dp))
-            DecoratedFormField(fieldTitle = UiText.StringResource(R.string.full_name))
+            DecoratedFormField(
+                fieldTitle = UiText.StringResource(R.string.full_name),
+                onValueChange = {
+                    onIntent(
+                        InitSIgnUpIntent.FieldChanged(
+                            fieldType = InitSignUpFieldType.FULL_NAME,
+                            fieldValue = it
+                        )
+                    )
+                },
+                uiField = state.fields.fullName
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
-            DecoratedFormField(fieldTitle = UiText.StringResource(R.string.email_address))
+            DecoratedFormField(
+                fieldTitle = UiText.StringResource(R.string.email_address),
+                onValueChange = {
+                    onIntent(
+                        InitSIgnUpIntent.FieldChanged(
+                            fieldType = InitSignUpFieldType.EMAIL,
+                            fieldValue = it
+                        )
+                    )
+                },
+                uiField = state.fields.email
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
-            DecoratedPasswordFormField(fieldTitle = UiText.StringResource(R.string.password))
+            DecoratedPasswordFormField(
+                fieldTitle = UiText.StringResource(R.string.password),
+                onValueChange = {
+                    onIntent(
+                        InitSIgnUpIntent.FieldChanged(
+                            fieldType = InitSignUpFieldType.PASSWORD,
+                            fieldValue = it
+                        )
+                    )
+                },
+                uiField = state.fields.password
+            )
 
             Row(
                 modifier = Modifier.wrapContentWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CustomCheckBox(checked = state.agreedTerms, onValueChange = {
-                    onIntent(InitSIgnUpIntent.ToggleTermsAgreed(it))
-                })
+                CustomCheckBox(
+                    checked = state.agreedTerms,
+                    onValueChange = {
+                        onIntent(InitSIgnUpIntent.ToggleTermsAgreed(it))
+                    }
+                )
 
                 SpannableText(
                     baseString = "I confirm I agree with",
@@ -134,11 +190,14 @@ fun SignUpStartScreen_Ui(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+
             PrimaryButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    onIntent(InitSIgnUpIntent.SignUpConfirm)
+                },
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(id = R.string.sign_up),
-                isEnabled = true
+                isEnabled = state.signUpBtnEnabled
             )
 
             SpannableText(
