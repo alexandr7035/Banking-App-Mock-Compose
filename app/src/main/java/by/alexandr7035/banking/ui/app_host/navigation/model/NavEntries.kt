@@ -21,6 +21,11 @@ sealed class NavEntries(
         label = "Login",
     )
 
+    object InitSignUp: NavEntries(
+        route = "signup_init",
+        navIcons = null,
+        label = "Sign Up",
+    )
 
     object Profile : NavEntries(
         route = "profile",
@@ -90,6 +95,7 @@ sealed class NavEntries(
 
     sealed class Graphs(val route: String) {
         object HomeGraph : Graphs("homeGraph")
+        object SignUpGraph : Graphs("signUpGraph")
     }
 
     companion object {

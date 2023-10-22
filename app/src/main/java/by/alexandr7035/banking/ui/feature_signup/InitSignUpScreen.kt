@@ -44,19 +44,22 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SignUpStartScreen(
+fun InitSignUpScreen(
     viewModel: InitSignUpViewModel = koinViewModel(),
     onGoToSignIn: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
-    SignUpStartScreen_Ui(state = state)
+    SignUpStartScreen_Ui(
+        state = state,
+        onGoToSignIn = onGoToSignIn
+    )
 }
 
 @Composable
 fun SignUpStartScreen_Ui(
     state: InitSignUpState,
-    onIntent: (SignUpStartIntent) -> Unit = {},
+    onIntent: (InitSIgnUpIntent) -> Unit = {},
     onGoToSignIn: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
@@ -106,7 +109,7 @@ fun SignUpStartScreen_Ui(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CustomCheckBox(checked = state.agreedTerms, onValueChange = {
-                    onIntent.invoke(SignUpStartIntent.ToggleTermsAgreed(it))
+                    onIntent(InitSIgnUpIntent.ToggleTermsAgreed(it))
                 })
 
                 SpannableText(
@@ -147,7 +150,7 @@ fun SignUpStartScreen_Ui(
                         top = 16.dp
                     ),
             ) {
-                onGoToSignIn.invoke()
+                onGoToSignIn()
             }
         }
     }
