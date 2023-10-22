@@ -50,4 +50,6 @@
     <string name="on_progress">On Progress</string>
     <string name="edit">Edit</string>
     <string name="linked_card">Linked card</string>
+    <string name="full_name">Full Name</string>
+    <string name="already_have_an_account">Already have an account ?</string>
 </resources>
