@@ -86,7 +86,8 @@ class InitSignUpViewModel(
 
             _state.update {
                 it.copy(
-                    initSignUpEvent = triggered(res)
+                    isLoading = false,
+                    initSignUpEvent = triggered(res),
                 )
             }
         }

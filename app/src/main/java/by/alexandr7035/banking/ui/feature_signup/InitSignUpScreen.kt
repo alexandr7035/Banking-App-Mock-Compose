@@ -42,6 +42,7 @@ import by.alexandr7035.banking.ui.components.forms.DecoratedFormField
 import by.alexandr7035.banking.ui.components.forms.DecoratedPasswordFormField
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.components.text.SpannableText
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
@@ -50,10 +51,12 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun InitSignUpScreen(
     viewModel: InitSignUpViewModel = koinViewModel(),
-    onGoToSignIn: () -> Unit = {}
+    onGoToSignIn: () -> Unit = {},
+    onGoToConfirmSignUp: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val snackBarState = LocalScopedSnackbarState.current
+    val context = LocalContext.current
 
     SignUpStartScreen_Ui(
         state = state,
@@ -67,10 +70,14 @@ fun InitSignUpScreen(
     ) { res ->
         when (res) {
             is OperationResult.Success -> {
-                snackBarState.show("TODO success", SnackBarMode.Positive)
+                onGoToConfirmSignUp()
             }
+
             is OperationResult.Failure -> {
-                snackBarState.show("TODO failed", SnackBarMode.Negative)
+                snackBarState.show(
+                    message = res.error.errorType.asUiTextError().asString(context),
+                    snackBarMode = SnackBarMode.Negative
+                )
             }
         }
     }

@@ -27,6 +27,12 @@ sealed class NavEntries(
         label = "Sign Up",
     )
 
+    object ConfirmSignUp: NavEntries(
+        route = "signup_confirm",
+        navIcons = null,
+        label = "Sign Up confirm",
+    )
+
     object Profile : NavEntries(
         route = "profile",
         navIcons = NavIconPair(

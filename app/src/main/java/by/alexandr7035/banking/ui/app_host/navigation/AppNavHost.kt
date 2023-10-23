@@ -28,6 +28,7 @@ import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsScreen
 import by.alexandr7035.banking.ui.feature_signup.InitSignUpScreen
+import by.alexandr7035.banking.ui.feature_signup.confirm_signup.ConfirmSignUpScreen
 
 // TODO split nav graph
 @Composable
@@ -107,7 +108,14 @@ fun AppNavHost(
                             }
                         }
                     },
+                    onGoToConfirmSignUp = {
+                        navController.navigate(NavEntries.ConfirmSignUp.route)
+                    }
                 )
+            }
+
+            composable(route = NavEntries.ConfirmSignUp.route) {
+                ConfirmSignUpScreen()
             }
         }
 
