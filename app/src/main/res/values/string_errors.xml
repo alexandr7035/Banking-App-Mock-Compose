@@ -14,4 +14,5 @@
     <string name="invalid_email_field">Invalid e-mail address</string>
     <string name="unknown_error">An unknown error happened</string>
     <string name="generic_not_found_error">Item not found</string>
+    <string name="wrong_confirmation_code">Wrong confirmation code</string>
 </resources>

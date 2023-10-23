@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.core
 
 import android.app.Application
+import by.alexandr7035.banking.core.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin

@@ -3,7 +3,7 @@ package by.alexandr7035.banking.domain.core
 enum class ErrorType {
     USER_NOT_FOUND,
     WRONG_PASSWORD,
-
+    WRONG_CONFIRMATION_CODE,
     FIELD_IS_EMPTY,
     INVALID_CARD_NUMBER,
     CARD_EXPIRED,

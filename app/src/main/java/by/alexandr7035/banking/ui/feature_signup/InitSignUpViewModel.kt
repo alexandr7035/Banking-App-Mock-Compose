@@ -3,16 +3,19 @@ package by.alexandr7035.banking.ui.feature_signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.domain.features.signup.SignUpPayload
+import by.alexandr7035.banking.domain.features.signup.SignUpWithEmailUseCase
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class InitSignUpViewModel: ViewModel() {
+class InitSignUpViewModel(
+    private val signUpWithEmailUseCase: SignUpWithEmailUseCase
+): ViewModel() {
     private val _state = MutableStateFlow(InitSignUpState())
     val state = _state.asStateFlow()
 
@@ -69,12 +72,21 @@ class InitSignUpViewModel: ViewModel() {
         }
 
         viewModelScope.launch {
-            // TODO use case
-            delay(3000)
+            val currState = _state.value
+
+            val payload = SignUpPayload(
+                email = currState.fields.email.value,
+                password = currState.fields.password.value,
+                fullName = currState.fields.fullName.value
+            )
+
+            val res = OperationResult.runWrapped {
+                signUpWithEmailUseCase.execute(payload)
+            }
 
             _state.update {
                 it.copy(
-                    initSignUpEvent = triggered(OperationResult.Success(Unit))
+                    initSignUpEvent = triggered(res)
                 )
             }
         }

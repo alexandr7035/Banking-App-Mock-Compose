@@ -80,6 +80,8 @@ val presentationModule = module {
     }
 
     viewModel {
-        InitSignUpViewModel()
+        InitSignUpViewModel(
+            signUpWithEmailUseCase = get()
+        )
     }
 }
