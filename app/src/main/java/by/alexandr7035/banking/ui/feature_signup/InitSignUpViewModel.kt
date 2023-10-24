@@ -2,6 +2,7 @@ package by.alexandr7035.banking.ui.feature_signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import by.alexandr7035.banking.BuildConfig
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
@@ -25,6 +26,14 @@ class InitSignUpViewModel(
 ): ViewModel() {
     private val _state = MutableStateFlow(InitSignUpState())
     val state = _state.asStateFlow()
+
+    init {
+        if (BuildConfig.DEBUG) {
+            _state.update {
+                InitSignUpState.mock()
+            }
+        }
+    }
 
     fun emitIntent(intent: InitSIgnUpIntent) {
         when (intent) {

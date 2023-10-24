@@ -17,6 +17,16 @@ data class InitSignUpState(
         val email: UiField = UiField(""),
         val password: UiField = UiField(""),
     )
+
+    companion object {
+        fun mock() = InitSignUpState(
+            fields = InitSignUpFields(
+                fullName = UiField("Alexandr Michael"),
+                email = UiField("example@mail.com"),
+                password = UiField("1234567Ab"),
+            ),
+        )
+    }
 }
 
 enum class InitSignUpFieldType {
