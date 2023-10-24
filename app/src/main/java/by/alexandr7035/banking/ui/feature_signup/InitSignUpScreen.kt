@@ -183,6 +183,7 @@ fun SignUpStartScreen_Ui(
                         fontFamily = primaryFontFamily,
                         fontWeight = FontWeight(400),
                         color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Start
                     ),
                     actionStyle = SpanStyle(
                         fontSize = 12.sp,

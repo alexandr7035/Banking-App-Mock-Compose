@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -57,18 +58,18 @@ fun OtpConfirmationScreen(
             modifier = Modifier
                 .height(maxHeight)
                 .width(maxWidth)
+                .verticalScroll(rememberScrollState())
                 .padding(
                     vertical = 40.dp,
                     horizontal = 24.dp
-                )
-                .verticalScroll(rememberScrollState()),
+                ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Spacer(Modifier.height(72.dp))
 
             Text(
-                text = "Verify Account",
+                text = stringResource(R.string.verify_account),
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontFamily = primaryFontFamily,
@@ -81,12 +82,12 @@ fun OtpConfirmationScreen(
             Spacer(Modifier.height(16.dp))
 
             SpannableText(
-                baseString = "Enter 4 digit code we have sent\n",
+                baseString = "Enter 4 digit code we have sent\nto ",
                 baseStyle = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 24.sp,
                     fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(400),
+                    fontWeight = FontWeight.Normal,
                     color = Color(0xFF999999),
                     textAlign = TextAlign.Center,
                 ),
@@ -94,14 +95,14 @@ fun OtpConfirmationScreen(
                 actionStyle = SpanStyle(
                     fontSize = 14.sp,
                     fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight.Medium,
                     color = Color(0xFF333333),
                 )
             )
 
             OTPField(
                 value = state.code.value,
-                onValueChange ={
+                onValueChange = {
                     onIntent(OtpConfirmationIntent.CodeChanged(it))
                 },
                 modifier = Modifier.padding(vertical = 40.dp)
@@ -134,6 +135,7 @@ fun OtpConfirmationScreen(
             }
 
             Spacer(Modifier.weight(1f))
+            Spacer(Modifier.height(24.dp))
 
             PrimaryButton(
                 onClick = { onIntent(OtpConfirmationIntent.SubmitCode) },

@@ -52,7 +52,7 @@ fun ConfirmSignUpScreen(
                             onCodeVerified()
                         } else {
                             snackBarState.show(
-                                message = "Wrong OTP code. Remaining attempts: ${codeVerifyResult.data.remainingAttempts}",
+                                message = "Wrong OTP code.\nRemaining attempts: ${codeVerifyResult.data.remainingAttempts}",
                                 snackBarMode = SnackBarMode.Negative
                             )
                         }
@@ -73,7 +73,7 @@ fun ConfirmSignUpScreen(
 
                     is OperationResult.Success -> {
                         snackBarState.show(
-                            message = "Code has been sent. Remaining attempts: ${otpGenerationRes.data.remainingAttempts}",
+                            message = "Code has been sent.\nRemaining attempts: ${otpGenerationRes.data.remainingAttempts}",
                             snackBarMode = SnackBarMode.Neutral
                         )
                     }

@@ -72,7 +72,9 @@ class ConfirmEmailSignUpVIewModel(
                         it.copy(
                             isInitialLoading = false,
                             otpConfiguration = otpConfiguration,
-                            otpState = OtpConfirmationState(),
+                            otpState = OtpConfirmationState(
+                                codeSentTo = otpConfiguration.otpDestination
+                            ),
                         )
                     }
                 }

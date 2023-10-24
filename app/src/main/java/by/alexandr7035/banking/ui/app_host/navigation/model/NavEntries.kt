@@ -33,6 +33,12 @@ sealed class NavEntries(
         label = "Sign Up confirm",
     )
 
+    object CompletedSignUp: NavEntries(
+        route = "signup_completed",
+        navIcons = null,
+        label = "Sign Up Completed",
+    )
+
     object Profile : NavEntries(
         route = "profile",
         navIcons = NavIconPair(

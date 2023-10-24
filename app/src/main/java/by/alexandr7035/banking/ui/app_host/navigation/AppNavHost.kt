@@ -29,6 +29,7 @@ import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsScreen
 import by.alexandr7035.banking.ui.feature_signup.InitSignUpScreen
 import by.alexandr7035.banking.ui.feature_signup.confirm_signup.ConfirmSignUpScreen
+import by.alexandr7035.banking.ui.feature_signup.finish_signup.CompleteSignUpScreen
 
 // TODO split nav graph
 @Composable
@@ -118,10 +119,30 @@ fun AppNavHost(
                 route = "${NavEntries.ConfirmSignUp.route}/{otpDestination}",
                 arguments = listOf(navArgument("otpDestination") { type = NavType.StringType })
             ) {
+                val email = it.arguments?.getString("otpDestination")!!
+
                 ConfirmSignUpScreen(
-                    email = it.arguments?.getString("otpDestination")!!,
+                    email = email,
                     onCodeVerified = {
-                        // TODO
+                        navController.navigate(NavEntries.CompletedSignUp.route) {
+                            popUpTo(NavEntries.Graphs.SignUpGraph.route) {
+//                            popUpTo("${NavEntries.ConfirmSignUp.route}/${email}") {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+
+            composable(NavEntries.CompletedSignUp.route) {
+                CompleteSignUpScreen(
+                    onClose = {
+                        navController.navigate(NavEntries.Graphs.HomeGraph.route) {
+                            // TODO check
+                            popUpTo(NavEntries.Graphs.SignUpGraph.route) {
+                                inclusive = true
+                            }
+                        }
                     }
                 )
             }
