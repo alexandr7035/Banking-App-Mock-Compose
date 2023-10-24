@@ -108,14 +108,22 @@ fun AppNavHost(
                             }
                         }
                     },
-                    onGoToConfirmSignUp = {
-                        navController.navigate(NavEntries.ConfirmSignUp.route)
+                    onGoToConfirmSignUp = { email ->
+                        navController.navigate("${NavEntries.ConfirmSignUp.route}/${email}")
                     }
                 )
             }
 
-            composable(route = NavEntries.ConfirmSignUp.route) {
-                ConfirmSignUpScreen()
+            composable(
+                route = "${NavEntries.ConfirmSignUp.route}/{otpDestination}",
+                arguments = listOf(navArgument("otpDestination") { type = NavType.StringType })
+            ) {
+                ConfirmSignUpScreen(
+                    email = it.arguments?.getString("otpDestination")!!,
+                    onCodeVerified = {
+                        // TODO
+                    }
+                )
             }
         }
 

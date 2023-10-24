@@ -53,4 +53,6 @@
     <string name="full_name">Full Name</string>
     <string name="already_have_an_account">Already have an account ?</string>
     <string name="don_t_have_an_account">Don’t have an account ?</string>
+    <string name="verify_now">Verify Now</string>
+    <string name="resend_code">Resend Code</string>
 </resources>

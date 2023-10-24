@@ -52,7 +52,7 @@ import org.koin.androidx.compose.koinViewModel
 fun InitSignUpScreen(
     viewModel: InitSignUpViewModel = koinViewModel(),
     onGoToSignIn: () -> Unit = {},
-    onGoToConfirmSignUp: () -> Unit = {}
+    onGoToConfirmSignUp: (email: String) -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val snackBarState = LocalScopedSnackbarState.current
@@ -70,7 +70,7 @@ fun InitSignUpScreen(
     ) { res ->
         when (res) {
             is OperationResult.Success -> {
-                onGoToConfirmSignUp()
+                onGoToConfirmSignUp(state.fields.email.value)
             }
 
             is OperationResult.Failure -> {
