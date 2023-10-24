@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_2fa_confirmation
+package by.alexandr7035.banking.ui.feature_otp
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,15 +28,17 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.components.FullscreenProgressBar
+import by.alexandr7035.banking.ui.components.OTPField
 import by.alexandr7035.banking.ui.components.PrimaryButton
-import by.alexandr7035.banking.ui.components.PrimaryTextField
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.text.SpannableText
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
-fun OtpFactorConfirmationScreen(
+fun OtpConfirmationScreen(
     onIntent: (OtpConfirmationIntent) -> Unit = {},
     state: OtpConfirmationState
 ) {
@@ -43,12 +46,12 @@ fun OtpFactorConfirmationScreen(
 
     BoxWithConstraints(
         modifier = Modifier
-            .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     focusManager.clearFocus()
                 })
             }
+            .fillMaxSize()
     ) {
         Column(
             modifier = Modifier
@@ -96,11 +99,12 @@ fun OtpFactorConfirmationScreen(
                 )
             )
 
-            PrimaryTextField(
+            OTPField(
                 value = state.code.value,
-                onValueChange = {
-
-                }
+                onValueChange ={
+                    onIntent(OtpConfirmationIntent.CodeChanged(it))
+                },
+                modifier = Modifier.padding(vertical = 40.dp)
             )
 
             Text(
@@ -115,9 +119,9 @@ fun OtpFactorConfirmationScreen(
                 )
             )
 
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = { onIntent(OtpConfirmationIntent.ResendCode) }) {
                 Text(
-                    text = "Resend Code",
+                    text = stringResource(R.string.resend_code),
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = primaryFontFamily,
@@ -132,11 +136,16 @@ fun OtpFactorConfirmationScreen(
             Spacer(Modifier.weight(1f))
 
             PrimaryButton(
-                onClick = { /*TODO*/ },
+                onClick = { onIntent(OtpConfirmationIntent.SubmitCode) },
                 modifier = Modifier.fillMaxWidth(),
-                text = "Verify Now"
+                text = stringResource(R.string.verify_now),
+                isEnabled = state.submitBtnEnabled
             )
         }
+    }
+
+    if (state.isLoading) {
+        FullscreenProgressBar()
     }
 }
 
@@ -144,7 +153,7 @@ fun OtpFactorConfirmationScreen(
 @Composable
 fun OtpConfirmationScreen_Preview() {
     ScreenPreview {
-        OtpFactorConfirmationScreen(
+        OtpConfirmationScreen(
             state = OtpConfirmationState(
                 code = UiField("1111"),
                 codeSentTo = "+6285788773880",
