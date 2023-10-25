@@ -105,6 +105,12 @@ sealed class NavEntries(
         label = "Saving Details"
     )
 
+    object TermsAndConditions: NavEntries(
+        route = "terms",
+        navIcons = null,
+        label = "terms"
+    )
+
     sealed class Graphs(val route: String) {
         object HomeGraph : Graphs("homeGraph")
         object SignUpGraph : Graphs("signUpGraph")

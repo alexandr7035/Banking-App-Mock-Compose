@@ -38,7 +38,8 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
 fun CompleteSignUpScreen(
-    onClose: () -> Unit = {}
+    onClose: () -> Unit = {},
+    onGoToTermsAndConditions: () -> Unit = {}
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         Column(
@@ -118,7 +119,9 @@ fun CompleteSignUpScreen(
                     textDecoration = TextDecoration.Underline,
                 ),
                 divider = "\n"
-            )
+            ) {
+                onGoToTermsAndConditions()
+            }
         }
     }
 }

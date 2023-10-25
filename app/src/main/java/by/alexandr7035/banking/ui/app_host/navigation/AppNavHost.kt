@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +29,7 @@ import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDe
 import by.alexandr7035.banking.ui.feature_signup.InitSignUpScreen
 import by.alexandr7035.banking.ui.feature_signup.confirm_signup.ConfirmSignUpScreen
 import by.alexandr7035.banking.ui.feature_signup.finish_signup.CompleteSignUpScreen
+import by.alexandr7035.banking.ui.feature_webview.WebViewScreen
 
 // TODO split nav graph
 @Composable
@@ -111,6 +111,9 @@ fun AppNavHost(
                     },
                     onGoToConfirmSignUp = { email ->
                         navController.navigate("${NavEntries.ConfirmSignUp.route}/${email}")
+                    },
+                    onGoToTermsAndConditions = {
+                        navController.navigate(NavEntries.TermsAndConditions.route)
                     }
                 )
             }
@@ -143,6 +146,9 @@ fun AppNavHost(
                                 inclusive = true
                             }
                         }
+                    },
+                    onGoToTermsAndConditions = {
+                        navController.navigate(NavEntries.TermsAndConditions.route)
                     }
                 )
             }
@@ -258,6 +264,29 @@ fun AppNavHost(
                     },
                     onLinkedCardDetails = { cardId ->
                         navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                    }
+                )
+            }
+
+            composable(
+                route = NavEntries.TermsAndConditions.route,
+//                route = "${NavEntries.TermsAndConditions.route}/{url}/{title}",
+//                arguments = listOf(
+//                    navArgument("url") { type = NavType.StringType },
+//                    navArgument("title") { type = NavType.StringType },
+//                )
+            ) {
+//                val title = it.arguments?.getString("title") ?: "Unknown"
+//                val url = it.arguments?.getString("url") ?: ""
+
+                val title = "Terms and Conditions"
+                val url = "https://example.com"
+
+                WebViewScreen(
+                    title = title,
+                    url = url,
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }

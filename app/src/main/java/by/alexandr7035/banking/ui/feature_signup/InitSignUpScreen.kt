@@ -52,7 +52,8 @@ import org.koin.androidx.compose.koinViewModel
 fun InitSignUpScreen(
     viewModel: InitSignUpViewModel = koinViewModel(),
     onGoToSignIn: () -> Unit = {},
-    onGoToConfirmSignUp: (email: String) -> Unit = {}
+    onGoToConfirmSignUp: (email: String) -> Unit = {},
+    onGoToTermsAndConditions: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val snackBarState = LocalScopedSnackbarState.current
@@ -61,7 +62,8 @@ fun InitSignUpScreen(
     SignUpStartScreen_Ui(
         state = state,
         onGoToSignIn = onGoToSignIn,
-        onIntent = { viewModel.emitIntent(it) }
+        onGoToTermsAndConditions = onGoToTermsAndConditions,
+        onIntent = { viewModel.emitIntent(it) },
     )
 
     EventEffect(
@@ -87,10 +89,10 @@ fun InitSignUpScreen(
 fun SignUpStartScreen_Ui(
     state: InitSignUpState,
     onIntent: (InitSIgnUpIntent) -> Unit = {},
-    onGoToSignIn: () -> Unit = {}
+    onGoToSignIn: () -> Unit = {},
+    onGoToTermsAndConditions: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
-    val context = LocalContext.current
 
     BoxWithConstraints(
         contentAlignment = Alignment.TopCenter,
@@ -193,7 +195,7 @@ fun SignUpStartScreen_Ui(
                         textDecoration = TextDecoration.Underline,
                     )
                 ) {
-                    // TODO click
+                    onGoToTermsAndConditions()
                 }
             }
 
