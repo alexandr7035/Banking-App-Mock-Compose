@@ -50,4 +50,16 @@
     <string name="on_progress">On Progress</string>
     <string name="edit">Edit</string>
     <string name="linked_card">Linked card</string>
+    <string name="full_name">Full Name</string>
+    <string name="already_have_an_account">Already have an account ?</string>
+    <string name="don_t_have_an_account">Don’t have an account ?</string>
+    <string name="verify_now">Verify Now</string>
+    <string name="resend_code">Resend Code</string>
+    <string name="verify_account">Verify Account</string>
+    <string name="account_created">Account Created</string>
+    <string name="account_created_message">Your account has been created successfully.\nPress continue to continue using the app</string>
+    <string name="continue_msg">Continue</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="i_confirm_i_agree_with">I confirm I agree with</string>
+    <string name="welcome">Welcome !</string>
 </resources>

@@ -25,5 +25,6 @@ fun ErrorType.asUiTextError(): UiText {
         ErrorType.UNKNOWN_ERROR ->  UiText.StringResource(R.string.unknown_error)
 
         ErrorType.GENERIC_NOT_FOUND_ERROR -> UiText.StringResource(R.string.generic_not_found_error)
+        ErrorType.WRONG_CONFIRMATION_CODE -> UiText.StringResource(R.string.wrong_confirmation_code)
     }
 }

@@ -13,14 +13,13 @@ import kotlinx.coroutines.CoroutineScope
 // If some drawbacks are found, just comment the isCompleted condition and use it as a regular launced effect
 @Composable
 fun EnterScreenEffect(
-    key1: Any?,
     block: suspend CoroutineScope.() -> Unit
 ) {
     val isCompleted = rememberSaveable {
         mutableStateOf(false)
     }
 
-    LaunchedEffect(key1 = key1, block = {
+    LaunchedEffect(key1 = Unit, block = {
         if (!isCompleted.value) {
             block()
             isCompleted.value = true

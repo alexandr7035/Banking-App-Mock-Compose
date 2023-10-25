@@ -21,6 +21,23 @@ sealed class NavEntries(
         label = "Login",
     )
 
+    object InitSignUp: NavEntries(
+        route = "signup_init",
+        navIcons = null,
+        label = "Sign Up",
+    )
+
+    object ConfirmSignUp: NavEntries(
+        route = "signup_confirm",
+        navIcons = null,
+        label = "Sign Up confirm",
+    )
+
+    object CompletedSignUp: NavEntries(
+        route = "signup_completed",
+        navIcons = null,
+        label = "Sign Up Completed",
+    )
 
     object Profile : NavEntries(
         route = "profile",
@@ -88,8 +105,15 @@ sealed class NavEntries(
         label = "Saving Details"
     )
 
+    object TermsAndConditions: NavEntries(
+        route = "terms",
+        navIcons = null,
+        label = "terms"
+    )
+
     sealed class Graphs(val route: String) {
         object HomeGraph : Graphs("homeGraph")
+        object SignUpGraph : Graphs("signUpGraph")
     }
 
     companion object {

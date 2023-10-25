@@ -56,6 +56,7 @@ import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
+import by.alexandr7035.banking.ui.components.text.SpannableText
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.core.resources.UiText
@@ -70,6 +71,7 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
     onLoginCompleted: () -> Unit = {},
+    onSignUp: () -> Unit
 ) {
     val context = LocalContext.current
     val state = viewModel.loginState.collectAsStateWithLifecycle().value
@@ -92,6 +94,7 @@ fun LoginScreen(
     LoginScreen_Ui(
         state = state,
         onIntent = { viewModel.emitIntent(it) },
+        onSignUp = onSignUp
     )
 }
 
@@ -100,7 +103,8 @@ fun LoginScreen(
 @Composable
 private fun LoginScreen_Ui(
     state: LoginScreenState,
-    onIntent: (intent: LoginIntent) -> Unit = {}
+    onIntent: (intent: LoginIntent) -> Unit = {},
+    onSignUp: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -150,6 +154,7 @@ private fun LoginScreen_Ui(
                 LoginForm(
                     state = state,
                     onIntent = onIntent,
+                    onSignUp = onSignUp
                 )
             }
         }
@@ -165,6 +170,7 @@ private fun LoginScreen_Ui(
 private fun LoginForm(
     state: LoginScreenState,
     onIntent: (intent: LoginIntent) -> Unit = {},
+    onSignUp: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -268,36 +274,12 @@ private fun LoginForm(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
+        SpannableText(
+            modifier = Modifier.fillMaxWidth(),
+            baseString = stringResource(R.string.don_t_have_an_account),
+            actionString = stringResource(R.string.sign_up)
         ) {
-            // TODO some generic code for spans
-            val annotatedString = buildAnnotatedString {
-                append("Don’t have an account ? ")
-
-                val signUp = stringResource(R.string.sign_up)
-                pushStringAnnotation(tag = signUp, annotation = signUp)
-
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold
-                    )
-                ) {
-                    append(signUp)
-                }
-            }
-
-            ClickableText(text = annotatedString, style = TextStyle(
-                fontFamily = primaryFontFamily,
-                fontSize = 12.sp,
-                color = Gray30,
-            ), onClick = { offset ->
-                annotatedString.getStringAnnotations(offset, offset).firstOrNull()?.let { span ->
-                    context.showToast("TODO: Sign Up")
-                }
-            })
+            onSignUp()
         }
 
         Spacer(modifier = Modifier.heightIn(min = 16.dp))
