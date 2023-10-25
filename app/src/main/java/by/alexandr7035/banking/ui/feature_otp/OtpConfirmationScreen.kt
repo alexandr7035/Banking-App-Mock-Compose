@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -82,7 +81,7 @@ fun OtpConfirmationScreen(
             Spacer(Modifier.height(16.dp))
 
             SpannableText(
-                baseString = "Enter 4 digit code we have sent\nto ",
+                baseString = "Enter ${state.codeLength} digit code we have sent\nto ",
                 baseStyle = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 24.sp,
@@ -91,7 +90,7 @@ fun OtpConfirmationScreen(
                     color = Color(0xFF999999),
                     textAlign = TextAlign.Center,
                 ),
-                actionString = "${state.codeSentTo}",
+                actionString = state.codeSentTo,
                 actionStyle = SpanStyle(
                     fontSize = 14.sp,
                     fontFamily = primaryFontFamily,
@@ -105,7 +104,8 @@ fun OtpConfirmationScreen(
                 onValueChange = {
                     onIntent(OtpConfirmationIntent.CodeChanged(it))
                 },
-                modifier = Modifier.padding(vertical = 40.dp)
+                modifier = Modifier.padding(vertical = 40.dp),
+                otpLength = state.codeLength
             )
 
             Text(

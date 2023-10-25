@@ -115,7 +115,7 @@ fun SignUpStartScreen_Ui(
             Spacer(Modifier.weight(1f))
 
             Text(
-                text = "Welcome !", style = TextStyle(
+                text = stringResource(R.string.welcome), style = TextStyle(
                     fontSize = 24.sp,
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight.SemiBold,
@@ -178,19 +178,19 @@ fun SignUpStartScreen_Ui(
                 )
 
                 SpannableText(
-                    baseString = "I confirm I agree with",
-                    actionString = "Terms and Condition",
+                    baseString = stringResource(R.string.i_confirm_i_agree_with),
+                    actionString = stringResource(id = R.string.terms_and_conditions),
                     baseStyle = TextStyle(
                         fontSize = 12.sp,
                         fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight(400),
+                        fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Start
                     ),
                     actionStyle = SpanStyle(
                         fontSize = 12.sp,
                         fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight(500),
+                        fontWeight = FontWeight.Medium,
                         color = Color(0xFF333333),
                         textDecoration = TextDecoration.Underline,
                     )
@@ -213,6 +213,13 @@ fun SignUpStartScreen_Ui(
             SpannableText(
                 baseString = stringResource(R.string.already_have_an_account),
                 actionString = stringResource(R.string.sign_in),
+                baseStyle = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Start
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(

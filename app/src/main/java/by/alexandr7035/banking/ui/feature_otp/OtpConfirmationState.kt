@@ -9,6 +9,7 @@ import de.palm.composestateevents.consumed
 
 data class OtpConfirmationState(
     val isLoading: Boolean = false,
+    val codeLength: Int = 4,
     val code: UiField = UiField(""),
     val codeSentTo: String = "",
     val submitBtnEnabled: Boolean = false,

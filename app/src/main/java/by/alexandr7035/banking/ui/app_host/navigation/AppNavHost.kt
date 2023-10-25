@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.core.EnterScreenEffect
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
@@ -270,16 +272,8 @@ fun AppNavHost(
 
             composable(
                 route = NavEntries.TermsAndConditions.route,
-//                route = "${NavEntries.TermsAndConditions.route}/{url}/{title}",
-//                arguments = listOf(
-//                    navArgument("url") { type = NavType.StringType },
-//                    navArgument("title") { type = NavType.StringType },
-//                )
             ) {
-//                val title = it.arguments?.getString("title") ?: "Unknown"
-//                val url = it.arguments?.getString("url") ?: ""
-
-                val title = "Terms and Conditions"
+                val title = stringResource(id = R.string.terms_and_conditions)
                 val url = "https://example.com"
 
                 WebViewScreen(

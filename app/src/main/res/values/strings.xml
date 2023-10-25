@@ -60,4 +60,6 @@
     <string name="account_created_message">Your account has been created successfully.\nPress continue to continue using the app</string>
     <string name="continue_msg">Continue</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="i_confirm_i_agree_with">I confirm I agree with</string>
+    <string name="welcome">Welcome !</string>
 </resources>
