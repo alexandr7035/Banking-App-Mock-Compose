@@ -45,6 +45,7 @@ For example, for banking profile the app uses local mock Repositories with stati
 - [X] Onboarding slider
 - [X] Sign up with email
 - [ ] Sign up with phone number
+- [ ] Restore password
 - [X] OTP verification
 - [ ] Home screen:
     - [X] Cards
@@ -55,7 +56,7 @@ For example, for banking profile the app uses local mock Repositories with stati
 - [ ] Cards
     - [X] Card list
     - [X] Create card
-    - [ ] Delete carrd
+    - [X] Delete carrd
     - [ ] Card Statistics
 - [X] Savings
     - [X] Savings list
