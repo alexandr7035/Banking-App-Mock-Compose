@@ -91,7 +91,7 @@ val presentationModule = module {
     viewModel {
         ConfirmEmailSignUpVIewModel(
             requestOtpGenerationUseCase = get(),
-            verifyOtpUseCase = get()
+            confirmSignUpWithEmailUseCase = get()
         )
     }
 }

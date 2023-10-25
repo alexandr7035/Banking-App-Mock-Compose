@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.otp.RequestOtpGenerationUseCase
-import by.alexandr7035.banking.domain.features.otp.VerifyOtpUseCase
 import by.alexandr7035.banking.domain.features.otp.model.OtpConfiguration
+import by.alexandr7035.banking.domain.features.signup.ConfirmSignUpWithEmailUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
-import by.alexandr7035.banking.ui.feature_otp.OtpConfirmationIntent
-import by.alexandr7035.banking.ui.feature_otp.OtpViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
+import by.alexandr7035.banking.ui.feature_otp.OtpConfirmationIntent
 import by.alexandr7035.banking.ui.feature_otp.OtpConfirmationState
+import by.alexandr7035.banking.ui.feature_otp.OtpViewModel
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 class ConfirmEmailSignUpVIewModel(
     private val requestOtpGenerationUseCase: RequestOtpGenerationUseCase,
-    private val verifyOtpUseCase: VerifyOtpUseCase
+    private val confirmSignUpWithEmailUseCase: ConfirmSignUpWithEmailUseCase
 ) : ViewModel(), OtpViewModel {
 
     private val _state: MutableStateFlow<ConfirmSignUpScreenState> = MutableStateFlow(
@@ -104,9 +104,9 @@ class ConfirmEmailSignUpVIewModel(
 
             viewModelScope.launch {
                 val res = OperationResult.runWrapped {
-                    verifyOtpUseCase.execute(
+                    confirmSignUpWithEmailUseCase.execute(
                         otpConfiguration = currentState.otpConfiguration,
-                        code = currentState.otpState.code.value
+                        otpCode = currentState.otpState.code.value
                     )
                 }
 
@@ -114,7 +114,8 @@ class ConfirmEmailSignUpVIewModel(
                     it.copy(
                         otpState = currentOtpState.copy(
                             isLoading = false,
-                            codeSubmittedEvent = triggered(res)
+                            code = UiField(""),
+                            codeSubmittedEvent = triggered(res),
                         )
                     )
                 }

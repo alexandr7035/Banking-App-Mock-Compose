@@ -41,7 +41,11 @@ val dataModule = module {
     }
 
     single<SignUpRepository> {
-        SignUpRepositoryMock(Dispatchers.IO)
+        SignUpRepositoryMock(
+            coroutineDispatcher = Dispatchers.IO,
+            otpRepository = get(),
+            prefs = get()
+        )
     }
 
     single<LoginRepository> {
