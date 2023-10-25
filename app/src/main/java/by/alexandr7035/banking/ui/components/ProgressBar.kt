@@ -44,22 +44,18 @@ import kotlin.math.roundToInt
 
 @Composable
 fun FullscreenProgressBar(
-    backgroundColor: Color? = null
+    backgroundColor: Color = Color(0x80000000)
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor ?: Color(0x80000000))
+            .background(backgroundColor)
             .pointerInput(Unit) {
                 // Skip touch events
             },
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.primary,
-            strokeWidth = 6.dp,
-            modifier = Modifier.then(Modifier.size(56.dp))
-        )
+        DotsProgressIndicator()
     }
 }
 
