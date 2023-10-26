@@ -10,6 +10,8 @@ sealed class AppState {
     data class Ready(
         val isLoggedIn: Boolean = false,
         val passedOnboarding: Boolean = false,
+        // TODO check (use case + onresume)
+        val requireUnlock: Boolean = true
     ): AppState()
 
     data class InitFailure(

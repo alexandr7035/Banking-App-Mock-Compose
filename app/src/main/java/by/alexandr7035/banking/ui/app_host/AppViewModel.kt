@@ -52,6 +52,18 @@ class AppViewModel(
                     }
                 }
             }
+
+            AppIntent.TryPostUnlock -> {
+                val currState = _appState.value
+
+                if (currState is AppState.Ready) {
+                    _appState.update {
+                        currState.copy(
+                            requireUnlock = false
+                        )
+                    }
+                }
+            }
         }
     }
 
