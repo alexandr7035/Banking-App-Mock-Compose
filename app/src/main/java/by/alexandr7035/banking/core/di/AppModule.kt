@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.core.di
 
 import by.alexandr7035.banking.core.di.data.dataModule
+import by.alexandr7035.banking.core.di.domain.appLockUseCasesModule
 import by.alexandr7035.banking.core.di.domain.cardUseCasesModule
 import by.alexandr7035.banking.core.di.domain.loginUseCasesModule
 import by.alexandr7035.banking.core.di.domain.onboardingModule
@@ -13,6 +14,8 @@ import by.alexandr7035.banking.core.di.presentation.presentationModule
 import org.koin.dsl.module
 
 val appModule = module {
+    includes(appLockUseCasesModule)
+
     includes(loginUseCasesModule)
     includes(signUpModule)
 
