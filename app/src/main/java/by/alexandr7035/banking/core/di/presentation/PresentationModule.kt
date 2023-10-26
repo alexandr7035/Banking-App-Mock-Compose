@@ -97,6 +97,8 @@ val presentationModule = module {
     }
 
     viewModel {
-        AppLockViewModel()
+        AppLockViewModel(
+            authenticateWithPinUseCase = get()
+        )
     }
 }
