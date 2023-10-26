@@ -1,6 +1,5 @@
 package by.alexandr7035.banking.core.di.data
 
-import android.content.SharedPreferences
 import androidx.room.Room
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -25,6 +24,7 @@ import by.alexandr7035.banking.domain.features.signup.SignUpRepository
 import com.cioccarellia.ksprefs.KsPrefs
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 
@@ -57,7 +57,8 @@ val dataModule = module {
     single<LoginRepository> {
         LoginRepositoryMock(
             coroutineDispatcher = Dispatchers.IO,
-            prefs = get()
+            prefs = get(),
+            securedPrefs = get(named("encryptedPrefs"))
         )
     }
 
@@ -90,23 +91,25 @@ val dataModule = module {
         KsPrefs(androidApplication().applicationContext)
     }
 
-    single<AppLockRepository> {
+    single(named("encryptedPrefs")) {
         val context = androidApplication().applicationContext
 
         val masterKey: MasterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
             .build()
 
-        val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+        EncryptedSharedPreferences.create(
             context,
             "secured_shared_prefs",
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
+    }
 
+    single<AppLockRepository> {
         AppLockRepositoryImpl(
-            securedPreferences = sharedPreferences
+            securedPreferences = get(named("encryptedPrefs"))
         )
     }
 }

@@ -11,7 +11,7 @@ class AppLockRepositoryImpl(
 
     // TODO set pin method
     init {
-        savePin("1122")
+//        savePin("1122")
     }
 
     override fun authenticateWithPin(pin: String): AuthenticationResult {
