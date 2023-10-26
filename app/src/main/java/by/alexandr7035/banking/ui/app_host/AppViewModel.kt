@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.domain.features.app_lock.CheckAppLockUseCase
 import by.alexandr7035.banking.domain.features.login.CheckIfLoggedInUseCase
 import by.alexandr7035.banking.domain.features.onboarding.CheckIfPassedOnboardingUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 
 class AppViewModel(
     private val checkIfLoggedInUseCase: CheckIfLoggedInUseCase,
-    private val checkIfPassedOnboardingUseCase: CheckIfPassedOnboardingUseCase
+    private val checkIfPassedOnboardingUseCase: CheckIfPassedOnboardingUseCase,
+    private val checkAppLockUseCase: CheckAppLockUseCase
 ) : ViewModel() {
 
     private val _appState: MutableStateFlow<AppState> = MutableStateFlow(AppState.Loading)
@@ -40,9 +42,12 @@ class AppViewModel(
                         is OperationResult.Success -> {
                             val hasPassedOnboarding = checkIfPassedOnboardingUseCase.execute()
 
+                            val requiredUnlock = checkAppLockUseCase.execute()
+
                             reduceAppReady(
                                 isLoggedIn = isLoggedIn.data,
-                                hasPassedOnboarding = hasPassedOnboarding
+                                hasPassedOnboarding = hasPassedOnboarding,
+                                appLocked = requiredUnlock
                             )
                         }
 
@@ -75,11 +80,13 @@ class AppViewModel(
 
     private fun reduceAppReady(
         isLoggedIn: Boolean,
-        hasPassedOnboarding: Boolean
+        hasPassedOnboarding: Boolean,
+        appLocked: Boolean
     ) {
         _appState.value = AppState.Ready(
             isLoggedIn = isLoggedIn,
-            passedOnboarding = hasPassedOnboarding
+            passedOnboarding = hasPassedOnboarding,
+            requireUnlock = appLocked
         )
     }
 

@@ -7,7 +7,7 @@ import by.alexandr7035.banking.domain.features.app_lock.AuthenticationResult
 
 class AppLockRepositoryImpl(
     private val securedPreferences: SharedPreferences
-): AppLockRepository {
+) : AppLockRepository {
 
     // TODO set pin method
     init {
@@ -17,8 +17,7 @@ class AppLockRepositoryImpl(
     override fun authenticateWithPin(pin: String): AuthenticationResult {
         return if (isPinValid(pin)) {
             AuthenticationResult.Success
-        }
-        else {
+        } else {
             // TODO attempts
             AuthenticationResult.Failure(remainingAttempts = null)
         }
@@ -50,8 +49,13 @@ class AppLockRepositoryImpl(
         return storedHashedPin contentEquals enteredHashedPin
     }
 
+    override fun checkIfAppLocked(): Boolean {
+        return securedPreferences.getString(PIN_SALT_KEY, null) != null
+                && securedPreferences.getString(PIN_KEY, null) != null
+    }
+
     companion object {
         private const val PIN_KEY = "PIN_KEY"
-        private const val PIN_SALT_KEY= "PIN_SALT"
+        private const val PIN_SALT_KEY = "PIN_SALT"
     }
 }

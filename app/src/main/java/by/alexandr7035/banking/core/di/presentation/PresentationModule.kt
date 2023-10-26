@@ -33,7 +33,8 @@ val presentationModule = module {
     viewModel {
         AppViewModel(
             checkIfLoggedInUseCase = get(),
-            checkIfPassedOnboardingUseCase = get()
+            checkIfPassedOnboardingUseCase = get(),
+            checkAppLockUseCase = get()
         )
     }
     viewModel {
