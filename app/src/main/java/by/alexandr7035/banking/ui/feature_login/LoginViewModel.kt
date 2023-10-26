@@ -2,6 +2,7 @@ package by.alexandr7035.banking.ui.feature_login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import by.alexandr7035.banking.BuildConfig
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
@@ -24,6 +25,12 @@ class LoginViewModel(
 ) : ViewModel() {
     private val _loginState = MutableStateFlow(LoginScreenState())
     val loginState = _loginState.asStateFlow()
+
+    init {
+        if (BuildConfig.DEBUG) {
+            _loginState.value = LoginScreenState.mock()
+        }
+    }
 
     fun emitIntent(intent: LoginIntent) {
         val currentState = _loginState.value
