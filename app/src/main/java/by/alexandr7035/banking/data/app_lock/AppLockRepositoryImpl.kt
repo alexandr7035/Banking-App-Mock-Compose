@@ -11,7 +11,7 @@ class AppLockRepositoryImpl(
 
     // TODO set pin method
     init {
-//        savePin("1122")
+        savePin("1122")
     }
 
     override fun authenticateWithPin(pin: String): AuthenticationResult {
@@ -25,28 +25,31 @@ class AppLockRepositoryImpl(
 
     private fun savePin(pin: String) {
         val salt = CryptoUtils.generateSalt()
-        val saltedPin = pin.toByteArray() + salt
 
-        val hashedPin = CryptoUtils.sha256(saltedPin)
-        val encodedPinHash = Base64.encodeToString(hashedPin, Base64.DEFAULT)
+        val secretKey = CryptoUtils.generatePbkdf2Key(
+            passphraseOrPin = pin.toCharArray(),
+            salt = salt
+        )
+
+        val encodedPinData = Base64.encodeToString(secretKey.encoded, Base64.DEFAULT)
         val encodedSalt = Base64.encodeToString(salt, Base64.DEFAULT)
 
         securedPreferences.edit()
-            .putString(PIN_KEY, encodedPinHash)
+            .putString(PIN_KEY, encodedPinData)
             .putString(PIN_SALT_KEY, encodedSalt)
             .apply()
     }
 
     private fun isPinValid(pin: String): Boolean {
-        val encodedSalt = securedPreferences.getString(PIN_SALT_KEY, null)
-        val encodedHashedPin = securedPreferences.getString(PIN_KEY, null)
+        val storedSalt = securedPreferences.getString(PIN_SALT_KEY, null)
+        val decodedSalt = Base64.decode(storedSalt, Base64.DEFAULT)
 
-        val salt = Base64.decode(encodedSalt, Base64.DEFAULT)
-        val storedHashedPin = Base64.decode(encodedHashedPin, Base64.DEFAULT)
+        val storedPinData = securedPreferences.getString(PIN_KEY, null)
+        val decodedPinData = Base64.decode(storedPinData, Base64.DEFAULT)
 
-        val enteredHashedPin = CryptoUtils.sha256(pin.toByteArray() + salt)
+        val enteredPinData = CryptoUtils.generatePbkdf2Key(pin.toCharArray(), decodedSalt)
 
-        return storedHashedPin contentEquals enteredHashedPin
+        return decodedPinData contentEquals enteredPinData.encoded
     }
 
     override fun checkIfAppLocked(): Boolean {
