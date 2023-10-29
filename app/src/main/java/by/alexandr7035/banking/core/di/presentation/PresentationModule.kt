@@ -2,6 +2,7 @@ package by.alexandr7035.banking.core.di.presentation
 
 import by.alexandr7035.banking.ui.app_host.AppViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.AppLockViewModel
+import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.SetupAppLockViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
@@ -100,6 +101,12 @@ val presentationModule = module {
     viewModel {
         AppLockViewModel(
             authenticateWithPinUseCase = get()
+        )
+    }
+
+    viewModel {
+        SetupAppLockViewModel(
+            setupAppLockUseCase = get()
         )
     }
 }

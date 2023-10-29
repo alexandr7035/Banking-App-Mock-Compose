@@ -47,7 +47,9 @@ class AppViewModel(
                             reduceAppReady(
                                 isLoggedIn = isLoggedIn.data,
                                 hasPassedOnboarding = hasPassedOnboarding,
-                                appLocked = requiredUnlock
+// FIXME
+//                                appLocked = requiredUnlock
+                                appLocked = true
                             )
                         }
 

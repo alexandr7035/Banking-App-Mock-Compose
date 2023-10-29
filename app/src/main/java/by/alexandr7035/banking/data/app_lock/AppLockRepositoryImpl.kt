@@ -9,9 +9,9 @@ class AppLockRepositoryImpl(
     private val securedPreferences: SharedPreferences
 ) : AppLockRepository {
 
-    // TODO set pin method
-    init {
-        savePin("1122")
+    // TODO biometrics flag
+    override fun setupAppLock(pinCode: String) {
+        savePin(pin = pinCode)
     }
 
     override fun authenticateWithPin(pin: String): AuthenticationResult {
