@@ -57,7 +57,7 @@ fun NavGraphBuilder.signUpGraph(navController: NavController) {
         composable(NavEntries.CompletedSignUp.route) {
             CompleteSignUpScreen(
                 onClose = {
-                    navController.navigate(NavEntries.Graphs.HomeGraph.route) {
+                    navController.navigate(NavEntries.Graphs.CreateAppLock.route) {
                         // TODO check
                         popUpTo(NavEntries.Graphs.SignUpGraph.route) {
                             inclusive = true

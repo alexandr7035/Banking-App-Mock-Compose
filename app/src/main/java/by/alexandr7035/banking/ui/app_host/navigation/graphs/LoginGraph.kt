@@ -10,7 +10,7 @@ fun NavGraphBuilder.loginGraph(navController: NavController) {
     composable(NavEntries.Login.route) {
         LoginScreen(
             onLoginCompleted = {
-                navController.navigate(route = NavEntries.Graphs.HomeGraph.route) {
+                navController.navigate(route = NavEntries.Graphs.CreateAppLock.route) {
                     popUpTo(NavEntries.Login.route) {
                         inclusive = true
                     }

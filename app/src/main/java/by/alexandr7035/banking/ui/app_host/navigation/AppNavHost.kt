@@ -33,7 +33,6 @@ import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsScreen
 import by.alexandr7035.banking.ui.feature_webview.WebViewScreen
 
-// TODO split nav graph
 @Composable
 fun AppNavHost(
     navController: NavHostController,
@@ -77,10 +76,18 @@ fun AppNavHost(
         composable(NavEntries.Wizard.route) {
             OnboardingScreen(
                 onGoToLogin = {
-                    navController.navigate(NavEntries.Login.route)
+                    navController.navigate(NavEntries.Login.route) {
+                        popUpTo(NavEntries.Wizard.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 onSignUp = {
-                    navController.navigate(NavEntries.Graphs.SignUpGraph.route)
+                    navController.navigate(NavEntries.Graphs.SignUpGraph.route) {
+                        popUpTo(NavEntries.Wizard.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
