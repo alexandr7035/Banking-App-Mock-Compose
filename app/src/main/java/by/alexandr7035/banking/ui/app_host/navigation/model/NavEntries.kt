@@ -111,9 +111,16 @@ sealed class NavEntries(
         label = "terms"
     )
 
+    object CreatePin: NavEntries(
+        route = "create_pin",
+        navIcons = null,
+        label = "Create Pin"
+    )
+
     sealed class Graphs(val route: String) {
         object HomeGraph : Graphs("homeGraph")
         object SignUpGraph : Graphs("signUpGraph")
+        object CreateAppLock: Graphs("createAppLockGraph")
     }
 
     companion object {

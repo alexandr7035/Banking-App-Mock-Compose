@@ -7,6 +7,7 @@ import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.app_lock.CheckAppLockUseCase
 import by.alexandr7035.banking.domain.features.login.CheckIfLoggedInUseCase
 import by.alexandr7035.banking.domain.features.onboarding.CheckIfPassedOnboardingUseCase
+import by.alexandr7035.banking.ui.app_host.navigation.model.ConditionalNavigation
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,16 +41,18 @@ class AppViewModel(
 
                     when (isLoggedIn) {
                         is OperationResult.Success -> {
-                            val hasPassedOnboarding = checkIfPassedOnboardingUseCase.execute()
 
-                            val requiredUnlock = checkAppLockUseCase.execute()
+                            val hasPassedOnboarding = checkIfPassedOnboardingUseCase.execute()
+                            val appLocked = checkAppLockUseCase.execute()
 
                             reduceAppReady(
-                                isLoggedIn = isLoggedIn.data,
-                                hasPassedOnboarding = hasPassedOnboarding,
-// FIXME
-//                                appLocked = requiredUnlock
-                                appLocked = true
+                                conditionalNavigation = ConditionalNavigation(
+                                    // Require create applock if closed this step on registration
+                                    requireCreateAppLock = !appLocked && isLoggedIn.data,
+                                    requireLogin = !isLoggedIn.data,
+                                    requireOnboarding = !hasPassedOnboarding
+                                ),
+                                appLocked = appLocked
                             )
                         }
 
@@ -81,13 +84,11 @@ class AppViewModel(
     }
 
     private fun reduceAppReady(
-        isLoggedIn: Boolean,
-        hasPassedOnboarding: Boolean,
+        conditionalNavigation: ConditionalNavigation,
         appLocked: Boolean
     ) {
         _appState.value = AppState.Ready(
-            isLoggedIn = isLoggedIn,
-            passedOnboarding = hasPassedOnboarding,
+            conditionalNavigation = conditionalNavigation,
             requireUnlock = appLocked
         )
     }

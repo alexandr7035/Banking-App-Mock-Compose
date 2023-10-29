@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_app_lock.setup_applock
+package by.alexandr7035.banking.ui.feature_app_lock.setup_applock.pin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,12 +15,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SetupAppLockViewModel(
+class CreatePinViewModel(
     private val setupAppLockUseCase: SetupAppLockUseCase
 ) : ViewModel(), AppLockViewModel {
     override val pinLength: Int = 4
 
-    private val _state = MutableStateFlow(SetupAppLockState())
+    private val _state = MutableStateFlow(CreatePinState())
     val state = _state.asStateFlow()
 
     init {
@@ -81,18 +81,17 @@ class SetupAppLockViewModel(
             } else {
                 val pinsMatch = currentState.initialPin == pin
                 if (pinsMatch) {
-                    // TODO save pin
                     val savePinRes = setupAppLockUseCase.execute(
                         pinCode = pin
                     )
 
                     _state.update {
                         it.copy(
-                            appLockCreatedEvent = triggered
+                            pinCreatedEvent = triggered
                         )
                     }
                 } else {
-                    _state.value = SetupAppLockState(
+                    _state.value = CreatePinState(
                         // Reset default state
                         uiState = AppLockUiState(
                             prompt = UiText.StringResource(R.string.create_pin),
@@ -102,5 +101,9 @@ class SetupAppLockViewModel(
                 }
             }
         }
+    }
+
+    fun consumePinCreatedEvent() {
+
     }
 }
