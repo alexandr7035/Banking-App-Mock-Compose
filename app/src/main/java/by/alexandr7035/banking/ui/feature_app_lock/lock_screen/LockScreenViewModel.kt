@@ -1,10 +1,14 @@
-package by.alexandr7035.banking.ui.feature_app_lock
+package by.alexandr7035.banking.ui.feature_app_lock.lock_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.app_lock.AuthenticateWithPinUseCase
 import by.alexandr7035.banking.domain.features.app_lock.AuthenticationResult
 import by.alexandr7035.banking.ui.core.resources.UiText
+import by.alexandr7035.banking.ui.feature_app_lock.AppLockIntent
+import by.alexandr7035.banking.ui.feature_app_lock.components.AppLockUiState
+import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockViewModel
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,15 +16,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AppLockViewModel(
+class LockScreenViewModel(
     private val authenticateWithPinUseCase: AuthenticateWithPinUseCase
-) : ViewModel() {
+) : ViewModel(), AppLockViewModel {
 
-    private val _state = MutableStateFlow(AppLockUiState())
+    private val _state = MutableStateFlow(
+        LockScreenState(
+            uiState = AppLockUiState(
+                prompt = UiText.StringResource(R.string.unlock_app)
+            )
+        )
+    )
+
     val state = _state.asStateFlow()
-    private val pinLength = 4
+    override val pinLength = 4
 
-    fun emitAppLockIntent(intent: AppLockIntent) {
+    override fun emitAppLockIntent(intent: AppLockIntent) {
         when (intent) {
             is AppLockIntent.PinFieldChange -> reduce(intent)
         }
@@ -29,7 +40,7 @@ class AppLockViewModel(
     private fun reduce(intent: AppLockIntent.PinFieldChange) {
         _state.update {
             it.copy(
-                pinState = it.pinState.copy(
+                uiState = it.uiState.copy(
                     pinValue = intent.pin,
                     // Clear error on edit
                     error = null
@@ -40,13 +51,15 @@ class AppLockViewModel(
         if (intent.pin.length == pinLength) {
             _state.update {
                 it.copy(
-                    isLoading = true
+                    uiState = it.uiState.copy(
+                        isLoading = true
+                    )
                 )
             }
 
             viewModelScope.launch {
                 val pinRes = authenticateWithPinUseCase.execute(
-                    pin = _state.value.pinState.pinValue
+                    pin = _state.value.uiState.pinValue
                 )
 
                 when (pinRes) {
@@ -66,7 +79,9 @@ class AppLockViewModel(
         _state.update {
             it.copy(
                 unlockResultEvent = triggered,
-                isLoading = false,
+                uiState = it.uiState.copy(
+                    isLoading = false
+                )
             )
         }
     }
@@ -81,8 +96,8 @@ class AppLockViewModel(
 
         _state.update {
             it.copy(
-                isLoading = false,
-                pinState = it.pinState.copy(
+                uiState = it.uiState.copy(
+                    isLoading = false,
                     pinValue = "",
                     error = UiText.DynamicString("Invalid PIN.$postfix")
                 )
