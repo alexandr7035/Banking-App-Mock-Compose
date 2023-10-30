@@ -101,7 +101,9 @@ val presentationModule = module {
 
     viewModel {
         LockScreenViewModel(
-            authenticateWithPinUseCase = get()
+            authenticateWithPinUseCase = get(),
+            checkIfBiometricsAvailableUseCase = get(),
+            checkIfAppLockedWithBiometricsUseCase = get()
         )
     }
 

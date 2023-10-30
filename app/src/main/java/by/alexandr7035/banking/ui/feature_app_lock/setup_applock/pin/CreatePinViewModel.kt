@@ -40,6 +40,8 @@ class CreatePinViewModel(
     override fun emitAppLockIntent(intent: AppLockIntent) {
         when (intent) {
             is AppLockIntent.PinFieldChange -> reduce(intent)
+            // Do nothing on this user flow
+            is AppLockIntent.BiometricsBtnClicked -> {}
         }
     }
 

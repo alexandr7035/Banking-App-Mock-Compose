@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -25,7 +26,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,18 +55,19 @@ import by.alexandr7035.banking.ui.theme.ubuntuFontFamily
 @Composable
 fun AppLockScreen_Ui(
     state: AppLockUiState,
-    onIntent: (AppLockIntent) -> Unit = {}
+    onIntent: (AppLockIntent) -> Unit = {},
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .height(maxHeight)
                 .width(maxWidth)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(Modifier.height(100.dp))
+            Spacer(Modifier.weight(1f))
 
             Text(
                 text = state.prompt.asString(), style = TextStyle(
@@ -75,7 +80,8 @@ fun AppLockScreen_Ui(
                 )
             )
 
-            Spacer(Modifier.height(100.dp))
+            Spacer(Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
             PinIndicator(
                 itemCount = state.pinLength,
@@ -94,16 +100,32 @@ fun AppLockScreen_Ui(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Spacer(Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            if (state.showBiometricsBtn) {
+                // Use textbutton instead of icon due to ripple
+                TextButton(
+                    onClick = {
+                        onIntent(AppLockIntent.BiometricsBtnClicked)
+                    },
+                    modifier = Modifier.wrapContentSize(),
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_fingerprint),
+                        contentDescription = stringResource(id = R.string.unlock_app_biometrics),
+                        modifier = Modifier.size(72.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            Spacer(Modifier.weight(2f))
 
             PinKeyboard(
                 onIntent = onIntent,
                 pinLength = state.pinLength,
                 pinValue = state.pinValue
             )
-
-            Spacer(Modifier.height(32.dp))
         }
 
         if (state.isLoading) {
@@ -125,10 +147,6 @@ private fun PinKeyboard(
     ) {
 
         val btnModifier = Modifier.weight(1f)
-
-//        val pin = rememberSaveable {
-//            mutableStateOf("")
-//        }
 
         val onDigitClick: (Int) -> Unit = { clickedDigit ->
             if (pinValue.length < pinLength) {
@@ -325,6 +343,21 @@ fun AppLockScreen_Error_Preview() {
                 pinLength = 4,
                 pinValue = "123",
                 error = UiText.DynamicString("Wrong PIN. 3 attempts left")
+            )
+        )
+    }
+}
+
+@Composable
+@Preview
+fun AppLockScreen_With_Biometrics_Preview() {
+    ScreenPreview {
+        AppLockScreen_Ui(
+            AppLockUiState(
+                prompt = UiText.DynamicString("Unlock the app"),
+                pinLength = 4,
+                pinValue = "123",
+                showBiometricsBtn = true
             )
         )
     }

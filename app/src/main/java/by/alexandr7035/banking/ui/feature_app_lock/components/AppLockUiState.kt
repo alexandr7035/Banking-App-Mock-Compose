@@ -8,5 +8,5 @@ data class AppLockUiState(
     val pinValue: String = "",
     val error: UiText? = null,
     val isLoading: Boolean = false,
-    // TODO biometric btn
+    val showBiometricsBtn: Boolean = false,
 )

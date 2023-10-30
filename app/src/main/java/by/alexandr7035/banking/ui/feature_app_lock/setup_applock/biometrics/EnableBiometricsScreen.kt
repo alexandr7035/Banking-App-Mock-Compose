@@ -45,7 +45,8 @@ import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricAuthResult
 import by.alexandr7035.banking.domain.features.app_lock.model.BiometricsAvailability
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsHelper
-import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsPrompt
+import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsIntent
+import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsPromptUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
@@ -62,7 +63,7 @@ fun EnableBiometricsScreen(
 
     EnableBiometricsScreen_Ui(
         onIntent = {
-            viewModel.emitIntent(it)
+            viewModel.emitBiometricsIntent(it)
         },
         onExit = onExit,
         biometricsPrompt = state.prompt,
@@ -75,7 +76,6 @@ fun EnableBiometricsScreen(
     ) { result ->
         when (result) {
             is BiometricAuthResult.Success -> {
-                snackBarState.show("TODO", SnackBarMode.Neutral)
                 onExit()
             }
 
@@ -86,15 +86,15 @@ fun EnableBiometricsScreen(
     }
 
     OnResumeEffect {
-        viewModel.emitIntent(EnableBiometricsIntent.RefreshBiometricsAvailability(context))
+        viewModel.emitBiometricsIntent(BiometricsIntent.RefreshBiometricsAvailability)
     }
 }
 
 @Composable
 fun EnableBiometricsScreen_Ui(
-    onIntent: (EnableBiometricsIntent) -> Unit = {},
+    onIntent: (BiometricsIntent) -> Unit = {},
     onExit: () -> Unit = {},
-    biometricsPrompt: BiometricsPrompt,
+    biometricsPrompt: BiometricsPromptUi,
     biometricsAvailability: BiometricsAvailability = BiometricsAvailability.Checking
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -166,14 +166,14 @@ fun EnableBiometricsScreen_Ui(
                                     activity,
                                     onSuccess = {
                                         onIntent(
-                                            EnableBiometricsIntent.AuthenticationResult(
+                                            BiometricsIntent.AuthenticationResult(
                                                 BiometricAuthResult.Success
                                             )
                                         )
                                     },
                                     onError = {
                                         onIntent(
-                                            EnableBiometricsIntent.AuthenticationResult(
+                                            BiometricsIntent.AuthenticationResult(
                                                 BiometricAuthResult.Failure(it)
                                             )
                                         )
@@ -246,7 +246,7 @@ fun EnableBiometricsScreen_Ui(
 fun EnableBiometricsScreen_Preview() {
     ScreenPreview {
         EnableBiometricsScreen_Ui(
-            biometricsPrompt = BiometricsPrompt(
+            biometricsPrompt = BiometricsPromptUi(
                 title = UiText.StringResource(R.string.setup_biometrics),
                 cancelBtnText = UiText.StringResource(R.string.cancel)
             ),
@@ -260,7 +260,7 @@ fun EnableBiometricsScreen_Preview() {
 fun EnableBiometricsScreen_Not_Enrolled_Preview() {
     ScreenPreview {
         EnableBiometricsScreen_Ui(
-            biometricsPrompt = BiometricsPrompt(
+            biometricsPrompt = BiometricsPromptUi(
                 title = UiText.StringResource(R.string.setup_biometrics),
                 cancelBtnText = UiText.StringResource(R.string.cancel)
             ),
@@ -275,7 +275,7 @@ fun EnableBiometricsScreen_Not_Enrolled_Preview() {
 fun EnableBiometricsScreen_Not_Available_Preview() {
     ScreenPreview {
         EnableBiometricsScreen_Ui(
-            biometricsPrompt = BiometricsPrompt(
+            biometricsPrompt = BiometricsPromptUi(
                 title = UiText.StringResource(R.string.setup_biometrics),
                 cancelBtnText = UiText.StringResource(R.string.cancel)
             ),
@@ -289,7 +289,7 @@ fun EnableBiometricsScreen_Not_Available_Preview() {
 fun EnableBiometricsScreen_Loading_Preview() {
     ScreenPreview {
         EnableBiometricsScreen_Ui(
-            biometricsPrompt = BiometricsPrompt(
+            biometricsPrompt = BiometricsPromptUi(
                 title = UiText.StringResource(R.string.setup_biometrics),
                 cancelBtnText = UiText.StringResource(R.string.cancel)
             ),

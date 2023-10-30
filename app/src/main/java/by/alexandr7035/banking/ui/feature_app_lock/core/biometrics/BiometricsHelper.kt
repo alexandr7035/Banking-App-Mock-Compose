@@ -15,7 +15,7 @@ object BiometricsHelper {
 
     fun showPrompt(
         activity: FragmentActivity,
-        prompt: BiometricsPrompt,
+        prompt: BiometricsPromptUi,
         onSuccess: () -> Unit,
         onError: (error: String) -> Unit,
     ) {
