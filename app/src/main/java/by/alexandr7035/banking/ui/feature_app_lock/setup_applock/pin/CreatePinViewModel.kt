@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.app_lock.SetupAppLockUseCase
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_app_lock.AppLockIntent
+import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockIntent
 import by.alexandr7035.banking.ui.feature_app_lock.components.AppLockUiState
 import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockViewModel
 import de.palm.composestateevents.triggered

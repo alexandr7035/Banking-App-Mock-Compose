@@ -44,7 +44,7 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_app_lock.AppLockIntent
+import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockIntent
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import by.alexandr7035.banking.ui.theme.ubuntuFontFamily
 
