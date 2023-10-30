@@ -9,7 +9,6 @@ class AppLockRepositoryImpl(
     private val securedPreferences: SharedPreferences
 ) : AppLockRepository {
 
-    // TODO biometrics flag
     override fun setupAppLock(pinCode: String) {
         savePin(pin = pinCode)
     }
@@ -57,8 +56,17 @@ class AppLockRepositoryImpl(
                 && securedPreferences.getString(PIN_KEY, null) != null
     }
 
+    override fun setupLockWithBiometrics(isLocked: Boolean) {
+        securedPreferences.edit().putBoolean(BIOMETRICS_FLAG, isLocked).apply()
+    }
+
+    override fun checkIfAppLockedWithBiometrics(): Boolean {
+        return securedPreferences.getBoolean(BIOMETRICS_FLAG, false)
+    }
+
     companion object {
         private const val PIN_KEY = "PIN_KEY"
         private const val PIN_SALT_KEY = "PIN_SALT"
+        private const val BIOMETRICS_FLAG = "BIOMETRICS_LOCK_ENABLED"
     }
 }

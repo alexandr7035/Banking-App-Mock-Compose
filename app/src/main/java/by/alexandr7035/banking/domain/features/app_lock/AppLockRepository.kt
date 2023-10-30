@@ -4,4 +4,6 @@ interface AppLockRepository {
     fun setupAppLock(pinCode: String)
     fun authenticateWithPin(pin: String): AuthenticationResult
     fun checkIfAppLocked(): Boolean
+    fun setupLockWithBiometrics(isLocked: Boolean)
+    fun checkIfAppLockedWithBiometrics(): Boolean
 }
