@@ -109,7 +109,8 @@ val dataModule = module {
 
     single<AppLockRepository> {
         AppLockRepositoryImpl(
-            securedPreferences = get(named("encryptedPrefs"))
+            securedPreferences = get(named("encryptedPrefs")),
+            context = androidApplication().applicationContext
         )
     }
 }

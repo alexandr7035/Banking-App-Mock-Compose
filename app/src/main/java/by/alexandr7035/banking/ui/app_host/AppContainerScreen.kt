@@ -43,6 +43,7 @@ import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
 import by.alexandr7035.banking.ui.app_host.navigation.AppBottomNav
 import by.alexandr7035.banking.ui.app_host.navigation.AppNavHost
 import by.alexandr7035.banking.ui.feature_app_lock.lock_screen.LockScreen
+import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.biometrics.EnableBiometricsScreen
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
 

@@ -107,13 +107,15 @@ val presentationModule = module {
 
     viewModel {
         CreatePinViewModel(
-            setupAppLockUseCase = get()
+            setupAppLockUseCase = get(),
+            checkIfBiometricsAvailableUseCase = get(),
         )
     }
 
     viewModel {
         EnableBiometricsViewModel(
-            setupAppLockedWithBiometricsUseCase = get()
+            setupAppLockedWithBiometricsUseCase = get(),
+            checkIfBiometricsAvailableUseCase = get(),
         )
     }
 }

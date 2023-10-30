@@ -43,7 +43,7 @@ import by.alexandr7035.banking.ui.core.extensions.findActivity
 import by.alexandr7035.banking.ui.core.extensions.openBiometricsSettings
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricAuthResult
-import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsAvailability
+import by.alexandr7035.banking.domain.features.app_lock.model.BiometricsAvailability
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsHelper
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsPrompt
 import by.alexandr7035.banking.ui.theme.primaryFontFamily

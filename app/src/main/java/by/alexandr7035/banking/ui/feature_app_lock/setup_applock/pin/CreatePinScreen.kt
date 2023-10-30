@@ -9,7 +9,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CreatePinScreen(
     viewModel: CreatePinViewModel = koinViewModel(),
-    onPinCreated: () -> Unit = {}
+    onPinCreated: (shouldRequestBiometrics: Boolean) -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -21,7 +21,7 @@ fun CreatePinScreen(
     EventEffect(
         event = state.pinCreatedEvent,
         onConsumed = viewModel::consumePinCreatedEvent,
-    ) {
-        onPinCreated()
+    ) { pinCreatedResult ->
+        onPinCreated(pinCreatedResult.shouldRequestBiometrics)
     }
 }

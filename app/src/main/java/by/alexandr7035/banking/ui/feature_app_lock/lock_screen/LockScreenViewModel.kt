@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.app_lock.AuthenticateWithPinUseCase
-import by.alexandr7035.banking.domain.features.app_lock.AuthenticationResult
+import by.alexandr7035.banking.domain.features.app_lock.model.AuthenticationResult
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockIntent
 import by.alexandr7035.banking.ui.feature_app_lock.components.AppLockUiState

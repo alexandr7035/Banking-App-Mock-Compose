@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_app_lock.core.biometrics
+package by.alexandr7035.banking.domain.features.app_lock.model
 
 sealed class BiometricsAvailability {
     object Checking: BiometricsAvailability()

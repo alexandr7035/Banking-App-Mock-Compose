@@ -3,11 +3,14 @@ package by.alexandr7035.banking.ui.feature_app_lock.setup_applock.pin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.domain.features.app_lock.CheckIfBiometricsAvailableUseCase
 import by.alexandr7035.banking.domain.features.app_lock.SetupAppLockUseCase
+import by.alexandr7035.banking.domain.features.app_lock.model.BiometricsAvailability
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockIntent
 import by.alexandr7035.banking.ui.feature_app_lock.components.AppLockUiState
+import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockIntent
 import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockViewModel
+import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +19,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CreatePinViewModel(
-    private val setupAppLockUseCase: SetupAppLockUseCase
+    private val setupAppLockUseCase: SetupAppLockUseCase,
+    private val checkIfBiometricsAvailableUseCase: CheckIfBiometricsAvailableUseCase
 ) : ViewModel(), AppLockViewModel {
     override val pinLength: Int = 4
 
@@ -81,13 +85,21 @@ class CreatePinViewModel(
             } else {
                 val pinsMatch = currentState.initialPin == pin
                 if (pinsMatch) {
+
+                    // Save pin
                     val savePinRes = setupAppLockUseCase.execute(
                         pinCode = pin
                     )
 
+                    // Check biometrics available for next step
+                    val biometricsRes = checkIfBiometricsAvailableUseCase.execute()
+                    val shouldRequestBiometrics = biometricsRes != BiometricsAvailability.NotAvailable
+
                     _state.update {
                         it.copy(
-                            pinCreatedEvent = triggered
+                            pinCreatedEvent = triggered(
+                                PinCreatedResult(shouldRequestBiometrics = shouldRequestBiometrics)
+                            )
                         )
                     }
                 } else {
@@ -104,6 +116,8 @@ class CreatePinViewModel(
     }
 
     fun consumePinCreatedEvent() {
-
+        _state.update {
+            it.copy(pinCreatedEvent = consumed())
+        }
     }
 }

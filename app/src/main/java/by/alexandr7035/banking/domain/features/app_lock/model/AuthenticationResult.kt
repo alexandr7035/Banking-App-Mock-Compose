@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.domain.features.app_lock
+package by.alexandr7035.banking.domain.features.app_lock.model
 
 // TODO separate with biometrics
 sealed class AuthenticationResult {

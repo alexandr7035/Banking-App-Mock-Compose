@@ -1,12 +1,17 @@
 package by.alexandr7035.banking.data.app_lock
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.util.Base64
+import androidx.biometric.BiometricManager
 import by.alexandr7035.banking.domain.features.app_lock.AppLockRepository
-import by.alexandr7035.banking.domain.features.app_lock.AuthenticationResult
+import by.alexandr7035.banking.domain.features.app_lock.model.AuthenticationResult
+import by.alexandr7035.banking.domain.features.app_lock.model.BiometricsAvailability
+import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsHelper
 
 class AppLockRepositoryImpl(
-    private val securedPreferences: SharedPreferences
+    private val securedPreferences: SharedPreferences,
+    private val context: Context,
 ) : AppLockRepository {
 
     override fun setupAppLock(pinCode: String) {
@@ -62,6 +67,22 @@ class AppLockRepositoryImpl(
 
     override fun checkIfAppLockedWithBiometrics(): Boolean {
         return securedPreferences.getBoolean(BIOMETRICS_FLAG, false)
+    }
+
+    override fun checkBiometricsAvailable(): BiometricsAvailability {
+        return when (BiometricsHelper.checkIfBiometricsAvailable(context)) {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                BiometricsAvailability.Available
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                BiometricsAvailability.NotEnabled
+            }
+            // All cases where not available
+            else -> {
+                BiometricsAvailability.NotAvailable
+            }
+        }
     }
 
     companion object {
