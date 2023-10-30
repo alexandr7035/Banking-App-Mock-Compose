@@ -67,4 +67,8 @@
     <string name="enable_biometrics">Enable Biometrics</string>
     <string name="biometrics_explanation">Logging in with biometrics is an easier way to access your account</string>
     <string name="unlock_app">Unlock App</string>
+    <string name="setup_biometrics">Setup Biometrics</string>
+    <string name="cancel">Cancel</string>
+    <string name="go_to_settings">Go to Settings</string>
+    <string name="biometrics_enable_explanation">You should enable Biometrics in Settings</string>
 </resources>

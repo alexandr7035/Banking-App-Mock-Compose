@@ -8,10 +8,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.FragmentActivity
 import by.alexandr7035.banking.ui.app_host.AppContainerScreen
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 
-class MainActivity : ComponentActivity() {
+// AppCompatActivity extends FragmentActivity which extends ComponentActivity
+// Need FragmentActivity at least for biometrics
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
