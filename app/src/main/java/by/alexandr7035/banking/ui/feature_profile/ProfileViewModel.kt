@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.login.LogoutUseCase
-import by.alexandr7035.banking.domain.features.profile.model.CompactProfile
 import by.alexandr7035.banking.domain.features.profile.GetCompactProfileUseCase
+import by.alexandr7035.banking.domain.features.profile.model.CompactProfile
 import by.alexandr7035.banking.ui.core.error.asUiTextError
+import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
+import by.alexandr7035.banking.ui.feature_logout.LogoutViewModel
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     private val getCompactProfileUseCase: GetCompactProfileUseCase,
     private val logoutUseCase: LogoutUseCase
-) : ViewModel() {
+) : ViewModel(), LogoutViewModel {
     private val _state = MutableStateFlow(
         ProfileScreenState()
     )
@@ -43,21 +45,6 @@ class ProfileViewModel(
                             reduceError(profile.error.errorType)
                         }
                     }
-                }
-            }
-
-            is ProfileScreenIntent.ToggleLogoutDialog -> {
-                reduceLogoutDialog(showDialog = intent.isShown)
-            }
-
-            is ProfileScreenIntent.ConfirmLogOut -> {
-                reduceLogoutLoading()
-
-                viewModelScope.launch {
-                    val res = OperationResult.runWrapped {
-                        logoutUseCase.execute()
-                    }
-                    reduceLogoutResult(res)
                 }
             }
         }
@@ -110,6 +97,25 @@ class ProfileViewModel(
                 isProfileLoading = false,
                 profile = ProfileUi.mapFromDomain(profile)
             )
+        }
+    }
+
+    override fun emitLogoutIntent(intent: LogoutIntent) {
+        when (intent) {
+            is LogoutIntent.ToggleLogoutDialog -> {
+                reduceLogoutDialog(showDialog = intent.isShown)
+            }
+
+            is LogoutIntent.ConfirmLogOut -> {
+                reduceLogoutLoading()
+
+                viewModelScope.launch {
+                    val res = OperationResult.runWrapped {
+                        logoutUseCase.execute()
+                    }
+                    reduceLogoutResult(res)
+                }
+            }
         }
     }
 

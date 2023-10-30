@@ -3,11 +3,13 @@ package by.alexandr7035.banking.ui.feature_app_lock.lock_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.app_lock.AuthenticateWithPinUseCase
 import by.alexandr7035.banking.domain.features.app_lock.CheckAppLockedWithBiometricsUseCase
 import by.alexandr7035.banking.domain.features.app_lock.CheckIfBiometricsAvailableUseCase
 import by.alexandr7035.banking.domain.features.app_lock.model.AuthenticationResult
 import by.alexandr7035.banking.domain.features.app_lock.model.BiometricsAvailability
+import by.alexandr7035.banking.domain.features.login.LogoutUseCase
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockIntent
 import by.alexandr7035.banking.ui.feature_app_lock.components.AppLockUiState
@@ -15,6 +17,8 @@ import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.core.BiometricsViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricAuthResult
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsIntent
+import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
+import by.alexandr7035.banking.ui.feature_logout.LogoutViewModel
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +29,13 @@ import kotlinx.coroutines.launch
 class LockScreenViewModel(
     private val authenticateWithPinUseCase: AuthenticateWithPinUseCase,
     private val checkIfBiometricsAvailableUseCase: CheckIfBiometricsAvailableUseCase,
-    private val checkIfAppLockedWithBiometricsUseCase: CheckAppLockedWithBiometricsUseCase
-) : ViewModel(), AppLockViewModel, BiometricsViewModel {
+    private val checkIfAppLockedWithBiometricsUseCase: CheckAppLockedWithBiometricsUseCase,
+    private val logoutUseCase: LogoutUseCase,
+) : ViewModel(),
+    AppLockViewModel,
+    BiometricsViewModel,
+    LogoutViewModel
+{
 
     private val _state = MutableStateFlow(
         LockScreenState(
@@ -61,6 +70,7 @@ class LockScreenViewModel(
                             )
                         }
                     }
+
                     is BiometricAuthResult.Failure -> {
                         // Do nothing
                         // User can init biometrics auth again or use pin code
@@ -92,6 +102,10 @@ class LockScreenViewModel(
         }
     }
 
+    fun emitLogoutIntent() {
+
+    }
+
     private fun reduce(intent: AppLockIntent.PinFieldChange) {
         _state.update {
             it.copy(
@@ -119,18 +133,56 @@ class LockScreenViewModel(
 
                 when (pinRes) {
                     is AuthenticationResult.Success -> {
-                        reduceSuccess()
+                        reducePinSuccess()
                     }
 
                     is AuthenticationResult.Failure -> {
-                        reduceError(pinRes)
+                        reducePinError(pinRes)
                     }
                 }
             }
         }
     }
 
-    private fun reduceSuccess() {
+    override fun emitLogoutIntent(intent: LogoutIntent) {
+        when (intent) {
+            is LogoutIntent.ToggleLogoutDialog -> {
+                _state.update {
+                    it.copy(
+                        logoutState = it.logoutState.copy(
+                            showLogoutDialog = intent.isShown
+                        )
+                    )
+                }
+            }
+
+            is LogoutIntent.ConfirmLogOut -> {
+                _state.update {
+                    it.copy(
+                        logoutState = it.logoutState.copy(
+                            isLoading = true
+                        )
+                    )
+                }
+
+                viewModelScope.launch {
+                    val logoutRes = OperationResult.runWrapped {
+                        logoutUseCase.execute()
+                    }
+
+                    _state.update {
+                        it.copy(
+                            logoutState = it.logoutState.copy(
+                                logoutEvent = triggered(logoutRes)
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun reducePinSuccess() {
         _state.update {
             it.copy(
                 unlockWithPinEvent = triggered,
@@ -141,7 +193,7 @@ class LockScreenViewModel(
         }
     }
 
-    private fun reduceError(pinRes: AuthenticationResult.Failure) {
+    private fun reducePinError(pinRes: AuthenticationResult.Failure) {
         // TODO string template
         val postfix = if (pinRes.remainingAttempts != null) {
             " ${pinRes.remainingAttempts} attempts left"
@@ -180,6 +232,16 @@ class LockScreenViewModel(
         _state.update {
             it.copy(
                 unlockWithBiometricsResultEvent = consumed()
+            )
+        }
+    }
+
+    fun consumeLogoutEvent() {
+        _state.update {
+            it.copy(
+                logoutState = it.logoutState.copy(
+                    logoutEvent = consumed()
+                )
             )
         }
     }

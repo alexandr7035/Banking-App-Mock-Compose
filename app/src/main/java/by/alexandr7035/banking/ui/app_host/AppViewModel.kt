@@ -32,35 +32,7 @@ class AppViewModel(
         when (intent) {
             AppIntent.EnterApp -> {
                 reduceAppLoading()
-
-                viewModelScope.launch {
-
-                    val isLoggedIn = OperationResult.runWrapped {
-                        checkIfLoggedInUseCase.execute()
-                    }
-
-                    when (isLoggedIn) {
-                        is OperationResult.Success -> {
-
-                            val hasPassedOnboarding = checkIfPassedOnboardingUseCase.execute()
-                            val appLocked = checkAppLockUseCase.execute()
-
-                            reduceAppReady(
-                                conditionalNavigation = ConditionalNavigation(
-                                    // Require create applock if closed this step on registration
-                                    requireCreateAppLock = !appLocked && isLoggedIn.data,
-                                    requireLogin = !isLoggedIn.data,
-                                    requireOnboarding = !hasPassedOnboarding
-                                ),
-                                appLocked = appLocked
-                            )
-                        }
-
-                        is OperationResult.Failure -> {
-                            reduceError(isLoggedIn.error.errorType)
-                        }
-                    }
-                }
+                reduceAppReadyCheck()
             }
 
             AppIntent.TryPostUnlock -> {
@@ -74,12 +46,54 @@ class AppViewModel(
                     }
                 }
             }
+
+            is AppIntent.AppLockLogout -> {
+                reduceAppReady(
+                    appLocked = false,
+                    conditionalNavigation = ConditionalNavigation(
+                        requireLogin = true,
+                        requireOnboarding = false,
+                        requireCreateAppLock = false
+                    )
+                )
+            }
         }
     }
 
     private fun reduceAppLoading() {
         _appState.update {
             AppState.Loading
+        }
+    }
+
+    private fun reduceAppReadyCheck() {
+        viewModelScope.launch {
+
+            val isLoggedIn = OperationResult.runWrapped {
+                checkIfLoggedInUseCase.execute()
+            }
+
+            when (isLoggedIn) {
+                is OperationResult.Success -> {
+
+                    val hasPassedOnboarding = checkIfPassedOnboardingUseCase.execute()
+                    val appLocked = checkAppLockUseCase.execute()
+
+                    reduceAppReady(
+                        conditionalNavigation = ConditionalNavigation(
+                            // Require create applock if closed this step on registration
+                            requireCreateAppLock = !appLocked && isLoggedIn.data,
+                            requireLogin = !isLoggedIn.data,
+                            requireOnboarding = !hasPassedOnboarding
+                        ),
+                        appLocked = appLocked
+                    )
+                }
+
+                is OperationResult.Failure -> {
+                    reduceError(isLoggedIn.error.errorType)
+                }
+            }
         }
     }
 

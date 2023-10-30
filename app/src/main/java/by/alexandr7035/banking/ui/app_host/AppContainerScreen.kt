@@ -82,6 +82,9 @@ fun AppContainerScreen(viewModel: AppViewModel = koinViewModel()) {
                         LockScreen(
                             onAppUnlock = {
                                 viewModel.emitIntent(AppIntent.TryPostUnlock)
+                            },
+                            onLogoutSucceeded = {
+                                viewModel.emitIntent(AppIntent.AppLockLogout)
                             }
                         )
                     }
