@@ -1,6 +1,9 @@
 package by.alexandr7035.banking.core.di.presentation
 
 import by.alexandr7035.banking.ui.app_host.AppViewModel
+import by.alexandr7035.banking.ui.feature_app_lock.lock_screen.LockScreenViewModel
+import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.biometrics.EnableBiometricsViewModel
+import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.pin.CreatePinViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
@@ -32,7 +35,8 @@ val presentationModule = module {
     viewModel {
         AppViewModel(
             checkIfLoggedInUseCase = get(),
-            checkIfPassedOnboardingUseCase = get()
+            checkIfPassedOnboardingUseCase = get(),
+            checkAppLockUseCase = get()
         )
     }
     viewModel {
@@ -92,6 +96,29 @@ val presentationModule = module {
         ConfirmEmailSignUpVIewModel(
             requestOtpGenerationUseCase = get(),
             confirmSignUpWithEmailUseCase = get()
+        )
+    }
+
+    viewModel {
+        LockScreenViewModel(
+            authenticateWithPinUseCase = get(),
+            checkIfBiometricsAvailableUseCase = get(),
+            checkIfAppLockedWithBiometricsUseCase = get(),
+            logoutUseCase = get(),
+        )
+    }
+
+    viewModel {
+        CreatePinViewModel(
+            setupAppLockUseCase = get(),
+            checkIfBiometricsAvailableUseCase = get(),
+        )
+    }
+
+    viewModel {
+        EnableBiometricsViewModel(
+            setupAppLockedWithBiometricsUseCase = get(),
+            checkIfBiometricsAvailableUseCase = get(),
         )
     }
 }

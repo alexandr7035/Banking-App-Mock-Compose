@@ -62,4 +62,14 @@
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="i_confirm_i_agree_with">I confirm I agree with</string>
     <string name="welcome">Welcome !</string>
+    <string name="create_pin">Create PIN</string>
+    <string name="confirm_pin">Confirm PIN</string>
+    <string name="enable_biometrics">Enable Biometrics</string>
+    <string name="biometrics_explanation">Logging in with biometrics is an easier way to access your account</string>
+    <string name="unlock_app">Unlock App</string>
+    <string name="unlock_app_biometrics">Unlock with Biometrics</string>
+    <string name="setup_biometrics">Setup Biometrics</string>
+    <string name="cancel">Cancel</string>
+    <string name="go_to_settings">Go to Settings</string>
+    <string name="biometrics_enable_explanation">You should enable Biometrics in Settings</string>
 </resources>

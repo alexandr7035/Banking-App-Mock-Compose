@@ -9,7 +9,16 @@ data class LoginScreenState(
     val formFields: LoginFormFields = LoginFormFields(),
     val isLoading: Boolean = false,
     val loginEvent: StateEventWithContent<OperationResult<Unit>> = consumed()
-)
+) {
+    companion object {
+        fun mock() = LoginScreenState(
+            formFields = LoginFormFields(
+                loginField = UiField("example@mail.com"),
+                passwordField = UiField("1234567Ab")
+            )
+        )
+    }
+}
 
 data class LoginFormFields(
     val loginField: UiField = UiField("", null),

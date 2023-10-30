@@ -39,8 +39,8 @@ For example, for banking profile the app uses local mock Repositories with stati
     - [X] Operation handling core (OperationResult class)
     - [X] Popup messages (snackbar)
     - [X] Error UI
-    - [ ] App lock (PIN)
-    - [ ] App lock (biometrics)
+    - [X] App lock (PIN)
+    - [X] App lock (biometrics)
     - [ ] Data enrcryption
 - [X] Onboarding slider
 - [X] Sign up with email

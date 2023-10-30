@@ -46,6 +46,8 @@ import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
+import by.alexandr7035.banking.ui.feature_logout.LogoutState
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
@@ -73,8 +75,8 @@ fun ProfileScreen(
                 context.showToast("TODO")
                 onSettingEntry.invoke(it)
             },
-            onIntent = {
-                viewModel.emitIntent(it)
+            onLogoutIntent = {
+                viewModel.emitLogoutIntent(it)
             },
             state = state
         )
@@ -82,10 +84,10 @@ fun ProfileScreen(
         if (state.logoutState.showLogoutDialog) {
             LogoutDialog(
                 onDismiss = {
-                    viewModel.emitIntent(ProfileScreenIntent.ToggleLogoutDialog(isShown = false))
+                    viewModel.emitLogoutIntent(LogoutIntent.ToggleLogoutDialog(isShown = false))
                 },
                 onConfirmLogout = {
-                    viewModel.emitIntent(ProfileScreenIntent.ConfirmLogOut)
+                    viewModel.emitLogoutIntent(LogoutIntent.ConfirmLogOut)
                 }
             )
         }
@@ -103,6 +105,7 @@ fun ProfileScreen(
                 is OperationResult.Success -> {
                     onLogoutCompleted.invoke()
                 }
+
                 is OperationResult.Failure -> {
                     snackBarState.show(
                         message = result.error.errorType.asUiTextError().asString(context),
@@ -118,7 +121,7 @@ fun ProfileScreen(
 private fun ProfileScreen_Ui(
     modifier: Modifier,
     state: ProfileScreenState,
-    onIntent: (intent: ProfileScreenIntent) -> Unit = {},
+    onLogoutIntent: (intent: LogoutIntent) -> Unit = {},
     onSettingEntryClick: (entry: SettingEntry) -> Unit = {},
 ) {
     Column(
@@ -234,8 +237,8 @@ private fun ProfileScreen_Ui(
 
                 TextButton(
                     onClick = {
-                        onIntent.invoke(
-                            ProfileScreenIntent.ToggleLogoutDialog(
+                        onLogoutIntent(
+                            LogoutIntent.ToggleLogoutDialog(
                                 isShown = true
                             )
                         )
@@ -296,7 +299,7 @@ fun ProfileScreen_Logout_Preview() {
         ProfileScreen_Ui(
             modifier = Modifier.fillMaxSize(),
             state = ProfileScreenState(
-                logoutState = ProfileScreenState.LogoutState(
+                logoutState = LogoutState(
                     showLogoutDialog = true
                 )
             )

@@ -1,5 +1,6 @@
 package by.alexandr7035.banking.data.login
 
+import android.content.SharedPreferences
 import by.alexandr7035.banking.data.app.PrefKeys
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
@@ -11,7 +12,8 @@ import kotlinx.coroutines.withContext
 
 class LoginRepositoryMock(
     private val coroutineDispatcher: CoroutineDispatcher,
-    private val prefs: KsPrefs
+    private val prefs: KsPrefs,
+    private val securedPrefs: SharedPreferences
 ) : LoginRepository {
 
     override suspend fun loginWithEmail(email: String, password: String) = withContext(coroutineDispatcher) {
@@ -38,7 +40,12 @@ class LoginRepositoryMock(
     override suspend fun logOut() = withContext(coroutineDispatcher) {
         // here may be some logic like cleanup and logout api call
         delay(MOCK_DELAY)
+
+        // Clear app settings
         prefs.push(PrefKeys.IS_LOGGED_IN.name, false)
+
+        // Clear encrypted storage
+        securedPrefs.edit().clear().apply()
     }
 
     companion object {

@@ -15,4 +15,8 @@
     <string name="unknown_error">An unknown error happened</string>
     <string name="generic_not_found_error">Item not found</string>
     <string name="wrong_confirmation_code">Wrong confirmation code</string>
+    <string name="pins_don_t_match">PINs don\'t match</string>
+    <string name="error_template">Error: %1$s</string>
+    <string name="error_auth_failed">Authentication failed</string>
+    <string name="error_biometrics_not_available">Biometrics not available</string>
 </resources>

@@ -17,43 +17,50 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.app_host.navigation.graphs.createAppLockGraph
+import by.alexandr7035.banking.ui.app_host.navigation.graphs.loginGraph
+import by.alexandr7035.banking.ui.app_host.navigation.graphs.signUpGraph
+import by.alexandr7035.banking.ui.app_host.navigation.model.ConditionalNavigation
 import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.core.EnterScreenEffect
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.HomeScreen
-import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsScreen
-import by.alexandr7035.banking.ui.feature_signup.InitSignUpScreen
-import by.alexandr7035.banking.ui.feature_signup.confirm_signup.ConfirmSignUpScreen
-import by.alexandr7035.banking.ui.feature_signup.finish_signup.CompleteSignUpScreen
 import by.alexandr7035.banking.ui.feature_webview.WebViewScreen
 
-// TODO split nav graph
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    isLoggedIn: Boolean,
-    hasPassedOnboarding: Boolean,
+    conditionalNavigation: ConditionalNavigation,
     paddingValues: PaddingValues
 ) {
 
     // Conditional navigation
     EnterScreenEffect() {
-        if (!isLoggedIn) {
+        if (conditionalNavigation.requireLogin) {
             navController.navigate(NavEntries.Login.route) {
                 popUpTo(NavEntries.Graphs.HomeGraph.route) {
                     inclusive = true
                 }
             }
 
-            if (!hasPassedOnboarding) {
+            if (conditionalNavigation.requireOnboarding) {
                 navController.navigate(NavEntries.Wizard.route) {
                     popUpTo(NavEntries.Login.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+        else {
+            if (conditionalNavigation.requireCreateAppLock) {
+                navController.navigate(NavEntries.Graphs.CreateAppLock.route) {
+                    popUpTo(NavEntries.Graphs.HomeGraph.route) {
                         inclusive = true
                     }
                 }
@@ -69,27 +76,15 @@ fun AppNavHost(
         composable(NavEntries.Wizard.route) {
             OnboardingScreen(
                 onGoToLogin = {
-                    navController.navigate(NavEntries.Login.route)
-                },
-                onSignUp = {
-                    navController.navigate(NavEntries.Graphs.SignUpGraph.route)
-                }
-            )
-        }
-
-        composable(NavEntries.Login.route) {
-            LoginScreen(
-                onLoginCompleted = {
-                    navController.navigate(route = NavEntries.Graphs.HomeGraph.route) {
-                        popUpTo(NavEntries.Login.route) {
+                    navController.navigate(NavEntries.Login.route) {
+                        popUpTo(NavEntries.Wizard.route) {
                             inclusive = true
                         }
                     }
                 },
                 onSignUp = {
                     navController.navigate(NavEntries.Graphs.SignUpGraph.route) {
-                        // TODO check ux
-                        popUpTo(NavEntries.Login.route) {
+                        popUpTo(NavEntries.Wizard.route) {
                             inclusive = true
                         }
                     }
@@ -97,64 +92,9 @@ fun AppNavHost(
             )
         }
 
-        navigation(
-            startDestination = NavEntries.InitSignUp.route,
-            route = NavEntries.Graphs.SignUpGraph.route
-        ) {
-            composable(route = NavEntries.InitSignUp.route) {
-                InitSignUpScreen(
-                    onGoToSignIn = {
-                        navController.navigate(NavEntries.Login.route) {
-                            // TODO check ux
-                            popUpTo(NavEntries.InitSignUp.route) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    onGoToConfirmSignUp = { email ->
-                        navController.navigate("${NavEntries.ConfirmSignUp.route}/${email}")
-                    },
-                    onGoToTermsAndConditions = {
-                        navController.navigate(NavEntries.TermsAndConditions.route)
-                    }
-                )
-            }
-
-            composable(
-                route = "${NavEntries.ConfirmSignUp.route}/{otpDestination}",
-                arguments = listOf(navArgument("otpDestination") { type = NavType.StringType })
-            ) {
-                val email = it.arguments?.getString("otpDestination")!!
-
-                ConfirmSignUpScreen(
-                    email = email,
-                    onCodeVerified = {
-                        navController.navigate(NavEntries.CompletedSignUp.route) {
-                            popUpTo(NavEntries.Graphs.SignUpGraph.route) {
-//                            popUpTo("${NavEntries.ConfirmSignUp.route}/${email}") {
-                                inclusive = true
-                            }
-                        }
-                    }
-                )
-            }
-
-            composable(NavEntries.CompletedSignUp.route) {
-                CompleteSignUpScreen(
-                    onClose = {
-                        navController.navigate(NavEntries.Graphs.HomeGraph.route) {
-                            // TODO check
-                            popUpTo(NavEntries.Graphs.SignUpGraph.route) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    onGoToTermsAndConditions = {
-                        navController.navigate(NavEntries.TermsAndConditions.route)
-                    }
-                )
-            }
-        }
+        signUpGraph(navController)
+        loginGraph(navController)
+        createAppLockGraph(navController)
 
         navigation(
             startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
