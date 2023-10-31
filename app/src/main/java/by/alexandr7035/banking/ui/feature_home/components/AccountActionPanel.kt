@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_home
+package by.alexandr7035.banking.ui.feature_home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +24,7 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,15 +38,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
+import by.alexandr7035.banking.ui.feature_account.AccountBalanceUi
 import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun AccountActionPanel(
-    balance: Float,
+    balanceFlow: Flow<AccountBalanceUi?>,
     onActionClick: (action: AccountAction) -> Unit
 ) {
+    val balance = balanceFlow.collectAsStateWithLifecycle(initialValue = null).value
 
     val shape = RoundedCornerShape(size = 10.dp)
     Column(
@@ -58,9 +65,12 @@ fun AccountActionPanel(
             )
             .background(color = Color(0xFFFFFFFF), shape = shape)
     ) {
-        Row(Modifier.padding(horizontal = 24.dp, vertical = 18.dp)) {
+        Row(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                text = "My Balance",
+                text = stringResource(R.string.my_balance),
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
@@ -72,15 +82,24 @@ fun AccountActionPanel(
 
             Spacer(Modifier.weight(1f))
 
-            Text(
-                text = "\$${balance}",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF100D40),
+            if (balance != null) {
+                Text(
+                    text = balance.balanceStr,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF100D40),
+                    )
                 )
-            )
+            } else {
+                SkeletonShape(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(18.dp),
+                    shape = RoundedCornerShape(4.dp)
+                )
+            }
         }
 
         Divider(
@@ -186,9 +205,12 @@ fun AccountActionPanel_Skeleton() {
             )
             .background(color = Color(0xFFFFFFFF), shape = shape)
     ) {
-        Row(Modifier.padding(horizontal = 24.dp, vertical = 18.dp)) {
+        Row(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                text = "My Balance",
+                text = stringResource(id = R.string.my_balance),
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
@@ -230,7 +252,7 @@ fun AccountActionPanel_Skeleton() {
 @Preview
 @Composable
 fun AccountActionPanel_Preview() {
-    AccountActionPanel(balance = 2000.52F, onActionClick = {})
+    AccountActionPanel(balanceFlow = flowOf(AccountBalanceUi("$2000"))) {}
 }
 
 @Preview

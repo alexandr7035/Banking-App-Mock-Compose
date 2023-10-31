@@ -49,7 +49,8 @@ val presentationModule = module {
         HomeViewModel(
             getHomeCardsUseCase = get(),
             getHomeSavingsUseCase = get(),
-            getCompactProfileUseCase = get()
+            getCompactProfileUseCase = get(),
+            getTotalAccountBalanceUseCase = get()
         )
     }
     viewModel { CardListViewModel(getAllCardsUseCase = get()) }
