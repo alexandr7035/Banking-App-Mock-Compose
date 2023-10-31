@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -12,9 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +53,7 @@ fun OnboardingScreen(
 ) {
     OnboardingScreen_Ui(
         onGoToLogin = onGoToLogin,
-        onSignUp = onSignUp,
+        onGoToSignUp = onSignUp,
         onIntent = { viewModel.emitIntent(it) }
     )
 }
@@ -58,147 +63,165 @@ fun OnboardingScreen(
 fun OnboardingScreen_Ui(
     onIntent: (intent: OnboardingIntent) -> Unit = {},
     onGoToLogin: () -> Unit = {},
-    onSignUp: () -> Unit = {},
+    onGoToSignUp: () -> Unit = {},
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom,
+
+    BoxWithConstraints(
+        Modifier.fillMaxSize()
     ) {
-
-        val pages = OnboardingPage.getPages(LocalContext.current)
-        val pagerState = rememberPagerState(pageCount = { pages.size })
-
-        val coroutineScope = rememberCoroutineScope()
-        val context = LocalContext.current
-
-        HorizontalPager(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .weight(1f)
-                .fillMaxSize(),
-            state = pagerState,
-        ) { pageIndex ->
-            val page = pages[pageIndex]
+                .width(maxWidth)
+                .height(maxHeight)
+                .verticalScroll(rememberScrollState())
+        ) {
 
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
-            ) {
+            val pages = OnboardingPage.getPages(LocalContext.current)
+            val pagerState = rememberPagerState(pageCount = { pages.size })
 
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(80.dp)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+            val coroutineScope = rememberCoroutineScope()
+            val context = LocalContext.current
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            HorizontalPager(
+                modifier = Modifier
+                    .wrapContentHeight(),
+                state = pagerState,
+            ) { pageIndex ->
+                val page = pages[pageIndex]
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
                 ) {
-                    Image(
-                        painter = painterResource(id = page.imgRes),
-                        contentDescription = null,
+
+                    Box(
                         modifier = Modifier
-                            .aspectRatio(1f)
-                            .wrapContentSize()
+                            .padding(horizontal = 80.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = page.imgRes),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .aspectRatio(1f)
+                                .fillMaxWidth()
+                        )
+                    }
+
+                    Text(
+                        text = page.title,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(horizontal = 56.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = page.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 56.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
+            }
+
+            DotsPagerIndicator(
+                totalDots = 3,
+                selectedIndex = pagerState.currentPage,
+                selectedColor = MaterialTheme.colorScheme.primary,
+                unSelectedColor = Gray20
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (pagerState.currentPage != pagerState.pageCount - 1) {
+                Box(Modifier.padding(horizontal = 24.dp)) {
+                    PrimaryButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.next_step)
                     )
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = page.title,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(horizontal = 56.dp)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = page.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 56.dp)
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-        }
-
-        DotsPagerIndicator(
-            totalDots = 3,
-            selectedIndex = pagerState.currentPage,
-            selectedColor = MaterialTheme.colorScheme.primary,
-            unSelectedColor = Gray20
-        )
-
-        if (pagerState.currentPage != pagerState.pageCount - 1) {
-            Spacer(modifier = Modifier.height(60.dp))
-
-            Box(Modifier.padding(horizontal = 24.dp)) {
-                PrimaryButton(
+                TextBtn(
                     onClick = {
                         coroutineScope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            pagerState.animateScrollToPage(pagerState.pageCount - 1)
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.next_step)
+                    modifier = Modifier.wrapContentSize(),
+                    text = stringResource(R.string.skip_this_step)
                 )
+
+                Spacer(modifier = Modifier.height(32.dp))
+            } else {
+                LaunchedEffect(Unit) {
+                    onIntent.invoke(OnboardingIntent.CompleteOnboarding)
+                }
+
+                Box(Modifier.padding(horizontal = 24.dp)) {
+                    PrimaryButton(
+                        onClick = {
+                            // TODO
+                            Toast.makeText(context, "TODO: Create account", Toast.LENGTH_SHORT).show()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.create_account)
+                    )
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                Box(Modifier.padding(horizontal = 24.dp)) {
+                    SecondaryButton(
+                        onClick = {
+                            onGoToLogin.invoke()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.login_now)
+                    )
+                }
+
+                Spacer(Modifier.height(40.dp))
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextBtn(
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.pageCount - 1)
-                    }
-                },
-                modifier = Modifier.wrapContentSize(),
-                text = stringResource(R.string.skip_this_step)
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-        } else {
-            LaunchedEffect(Unit) {
-                onIntent.invoke(OnboardingIntent.CompleteOnboarding)
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Box(Modifier.padding(horizontal = 24.dp)) {
-                PrimaryButton(
-                    onClick = {
-                        // TODO
-                        Toast.makeText(context, "TODO: Create account", Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.create_account)
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            Box(Modifier.padding(horizontal = 24.dp)) {
-                SecondaryButton(
-                    onClick = {
-                        onGoToLogin.invoke()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.login_now)
-                )
-            }
-
-            Spacer(Modifier.height(40.dp))
         }
-
     }
+
 }
 
 @Composable
 @Preview(device = Devices.PIXEL_2)
 fun WizardScreen_Preview() {
+    ScreenPreview {
+        OnboardingScreen_Ui()
+    }
+}
+
+@Composable
+@Preview(
+    device = Devices.NEXUS_5,
+    fontScale = 1.25f
+)
+fun WizardScreen_Small_Preview() {
     ScreenPreview {
         OnboardingScreen_Ui()
     }
