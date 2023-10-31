@@ -1,6 +1,5 @@
 package by.alexandr7035.banking.ui.feature_login
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -44,11 +43,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
-import by.alexandr7035.banking.ui.components.DecoratedPasswordTextField
-import by.alexandr7035.banking.ui.components.DecoratedTextField
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.forms.DecoratedFormField
+import by.alexandr7035.banking.ui.components.forms.DecoratedPasswordFormField
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.components.text.SpannableText
 import by.alexandr7035.banking.ui.core.error.asUiTextError
@@ -92,7 +91,6 @@ fun LoginScreen(
 }
 
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun LoginScreen_Ui(
     state: LoginScreenState,
@@ -127,7 +125,7 @@ private fun LoginScreen_Ui(
                         bottom = 16.dp
                     )
                     .fillMaxWidth(),
-                text = "SHIELDPAY",
+                text = stringResource(id = R.string.app_name).uppercase(),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary
@@ -172,10 +170,8 @@ private fun LoginForm(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .padding(
-                start = 24.dp,
-                end = 24.dp,
-                top = 36.dp,
-                bottom = 36.dp
+                vertical = 36.dp,
+                horizontal = 24.dp,
             )
     ) {
         Text(
@@ -188,19 +184,8 @@ private fun LoginForm(
 
         Spacer(modifier = Modifier.height(36.dp))
 
-        Text(
-            text = stringResource(R.string.email_address),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.labelSmall,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // TODO Refactoring of fields
-        DecoratedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.formFields.loginField.value,
+        DecoratedFormField(
+            fieldTitle = UiText.StringResource(R.string.email_address),
             onValueChange = {
                 onIntent.invoke(
                     LoginIntent.LoginFieldChanged(
@@ -209,24 +194,13 @@ private fun LoginForm(
                     )
                 )
             },
-            singleLine = true,
-            error = state.formFields.loginField.error?.asString()
+            uiField = state.formFields.loginField
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = stringResource(R.string.password),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.labelSmall,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        DecoratedPasswordTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.formFields.passwordField.value,
+        DecoratedPasswordFormField(
+            fieldTitle = UiText.StringResource(R.string.password),
             onValueChange = {
                 onIntent.invoke(
                     LoginIntent.LoginFieldChanged(
@@ -235,7 +209,7 @@ private fun LoginForm(
                     )
                 )
             },
-            error = state.formFields.passwordField.error?.asString()
+            uiField = state.formFields.passwordField
         )
 
         Spacer(modifier = Modifier.height(10.dp))
