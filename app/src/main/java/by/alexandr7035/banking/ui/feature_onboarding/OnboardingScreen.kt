@@ -174,14 +174,13 @@ fun OnboardingScreen_Ui(
                 Spacer(modifier = Modifier.height(32.dp))
             } else {
                 LaunchedEffect(Unit) {
-                    onIntent.invoke(OnboardingIntent.CompleteOnboarding)
+                    onIntent(OnboardingIntent.CompleteOnboarding)
                 }
 
                 Box(Modifier.padding(horizontal = 24.dp)) {
                     PrimaryButton(
                         onClick = {
-                            // TODO
-                            Toast.makeText(context, "TODO: Create account", Toast.LENGTH_SHORT).show()
+                            onGoToSignUp()
                         },
                         modifier = Modifier.fillMaxWidth(),
                         text = stringResource(R.string.create_account)
@@ -193,7 +192,7 @@ fun OnboardingScreen_Ui(
                 Box(Modifier.padding(horizontal = 24.dp)) {
                     SecondaryButton(
                         onClick = {
-                            onGoToLogin.invoke()
+                            onGoToLogin()
                         },
                         modifier = Modifier.fillMaxWidth(),
                         text = stringResource(R.string.login_now)
