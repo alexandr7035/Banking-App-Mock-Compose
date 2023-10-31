@@ -65,8 +65,8 @@ class CardsRepositoryMock(
         addedDate = System.currentTimeMillis()
     )
 
-    override suspend fun deleteCardByNumber(number: String) {
-        val cardEntity = cacheDao.getCardByNumber(number) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+    override suspend fun deleteCardById(id: String) {
+        val cardEntity = cacheDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
         delay(MOCK_DELAY)
         cacheDao.deleteCard(cardEntity)
     }

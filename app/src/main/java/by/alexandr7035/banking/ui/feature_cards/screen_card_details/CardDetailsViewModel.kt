@@ -90,7 +90,7 @@ class CardDetailsViewModel(
 
             viewModelScope.launch {
                 val res = OperationResult.runWrapped {
-                    deleteCardByNumberUseCase.execute(currentState.card.cardNumber)
+                    deleteCardByNumberUseCase.execute(currentState.card.id)
                 }
 
                 _state.value = currentState.copy(
