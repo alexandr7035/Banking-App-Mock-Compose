@@ -238,7 +238,11 @@ fun AppNavHost(
             }
 
             composable(route = NavEntries.AccountTopUp.route) {
-                TopUpScreen()
+                TopUpScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }

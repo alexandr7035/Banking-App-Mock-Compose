@@ -34,6 +34,10 @@ class TopUpScreenViewModel(
             is TopUpScreenIntent.ChooseCard -> {
 
             }
+
+            TopUpScreenIntent.ProceedClick -> {
+                TODO()
+            }
         }
     }
 }

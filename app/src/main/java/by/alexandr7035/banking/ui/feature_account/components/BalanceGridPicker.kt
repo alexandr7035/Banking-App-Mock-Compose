@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import by.alexandr7035.banking.domain.features.account.model.BalanceValue
+import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.ui.components.SimpleGridView
 import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
@@ -29,10 +29,10 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
 fun BalanceGridPicker(
-    proposedValues: Set<BalanceValue>,
-    selectedValue: BalanceValue,
+    proposedValues: Set<MoneyAmount>,
+    selectedValue: MoneyAmount,
     modifier: Modifier = Modifier,
-    onValueSelected: (BalanceValue) -> Unit = {}
+    onValueSelected: (MoneyAmount) -> Unit = {}
 ) {
     val items = proposedValues.toList()
 
@@ -55,9 +55,9 @@ fun BalanceGridPicker(
 
 @Composable
 private fun GridButton(
-    value: BalanceValue,
+    value: MoneyAmount,
     isSelected: Boolean,
-    onClick: (BalanceValue) -> Unit = {},
+    onClick: (MoneyAmount) -> Unit = {},
     background: Color = Color(0xFFFAFAFA),
     selectedColor: Color = MaterialTheme.colorScheme.primary,
     textColor: Color = Color(0xFF999999),
@@ -89,7 +89,7 @@ private fun GridButton(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 fontFamily = primaryFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
                 color = if (isSelected) selectedTextColor else textColor,
                 textAlign = TextAlign.Center,
             )
@@ -107,10 +107,10 @@ fun BalanceGridPicker_Preview() {
                 .padding(36.dp)
         ) {
             BalanceGridPicker(
-                selectedValue = BalanceValue.LongBalance(200),
+                selectedValue = MoneyAmount(200F),
                 proposedValues = setOf(100, 200, 300, 400, 500, 600).map {
-                    BalanceValue.LongBalance(it.toLong())
-                }.toSet()
+                    MoneyAmount(it.toFloat())
+                }.toSet() + MoneyAmount(10.25F)
             )
         }
     }

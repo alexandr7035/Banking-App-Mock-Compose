@@ -9,40 +9,55 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.domain.features.account.model.BalanceValue
+import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
+import by.alexandr7035.banking.ui.components.FullscreenProgressBar
+import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
+import by.alexandr7035.banking.ui.components.TextBtn
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.components.BalanceGridPicker
+import by.alexandr7035.banking.ui.feature_account.components.BalanceSliderPicker
 import by.alexandr7035.banking.ui.feature_cards.components.PanelCardSelector
+import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TopUpScreen(
-    viewModel: TopUpScreenViewModel = koinViewModel()
+    viewModel: TopUpScreenViewModel = koinViewModel(),
+    onBack: () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     TopUpScreen_Ui(
         state = state,
-        onIntent = { viewModel.emitIntent(it) }
+        onIntent = { viewModel.emitIntent(it) },
+        onBack = onBack
     )
 }
 
 @Composable
 fun TopUpScreen_Ui(
     state: TopUpScreenState,
-    onIntent: (TopUpScreenIntent) -> Unit = {}
+    onIntent: (TopUpScreenIntent) -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         Column(
@@ -55,7 +70,7 @@ fun TopUpScreen_Ui(
             ScreenHeader(
                 toolbar = {
                     SecondaryToolBar(
-                        onBack = { },
+                        onBack = { onBack() },
                         title = UiText.StringResource(R.string.top_up),
                         containerColor = Color.Transparent,
                         contentColor = Color.White,
@@ -70,6 +85,31 @@ fun TopUpScreen_Ui(
 
             Spacer(Modifier.height(24.dp))
 
+            Text(
+                text = "Enter Nominal",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary,
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            BalanceSliderPicker(
+                modifier = Modifier.padding(horizontal = 24.dp),
+                selectedValue = state.selectedAmount,
+                onValueSelected = {
+                    onIntent(TopUpScreenIntent.UpdateSelectedValue(it))
+                }
+            )
+
+            Spacer(Modifier.height(24.dp))
+
             BalanceGridPicker(
                 proposedValues = state.proposedValues,
                 selectedValue = state.selectedAmount,
@@ -80,7 +120,30 @@ fun TopUpScreen_Ui(
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
             )
+
+            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.height(36.dp))
+
+            PrimaryButton(
+                onClick = { onIntent(TopUpScreenIntent.ProceedClick) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                text = stringResource(R.string.proceed),
+                isEnabled = state.proceedButtonEnabled
+            )
+            TextBtn(
+                onClick = { onBack() },
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(vertical = 8.dp),
+                text = stringResource(id = R.string.cancel)
+            )
         }
+    }
+
+    if (state.isLoading) {
+        FullscreenProgressBar()
     }
 }
 
@@ -91,8 +154,9 @@ fun TopUpScreen_Preview() {
         TopUpScreen_Ui(
             state = TopUpScreenState(
                 proposedValues = setOf(100, 200, 300, 400, 500, 600).map {
-                    BalanceValue.LongBalance(it.toLong())
-                }.toSet()
+                    MoneyAmount(it.toFloat())
+                }.toSet(),
+                selectedAmount = MoneyAmount(100f)
             )
         )
     }
