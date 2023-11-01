@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.core.di.presentation
 
 import by.alexandr7035.banking.ui.app_host.AppViewModel
+import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreenViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.lock_screen.LockScreenViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.biometrics.EnableBiometricsViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.pin.CreatePinViewModel
@@ -120,6 +121,12 @@ val presentationModule = module {
         EnableBiometricsViewModel(
             setupAppLockedWithBiometricsUseCase = get(),
             checkIfBiometricsAvailableUseCase = get(),
+        )
+    }
+
+    viewModel {
+        TopUpScreenViewModel(
+            getSuggestedTopUpValuesUseCase = get()
         )
     }
 }

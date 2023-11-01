@@ -50,6 +50,7 @@ import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.components.AccountActionPanel
 import by.alexandr7035.banking.ui.feature_home.components.AccountActionPanel_Skeleton
+import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
 import by.alexandr7035.banking.ui.feature_profile.ProfileUi
@@ -63,6 +64,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     onGoToDestination: (navEntry: NavEntries) -> Unit = {},
+    onAccountAction: (AccountAction) -> Unit = {},
     onCardDetails: (cardId: String) -> Unit = {},
     onSavingDetails: (id: Long) -> Unit = {}
 ) {
@@ -77,7 +79,8 @@ fun HomeScreen(
             state = state,
             onGoToDestination = onGoToDestination,
             onCardDetails = onCardDetails,
-            onSavingDetails = onSavingDetails
+            onSavingDetails = onSavingDetails,
+            onAccountAction = onAccountAction
         )
 
         is HomeState.Loading -> HomeScreen_Skeleton()
@@ -95,7 +98,8 @@ fun HomeScreen_Ui(
     state: HomeState.Success,
     onGoToDestination: (navEntry: NavEntries) -> Unit = {},
     onCardDetails: (cardId: String) -> Unit = {},
-    onSavingDetails: (id: Long) -> Unit = {}
+    onSavingDetails: (id: Long) -> Unit = {},
+    onAccountAction: (AccountAction) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -117,8 +121,7 @@ fun HomeScreen_Ui(
             AccountActionPanel(
                 balanceFlow = state.balance
             ) {
-                // TODO
-                ctx.showToast("TODO")
+                onAccountAction(it)
             }
         }
 
