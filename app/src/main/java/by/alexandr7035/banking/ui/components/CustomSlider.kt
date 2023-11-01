@@ -65,7 +65,7 @@ fun CustomSlider(
             },
             track = {
                 SliderDefaults.Track(
-                    sliderPositions = it,
+                    sliderState = it,
                     colors = SliderDefaults.colors(
                         activeTrackColor = MaterialTheme.colorScheme.primary,
                         inactiveTrackColor = Color(0xFFE7E7E7),
