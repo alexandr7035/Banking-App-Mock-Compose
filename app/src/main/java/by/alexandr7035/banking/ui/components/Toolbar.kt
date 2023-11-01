@@ -17,8 +17,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +33,10 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 @Composable
 fun SecondaryToolBar(
     onBack: () -> Unit,
-    title: UiText
+    title: UiText,
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    contentColor: Color = Color(0xFF262626),
+    modifier: Modifier = Modifier
 ) {
 
     CenterAlignedTopAppBar(
@@ -44,7 +47,7 @@ fun SecondaryToolBar(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF262626),
+                    color = contentColor,
                     textAlign = TextAlign.Center,
                 ),
             )
@@ -54,12 +57,14 @@ fun SecondaryToolBar(
                 onClick = { onBack.invoke() }, modifier = Modifier.padding(start = 8.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_nav_back), contentDescription = null
+                    painter = painterResource(id = R.drawable.ic_nav_back),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(contentColor)
                 )
             }
         },
-        modifier = Modifier.fillMaxWidth(),
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+        modifier = modifier.then(Modifier.fillMaxWidth()),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor)
     )
 }
 
