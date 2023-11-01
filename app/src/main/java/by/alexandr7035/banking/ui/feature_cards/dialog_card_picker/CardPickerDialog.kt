@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
@@ -97,7 +99,7 @@ private fun CardPickerDialog_Ui(
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = "Choose a Card",
+            text = stringResource(R.string.choose_card),
             style = TextStyle(
                 fontSize = 18.sp,
                 fontFamily = primaryFontFamily,
@@ -132,7 +134,7 @@ private fun CardPickerDialog_Ui(
                             PaymentCard(
                                 cardUi = card,
                                 onCLick = {
-                                    onDismissRequest(card.cardNumber)
+                                    onDismissRequest(card.id)
                                 }
                             )
                         }

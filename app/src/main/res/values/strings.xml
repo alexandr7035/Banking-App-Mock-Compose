@@ -75,4 +75,5 @@
     <string name="my_balance">My Balance</string>
     <string name="proceed">Proceed</string>
     <string name="set_the_nominal">Set the nominal</string>
+    <string name="choose_card">Choose Card</string>
 </resources>

@@ -127,7 +127,8 @@ val presentationModule = module {
 
     viewModel {
         TopUpScreenViewModel(
-            getSuggestedTopUpValuesUseCase = get()
+            getSuggestedTopUpValuesUseCase = get(),
+            getCardByIdUseCase = get()
         )
     }
 

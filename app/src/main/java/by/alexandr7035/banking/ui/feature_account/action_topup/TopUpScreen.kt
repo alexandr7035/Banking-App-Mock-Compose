@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,37 +28,49 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
+import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.TextBtn
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
+import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.components.BalanceGridPicker
 import by.alexandr7035.banking.ui.feature_account.components.BalanceSliderPicker
-import by.alexandr7035.banking.ui.feature_cards.components.PanelCardSelector
+import by.alexandr7035.banking.ui.feature_cards.components.PanelCardPicker
+import by.alexandr7035.banking.ui.feature_cards.dialog_card_picker.CardPickerDialog
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TopUpScreen(
-    viewModel: TopUpScreenViewModel = koinViewModel(),
-    onBack: () -> Unit
+    viewModel: TopUpScreenViewModel = koinViewModel(), onBack: () -> Unit
 ) {
+    val snackbarHostState = LocalScopedSnackbarState.current
+    val context = LocalContext.current
+
     val state = viewModel.state.collectAsStateWithLifecycle().value
     TopUpScreen_Ui(
         state = state,
         onIntent = { viewModel.emitIntent(it) },
         onBack = onBack
     )
+
+    EventEffect(
+        event = state.cardPickerState.cardSelectErrorEvent,
+        onConsumed = viewModel::consumeLoadCardErrorEvent
+    ) {
+        snackbarHostState.show(it.asUiTextError().asString(context), SnackBarMode.Negative)
+    }
 }
 
 @Composable
 fun TopUpScreen_Ui(
-    state: TopUpScreenState,
-    onIntent: (TopUpScreenIntent) -> Unit = {},
-    onBack: () -> Unit = {}
+    state: TopUpScreenState, onIntent: (TopUpScreenIntent) -> Unit = {}, onBack: () -> Unit = {}
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         Column(
@@ -67,33 +80,34 @@ fun TopUpScreen_Ui(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ScreenHeader(
-                toolbar = {
-                    SecondaryToolBar(
-                        onBack = { onBack() },
-                        title = UiText.StringResource(R.string.top_up),
-                        containerColor = Color.Transparent,
-                        contentColor = Color.White,
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .padding(top = 16.dp)
-                    )
-                }
-            ) {
-                PanelCardSelector(selectedCard = state.selectedCard)
+            ScreenHeader(toolbar = {
+                SecondaryToolBar(
+                    onBack = { onBack() },
+                    title = UiText.StringResource(R.string.top_up),
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White,
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(top = 16.dp)
+                )
+            }) {
+                PanelCardPicker(
+                    selectedCard = state.cardPickerState.selectedCard,
+                    isLoading = state.cardPickerState.isLoading,
+                    onCardPickerClick = {
+                        onIntent(TopUpScreenIntent.ToggleCardPicker(show = true))
+                    })
             }
 
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = "Enter Nominal",
-                style = TextStyle(
+                text = "Enter Nominal", style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,
-                ),
-                modifier = Modifier
+                ), modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
             )
@@ -102,21 +116,17 @@ fun TopUpScreen_Ui(
 
             BalanceSliderPicker(
                 modifier = Modifier.padding(horizontal = 24.dp),
-                selectedValue = state.selectedAmount,
+                selectedValue = state.amountState.selectedAmount,
                 onValueSelected = {
                     onIntent(TopUpScreenIntent.UpdateSelectedValue(it))
-                }
-            )
+                })
 
             Spacer(Modifier.height(24.dp))
 
             BalanceGridPicker(
-                proposedValues = state.proposedValues,
-                selectedValue = state.selectedAmount,
-                onValueSelected = {
+                proposedValues = state.amountState.proposedValues, selectedValue = state.amountState.selectedAmount, onValueSelected = {
                     onIntent(TopUpScreenIntent.UpdateSelectedValue(it))
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
             )
@@ -145,18 +155,32 @@ fun TopUpScreen_Ui(
     if (state.isLoading) {
         FullscreenProgressBar()
     }
+
+    if (state.cardPickerState.showCardPicker) {
+        CardPickerDialog(
+            onDismissRequest = { selectedCardId ->
+                onIntent(TopUpScreenIntent.ToggleCardPicker(show = false))
+                selectedCardId?.let {
+                    onIntent(TopUpScreenIntent.ChooseCard(selectedCardId))
+                }
+            },
+        )
+    }
 }
 
 @Composable
 @Preview
 fun TopUpScreen_Preview() {
     ScreenPreview {
+        val amounts = setOf(100, 200, 300, 400, 500, 600).map {
+            MoneyAmount(it.toFloat())
+        }.toSet()
+
         TopUpScreen_Ui(
             state = TopUpScreenState(
-                proposedValues = setOf(100, 200, 300, 400, 500, 600).map {
-                    MoneyAmount(it.toFloat())
-                }.toSet(),
-                selectedAmount = MoneyAmount(100f)
+                amountState = TopUpScreenState.AmountPickersState(
+                    selectedAmount = MoneyAmount(100f), proposedValues = amounts
+                )
             )
         )
     }
