@@ -73,4 +73,6 @@
     <string name="go_to_settings">Go to Settings</string>
     <string name="biometrics_enable_explanation">You should enable Biometrics in Settings</string>
     <string name="my_balance">My Balance</string>
+    <string name="proceed">Proceed</string>
+    <string name="set_the_nominal">Set the nominal</string>
 </resources>
