@@ -4,8 +4,10 @@ import by.alexandr7035.banking.data.cards.cache.CardEntity
 import by.alexandr7035.banking.data.cards.cache.CardsDao
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.domain.features.cards.model.AddCardPayload
 import by.alexandr7035.banking.domain.features.cards.CardsRepository
+import by.alexandr7035.banking.domain.features.cards.model.CardType
 import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -51,9 +53,8 @@ class CardsRepositoryMock(
         addressSecondLine = cardEntity.addressSecondLine,
         expiration = cardEntity.expiration,
         addedDate = cardEntity.addedDate,
-
-        // Mock value here
-        usdBalance = 2000F,
+        recentBalance = MoneyAmount(cardEntity.recentBalance),
+        cardType = cardEntity.cardType
     )
 
     private fun mapAddCardPayloadToCache(addCardPayload: AddCardPayload): CardEntity = CardEntity(
@@ -62,7 +63,9 @@ class CardsRepositoryMock(
         addressFirstLine = addCardPayload.addressFirstLine,
         addressSecondLine = addCardPayload.addressSecondLine,
         expiration = addCardPayload.expirationDate,
-        addedDate = System.currentTimeMillis()
+        addedDate = System.currentTimeMillis(),
+        recentBalance = MOCK_CARD_INITIAL_BALANCE,
+        cardType = CardType.DEBIT
     )
 
     override suspend fun deleteCardById(id: String) {
@@ -73,5 +76,6 @@ class CardsRepositoryMock(
 
     companion object {
         private const val MOCK_DELAY = 500L
+        private const val MOCK_CARD_INITIAL_BALANCE = 0f
     }
 }
