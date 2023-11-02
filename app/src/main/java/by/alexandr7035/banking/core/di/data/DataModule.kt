@@ -118,7 +118,8 @@ val dataModule = module {
 
     single<AccountRepository> {
         AccountRepositoryMock(
-            coroutineDispatcher = Dispatchers.IO
+            coroutineDispatcher = Dispatchers.IO,
+            cardsRepository = get()
         )
     }
 }

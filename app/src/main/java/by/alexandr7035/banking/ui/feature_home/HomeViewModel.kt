@@ -10,6 +10,7 @@ import by.alexandr7035.banking.domain.features.profile.GetCompactProfileUseCase
 import by.alexandr7035.banking.domain.features.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_account.AccountBalanceUi
+import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
@@ -82,7 +83,7 @@ class HomeViewModel(
             val saving = savingsJob.await()
 
             val balanceFlow = getTotalAccountBalanceUseCase.execute().map { accountBalance ->
-                AccountBalanceUi.mapFromDomain(accountBalance)
+                BalanceValueUi.mapFromDomain(accountBalance)
             }
 
             // Success state
@@ -99,7 +100,7 @@ class HomeViewModel(
         profile: ProfileUi,
         cards: List<CardUi>,
         savings: List<SavingUi>,
-        balance: Flow<AccountBalanceUi>,
+        balance: Flow<BalanceValueUi>,
     ) {
         _state.update {
             HomeState.Success(

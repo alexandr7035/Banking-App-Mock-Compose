@@ -1,41 +1,41 @@
 package by.alexandr7035.banking.data.account
 
-import android.util.Log
+import by.alexandr7035.banking.data.helpers.sumMoneyAmounts
 import by.alexandr7035.banking.domain.features.account.AccountRepository
-import by.alexandr7035.banking.domain.features.account.model.AccountBalance
+import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
+import by.alexandr7035.banking.domain.features.cards.CardsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlin.random.Random
 
 class AccountRepositoryMock(
-    private val coroutineDispatcher: CoroutineDispatcher
+    private val coroutineDispatcher: CoroutineDispatcher,
+    private val cardsRepository: CardsRepository,
 ) : AccountRepository {
 
-    override fun getBalanceFlow(): Flow<AccountBalance> {
+    override fun getBalanceFlow(): Flow<MoneyAmount> {
+        // For mock app simply sum card balances
         return flow {
             // The flow starts afresh every time it is collected
-            delay(200)
-
-            Log.d("DEBUG_FLOW", "initial balance $INITIAL_MOCK_BALANCE")
-            emit(AccountBalance(INITIAL_MOCK_BALANCE))
-
             // A simple way to imitate server polling for balance
             while (true) {
-                val mockBalanceDiff = Random.nextDouble(-100.0, 100.0)
-                val balance = INITIAL_MOCK_BALANCE + mockBalanceDiff
-                Log.d("DEBUG_FLOW", "changed balance $balance")
-
-                emit(AccountBalance(balance))
+                emit(calculateBalance())
                 delay(MOCK_DELAY)
             }
         }.flowOn(coroutineDispatcher)
     }
 
+    private suspend fun calculateBalance(): MoneyAmount {
+        val amount = cardsRepository.getCards().sumMoneyAmounts {
+            it.recentBalance
+        }
+
+        return amount
+    }
+
     companion object {
         private const val MOCK_DELAY = 5000L
-        private const val INITIAL_MOCK_BALANCE = 3000.0
     }
 }

@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.feature_account.AccountBalanceUi
+import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.flow.Flow
@@ -49,7 +50,7 @@ import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun AccountActionPanel(
-    balanceFlow: Flow<AccountBalanceUi?>,
+    balanceFlow: Flow<BalanceValueUi?>,
     onActionClick: (action: AccountAction) -> Unit
 ) {
     val balance = balanceFlow.collectAsStateWithLifecycle(initialValue = null).value
@@ -252,7 +253,7 @@ fun AccountActionPanel_Skeleton() {
 @Preview
 @Composable
 fun AccountActionPanel_Preview() {
-    AccountActionPanel(balanceFlow = flowOf(AccountBalanceUi("$2000"))) {}
+    AccountActionPanel(balanceFlow = flowOf(BalanceValueUi("$2000"))) {}
 }
 
 @Preview
