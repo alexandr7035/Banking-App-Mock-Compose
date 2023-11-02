@@ -34,6 +34,7 @@ import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.TextBtn
+import by.alexandr7035.banking.ui.components.dialogs.SuccessDialog
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
@@ -164,6 +165,17 @@ fun TopUpScreen_Ui(
                     onIntent(TopUpScreenIntent.ChooseCard(selectedCardId))
                 }
             },
+        )
+    }
+
+    if (state.showSuccessDialog) {
+        SuccessDialog(
+            title = UiText.StringResource(R.string.top_up_successfully),
+            message = UiText.StringResource(R.string.topup_exaplanation),
+            onDismiss = {
+                onIntent(TopUpScreenIntent.DismissSuccessDialog)
+                onIntent(TopUpScreenIntent.RefreshCard)
+            }
         )
     }
 }

@@ -79,4 +79,6 @@
 
     <string name="credit">Credit</string>
     <string name="debit">Debit</string>
+    <string name="top_up_successfully">Top Up Successfully</string>
+    <string name="topup_exaplanation">The amount  will be reflected in your account with in few minutes</string>
 </resources>

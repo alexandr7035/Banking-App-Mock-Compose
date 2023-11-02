@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,15 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
+import by.alexandr7035.banking.ui.components.dashedBorder
+import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
 fun PanelCardPicker(
-    isLoading: Boolean,
-    selectedCard: CardUi?,
-    onCardPickerClick: () -> Unit = {}
+    isLoading: Boolean, selectedCard: CardUi?, onCardPickerClick: () -> Unit = {}
 ) {
     val shape = RoundedCornerShape(size = 10.dp)
 
@@ -46,30 +47,52 @@ fun PanelCardPicker(
                 shape = shape,
             )
             .background(color = Color(0xFFFFFFFF), shape = shape)
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(16.dp), verticalAlignment = Alignment.CenterVertically
     ) {
 
         when {
             isLoading -> {
-                Spacer(Modifier.weight(1f).height(56.dp))
-                DotsProgressIndicator()
-                Spacer(Modifier.weight(1f).height(56.dp))
+
+                SkeletonShape(
+                    modifier = Modifier
+                        .height(62.dp)
+                        .width(94.dp)
+                        .padding(end = 16.dp)
+                )
+
+                SkeletonShape(
+                    modifier = Modifier
+                        .height(14.dp)
+                        .width(72.dp)
+                )
+
+                Spacer(
+                    Modifier
+                        .weight(1f)
+                        .height(56.dp)
+                )
+
+                SkeletonShape(
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(80.dp)
+                        .padding(end = 12.dp)
+                )
             }
 
             selectedCard != null -> {
 
                 Box(
                     Modifier
-                        .width(100.dp)
                         .height(65.dp)
-                        .background(Color.LightGray)
                 )
+
+                SmallCardIcon()
 
                 Spacer(Modifier.width(16.dp))
 
                 Text(
-                    text = "Debit",
+                    text = selectedCard.cardType.asString(),
                     style = TextStyle(
                         fontSize = 12.sp,
                         lineHeight = 20.sp,
@@ -83,8 +106,7 @@ fun PanelCardPicker(
 
                 TextButton(onClick = { onCardPickerClick() }) {
                     Text(
-                        text = selectedCard.balance,
-                        style = TextStyle(
+                        text = selectedCard.balance, style = TextStyle(
                             fontSize = 16.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight(600),
@@ -95,20 +117,29 @@ fun PanelCardPicker(
                     Spacer(Modifier.width(6.dp))
 
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_down_arrrow),
-                        contentDescription = "Drop down"
+                        painter = painterResource(id = R.drawable.ic_down_arrrow), contentDescription = "Drop down"
                     )
                 }
             }
 
             selectedCard == null -> {
 
+                Box(
+                    Modifier
+                        .dashedBorder(
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            cornerRadiusDp = 10.dp
+                        )
+                        .height(62.dp)
+                        .width(94.dp)
+                )
+
                 Spacer(Modifier.weight(1f))
 
                 TextButton(onClick = { onCardPickerClick() }) {
                     Text(
-                        text = stringResource(R.string.choose_card),
-                        style = TextStyle(
+                        text = stringResource(R.string.choose_card), style = TextStyle(
                             fontSize = 16.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight(600),
@@ -119,8 +150,7 @@ fun PanelCardPicker(
                     Spacer(Modifier.width(6.dp))
 
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_down_arrrow),
-                        contentDescription = "Drop down"
+                        painter = painterResource(id = R.drawable.ic_down_arrrow), contentDescription = "Drop down"
                     )
                 }
             }
@@ -133,8 +163,7 @@ fun PanelCardPicker(
 fun PanelCardSelector_Preview() {
     BankingAppTheme() {
         PanelCardPicker(
-            selectedCard = CardUi.mock(),
-            isLoading = false
+            selectedCard = CardUi.mock(), isLoading = false
         )
     }
 }
@@ -144,8 +173,7 @@ fun PanelCardSelector_Preview() {
 fun PanelCardSelector_NotSelected_Preview() {
     BankingAppTheme() {
         PanelCardPicker(
-            selectedCard = null,
-            isLoading = false
+            selectedCard = null, isLoading = false
         )
     }
 }
@@ -156,8 +184,7 @@ fun PanelCardSelector_NotSelected_Preview() {
 fun PanelCardSelector_Loading_Preview() {
     BankingAppTheme() {
         PanelCardPicker(
-            selectedCard = null,
-            isLoading = true
+            selectedCard = null, isLoading = true
         )
     }
 }
