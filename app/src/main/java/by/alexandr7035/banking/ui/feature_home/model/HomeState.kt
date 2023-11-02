@@ -1,8 +1,6 @@
 package by.alexandr7035.banking.ui.feature_home.model
 
-import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_account.AccountBalanceUi
 import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_profile.ProfileUi

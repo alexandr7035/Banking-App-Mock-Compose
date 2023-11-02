@@ -9,7 +9,6 @@ import by.alexandr7035.banking.domain.features.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.domain.features.profile.GetCompactProfileUseCase
 import by.alexandr7035.banking.domain.features.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
-import by.alexandr7035.banking.ui.feature_account.AccountBalanceUi
 import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
