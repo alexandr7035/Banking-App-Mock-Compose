@@ -1,5 +1,6 @@
 package by.alexandr7035.banking.ui.feature_cards.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -7,13 +8,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,10 +26,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
+import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
+import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -35,7 +42,7 @@ fun SmallCardIcon() {
     val cardUi = CardUi.mock()
 
     Card(
-        backgroundColor = MaterialTheme.colorScheme.primary,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(4.dp),
     ) {
         Box(
@@ -106,9 +113,125 @@ fun SmallCardIcon() {
 }
 
 @Composable
+fun SmallCardIconCustomizable(
+    modifier: Modifier = Modifier,
+    cardUi: CardUi = CardUi.mock(),
+    numberSize: TextUnit = 16.sp,
+    balanceSize: TextUnit = 20.sp,
+    labelSize: TextUnit = 14.sp,
+    dateSize: TextUnit = 12.sp,
+    decorationSize: Dp = 50.dp
+) {
+    Box(
+        modifier = modifier.then(
+            Modifier.background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(4.dp)
+            )
+        )
+    ) {
+
+        DecorationRectangle(
+            modifier = Modifier
+                .size(decorationSize)
+                .offset(x = (-decorationSize / 2), y = (-decorationSize/2)),
+            strokeWidth = decorationSize / 8
+        )
+
+        DecorationCircle(
+            modifier = Modifier
+                .size(decorationSize)
+                .offset(x = decorationSize/3, y = decorationSize/2)
+                .align(Alignment.BottomEnd),
+            strokeWidth =  decorationSize / 8
+        )
+
+        Row(
+            modifier = Modifier
+                .wrapContentWidth()
+                .padding(4.dp)
+        ) {
+
+            Column() {
+                Text(
+                    text = stringResource(R.string.payment_card), style = TextStyle(
+                        fontSize = labelSize,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xCCFFFFFF),
+                    )
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                Text(
+                    text = cardUi.cardNumber,
+                    style = TextStyle(
+                        fontSize = numberSize,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFFFAF9FF),
+                    ),
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                Text(
+                    text = cardUi.balance,
+                    style = TextStyle(
+                        fontFamily = primaryFontFamily,
+                        fontSize = balanceSize,
+                        fontWeight = FontWeight(600),
+                        color = Color(0xFFFAF9FF),
+                    ),
+                )
+            }
+
+            Spacer(Modifier.weight(1f))
+
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                horizontalAlignment = Alignment.End
+            ) {
+                MasterCardLogo(modifier = Modifier
+                    .width(12.dp)
+                    .height(8.dp))
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = cardUi.expiration, style = TextStyle(
+                        fontSize = dateSize,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xCCFFFFFF),
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
 @Preview
 fun SmallCard_Preview() {
     BankingAppTheme() {
         SmallCardIcon()
+    }
+}
+
+@Composable
+@Preview
+fun SmallCard_Customizable_Preview() {
+    BankingAppTheme() {
+        SmallCardIconCustomizable(
+            modifier = Modifier
+                .height(60.dp),
+            numberSize = 6.sp,
+            labelSize = 4.sp,
+            balanceSize = 7.sp,
+            dateSize = 4.sp,
+            decorationSize = 40.dp
+        )
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -22,10 +23,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.components.DotsProgressIndicator
 import by.alexandr7035.banking.ui.components.dashedBorder
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
@@ -34,7 +35,10 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
 fun PanelCardPicker(
-    isLoading: Boolean, selectedCard: CardUi?, onCardPickerClick: () -> Unit = {}
+    isLoading: Boolean,
+    selectedCard: CardUi?,
+    onCardPickerClick: () -> Unit = {},
+    cardSize: DpSize = DpSize(width = 90.dp, height = 60.dp)
 ) {
     val shape = RoundedCornerShape(size = 10.dp)
 
@@ -55,15 +59,14 @@ fun PanelCardPicker(
 
                 SkeletonShape(
                     modifier = Modifier
-                        .height(62.dp)
-                        .width(94.dp)
                         .padding(end = 16.dp)
+                        .size(cardSize)
                 )
 
                 SkeletonShape(
                     modifier = Modifier
                         .height(14.dp)
-                        .width(72.dp)
+                        .width(56.dp)
                 )
 
                 Spacer(
@@ -75,19 +78,22 @@ fun PanelCardPicker(
                 SkeletonShape(
                     modifier = Modifier
                         .height(24.dp)
-                        .width(80.dp)
+                        .width(100.dp)
                         .padding(end = 12.dp)
                 )
             }
 
             selectedCard != null -> {
-
-                Box(
-                    Modifier
-                        .height(65.dp)
+                SmallCardIconCustomizable(
+                    cardUi = selectedCard,
+                    modifier = Modifier
+                        .size(cardSize),
+                    numberSize = 6.sp,
+                    labelSize = 4.sp,
+                    balanceSize = 7.sp,
+                    dateSize = 4.sp,
+                    decorationSize = 40.dp
                 )
-
-                SmallCardIcon()
 
                 Spacer(Modifier.width(16.dp))
 
@@ -131,8 +137,7 @@ fun PanelCardPicker(
                             color = MaterialTheme.colorScheme.primary,
                             cornerRadiusDp = 10.dp
                         )
-                        .height(62.dp)
-                        .width(94.dp)
+                        .size(cardSize)
                 )
 
                 Spacer(Modifier.weight(1f))
