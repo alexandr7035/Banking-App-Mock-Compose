@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface CardsDao {
@@ -19,4 +20,7 @@ interface CardsDao {
 
     @Delete
     suspend fun deleteCard(card: CardEntity)
+
+    @Update
+    suspend fun updateCard(card: CardEntity)
 }

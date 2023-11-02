@@ -74,6 +74,13 @@ class CardsRepositoryMock(
         cacheDao.deleteCard(cardEntity)
     }
 
+    override suspend fun topUpCard(cardId: String, amount: MoneyAmount) {
+        val cardEntity = cacheDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+        delay(MOCK_DELAY)
+        val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
+        cacheDao.updateCard(updated)
+    }
+
     companion object {
         private const val MOCK_DELAY = 500L
         private const val MOCK_CARD_INITIAL_BALANCE = 0f

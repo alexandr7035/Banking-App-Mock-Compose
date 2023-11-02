@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.account.account_topup.GetSuggestedTopUpValuesUseCase
+import by.alexandr7035.banking.domain.features.account.account_topup.TopUpAccountUseCase
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 
 class TopUpScreenViewModel(
     private val getSuggestedTopUpValuesUseCase: GetSuggestedTopUpValuesUseCase,
-    private val getCardByIdUseCase: GetCardByIdUseCase
+    private val getCardByIdUseCase: GetCardByIdUseCase,
+    private val topUpAccountUseCase: TopUpAccountUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(TopUpScreenState())
     val state = _state.asStateFlow()
@@ -133,12 +135,18 @@ class TopUpScreenViewModel(
         }
 
         viewModelScope.launch {
-            delay(2000)
+            val topUpRes: OperationResult<Unit> = OperationResult.runWrapped {
 
-            // TODO
-            val res: OperationResult<Unit> = OperationResult.Success<Unit>(Unit)
+                _state.value.cardPickerState.selectedCard?.let {
+                    topUpAccountUseCase.execute(
+                        cardId = it.id,
+                        amount = _state.value.amountState.selectedAmount
+                    )
+                }
 
-            when (res) {
+            }
+
+            when (topUpRes) {
                 is OperationResult.Success -> {
                     _state.update {
                         it.copy(
@@ -152,7 +160,7 @@ class TopUpScreenViewModel(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            error = res.error.errorType.asUiTextError()
+                            error = topUpRes.error.errorType.asUiTextError()
                         )
                     }
                 }
