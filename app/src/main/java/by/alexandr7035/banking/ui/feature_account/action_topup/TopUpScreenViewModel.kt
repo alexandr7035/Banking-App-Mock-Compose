@@ -7,11 +7,11 @@ import by.alexandr7035.banking.domain.features.account.account_topup.GetSuggeste
 import by.alexandr7035.banking.domain.features.account.account_topup.TopUpAccountUseCase
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
+import by.alexandr7035.banking.domain.features.cards.GetDefaultCardUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 class TopUpScreenViewModel(
     private val getSuggestedTopUpValuesUseCase: GetSuggestedTopUpValuesUseCase,
     private val getCardByIdUseCase: GetCardByIdUseCase,
+    private val getDefaultCardUseCase: GetDefaultCardUseCase,
     private val topUpAccountUseCase: TopUpAccountUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(TopUpScreenState())
@@ -39,6 +40,10 @@ class TopUpScreenViewModel(
 
     fun emitIntent(intent: TopUpScreenIntent) {
         when (intent) {
+            is TopUpScreenIntent.EnterScreen -> {
+                reduceLoadDefaultCard()
+            }
+
             is TopUpScreenIntent.UpdateSelectedValue -> {
                 reduceChooseTopUpAmount(intent.amount)
             }
@@ -116,6 +121,56 @@ class TopUpScreenViewModel(
         }
     }
 
+    private fun reduceLoadDefaultCard() {
+        _state.update {
+            it.copy(
+                cardPickerState = it.cardPickerState.copy(
+                    isLoading = true
+                )
+            )
+        }
+
+        viewModelScope.launch {
+            val defaultCardRes = OperationResult.runWrapped {
+                getDefaultCardUseCase.execute()
+            }
+
+            when (defaultCardRes) {
+                is OperationResult.Success -> {
+                    defaultCardRes.data?.let {
+                        _state.update {
+                            it.copy(
+                                cardPickerState = it.cardPickerState.copy(
+                                    selectedCard = CardUi.mapFromDomain(defaultCardRes.data),
+                                    isLoading = false
+                                )
+                            )
+                        }
+                    } ?: {
+                        _state.update {
+                            it.copy(
+                                cardPickerState = it.cardPickerState.copy(
+                                    selectedCard = null,
+                                    isLoading = false
+                                )
+                            )
+                        }
+                    }
+                }
+
+                is OperationResult.Failure -> {
+                    _state.update {
+                        it.copy(
+                            cardPickerState = it.cardPickerState.copy(
+                                selectedCard = null,
+                                isLoading = false,
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     private fun reduceChooseTopUpAmount(amount: MoneyAmount) {
         _state.update {
