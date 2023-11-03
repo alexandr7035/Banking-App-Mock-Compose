@@ -6,5 +6,6 @@ import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 data class CardPickerState(
     val isLoading: Boolean = false,
     val cards: List<CardUi>? = null,
-    val error: UiText? = null
+    val selectedCardId: String? = null,
+    val error: UiText? = null,
 )

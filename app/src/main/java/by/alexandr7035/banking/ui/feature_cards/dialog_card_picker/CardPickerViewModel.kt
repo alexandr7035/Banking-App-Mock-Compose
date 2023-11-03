@@ -42,7 +42,8 @@ class CardPickerViewModel(
                                     isLoading = false,
                                     cards = cards.data.map { card ->
                                         CardUi.mapFromDomain(card)
-                                    }
+                                    },
+                                    selectedCardId = intent.defaultSelectedCardId
                                 )
                             }
                         }

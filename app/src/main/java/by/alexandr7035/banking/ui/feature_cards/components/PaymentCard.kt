@@ -1,5 +1,7 @@
 package by.alexandr7035.banking.ui.feature_cards.components
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -19,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -36,7 +39,9 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PaymentCard(
+    modifier: Modifier = Modifier,
     cardUi: CardUi,
+    isSelected: Boolean = false,
     onCLick: (cardId: String) -> Unit = {}
 ) {
     Card(
@@ -44,10 +49,31 @@ fun PaymentCard(
         shape = RoundedCornerShape(10.dp),
         onClick = { onCLick.invoke(cardUi.cardNumber) }
     ) {
+
+        val selectedBorder = if (isSelected) {
+            Modifier.border(
+                brush = Brush.horizontalGradient(
+                    listOf(
+                        Color(0x1AFFFFFF),
+                        Color(0x80FFFFFF),
+                        Color(0x4DFFFFFF),
+                    )
+                ),
+                width = 8.dp,
+                shape = RoundedCornerShape(10.dp)
+            )
+        } else {
+            Modifier
+        }
+
         Box(
-            modifier = Modifier
-                .height(IntrinsicSize.Max)
-                .wrapContentWidth()
+            modifier = modifier
+                .then(selectedBorder)
+                .then(
+                    Modifier
+                        .height(IntrinsicSize.Max)
+                        .wrapContentWidth()
+                )
         ) {
 
             DecorationRectangle(
@@ -134,8 +160,15 @@ fun PaymentCard(
 @Preview
 fun PaymentCard_Preview() {
     BankingAppTheme() {
-        PaymentCard(
-            CardUi.mock()
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            PaymentCard(
+                cardUi = CardUi.mock()
+            )
+
+            PaymentCard(
+                cardUi = CardUi.mock(),
+                isSelected = true
+            )
+        }
     }
 }

@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.ui.feature_cards.dialog_card_picker
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -22,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -48,6 +52,7 @@ import org.koin.androidx.compose.koinViewModel
 fun CardPickerDialog(
     viewModel: CardPickerViewModel = koinViewModel(),
     onDismissRequest: (selectedCardNumber: String?) -> Unit = {},
+    defaultSelectedCard: String? = null
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val dialogState = rememberModalBottomSheetState()
@@ -83,7 +88,7 @@ fun CardPickerDialog(
     }
 
     EnterScreenEffect {
-        viewModel.emitIntent(CardPickerIntent.LoadCards)
+        viewModel.emitIntent(CardPickerIntent.LoadCards(defaultSelectedCard))
     }
 }
 
@@ -135,7 +140,9 @@ private fun CardPickerDialog_Ui(
                                 cardUi = card,
                                 onCLick = {
                                     onDismissRequest(card.id)
-                                }
+                                },
+                                modifier = Modifier,
+                                isSelected = card.id == state.selectedCardId
                             )
                         }
                     } else {

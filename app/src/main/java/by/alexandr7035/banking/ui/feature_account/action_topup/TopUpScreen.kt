@@ -170,6 +170,7 @@ fun TopUpScreen_Ui(
                     onIntent(TopUpScreenIntent.ChooseCard(selectedCardId))
                 }
             },
+            defaultSelectedCard = state.cardPickerState.selectedCard?.id
         )
     }
 
