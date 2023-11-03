@@ -29,8 +29,7 @@ import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricAuth
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsHelper
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricsIntent
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
-import by.alexandr7035.banking.ui.feature_profile.LogoutDialog
-import by.alexandr7035.banking.ui.feature_profile.ProfileScreenIntent
+import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
 

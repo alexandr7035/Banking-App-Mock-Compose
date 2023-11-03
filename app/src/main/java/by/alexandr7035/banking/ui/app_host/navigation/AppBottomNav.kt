@@ -3,8 +3,6 @@ package by.alexandr7035.banking.ui.app_host.navigation
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +22,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
+import by.alexandr7035.banking.ui.components.bottomnav.M2BottomNavigation
+import by.alexandr7035.banking.ui.components.bottomnav.M2BottomNavigationItem
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
@@ -35,7 +35,7 @@ fun AppBottomNav(navController: NavController) {
         NavEntries.Profile,
     )
 
-    BottomNavigation(
+    M2BottomNavigation(
         modifier = Modifier
             .height(
                 72.dp
@@ -55,7 +55,7 @@ fun AppBottomNav(navController: NavController) {
                 painterResource(id = navEntry.navIcons!!.unselected)
             }
 
-            BottomNavigationItem(selected = isDestinationSelected, onClick = {
+            M2BottomNavigationItem(selected = isDestinationSelected, onClick = {
                 navController.navigate(navEntry.route) {
                     // Pop up to the start destination of the graph to
                     // avoid building up a large stack of destinations
@@ -73,7 +73,8 @@ fun AppBottomNav(navController: NavController) {
                 Icon(
                     modifier = Modifier
                         .padding(bottom = 8.dp)
-                        .size(24.dp),
+                        .size(24.dp)
+                        ,
                     painter = icon,
                     contentDescription = null,
                     tint = selectedEntryColor(isDestinationSelected)
