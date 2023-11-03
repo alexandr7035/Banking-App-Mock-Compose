@@ -125,7 +125,7 @@ fun SmallCardIconCustomizable(
     Box(
         modifier = modifier.then(
             Modifier.background(
-                color = MaterialTheme.colorScheme.primary,
+                color = cardUi.cardColor,
                 shape = RoundedCornerShape(4.dp)
             )
         )

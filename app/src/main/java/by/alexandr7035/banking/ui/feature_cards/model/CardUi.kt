@@ -1,5 +1,6 @@
 package by.alexandr7035.banking.ui.feature_cards.model
 
+import androidx.compose.ui.graphics.Color
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.cards.model.CardType
 import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
@@ -17,9 +18,12 @@ data class CardUi(
     val addressSecondLine: String?,
     val dateAdded: String,
     val cardType: UiText,
+    val cardColor: Color
 ) {
     companion object {
-        fun mock(): CardUi {
+        fun mock(
+            cardColor: Color = Color(0xFF100D40),
+        ): CardUi {
             val mockNumber = "2298126833989874"
 
             return CardUi(
@@ -30,7 +34,8 @@ data class CardUi(
                 addressFirstLine = "2890 Pangandaran Street",
                 addressSecondLine = null,
                 dateAdded = "12 Jan 2021 22:12",
-                cardType = UiText.DynamicString("Debit")
+                cardType = UiText.DynamicString("Debit"),
+                cardColor = cardColor
             )
         }
 
@@ -48,6 +53,14 @@ data class CardUi(
                 cardType = when (card.cardType) {
                     CardType.DEBIT -> UiText.StringResource(R.string.debit)
                     CardType.CREDIT -> UiText.StringResource(R.string.credit)
+                },
+                cardColor = when (card.cardType) {
+                    CardType.DEBIT -> {
+                        Color(0xFF100D40)
+                    }
+                    CardType.CREDIT -> {
+                        Color(0xFF262627)
+                    }
                 }
             )
         }

@@ -45,7 +45,7 @@ fun PaymentCard(
     onCLick: (cardId: String) -> Unit = {}
 ) {
     Card(
-        backgroundColor = MaterialTheme.colorScheme.primary,
+        backgroundColor = cardUi.cardColor,
         shape = RoundedCornerShape(10.dp),
         onClick = { onCLick.invoke(cardUi.cardNumber) }
     ) {
@@ -167,6 +167,15 @@ fun PaymentCard_Preview() {
 
             PaymentCard(
                 cardUi = CardUi.mock(),
+                isSelected = true
+            )
+
+            PaymentCard(
+                cardUi = CardUi.mock(Color(0xFF000000)),
+            )
+
+            PaymentCard(
+                cardUi = CardUi.mock(Color(0xFF000000)),
                 isSelected = true
             )
         }
