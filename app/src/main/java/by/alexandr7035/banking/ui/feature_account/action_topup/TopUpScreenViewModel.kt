@@ -137,7 +137,7 @@ class TopUpScreenViewModel(
 
             when (defaultCardRes) {
                 is OperationResult.Success -> {
-                    defaultCardRes.data?.let {
+                    if (defaultCardRes.data != null) {
                         _state.update {
                             it.copy(
                                 cardPickerState = it.cardPickerState.copy(
@@ -146,7 +146,7 @@ class TopUpScreenViewModel(
                                 )
                             )
                         }
-                    } ?: {
+                    } else {
                         _state.update {
                             it.copy(
                                 cardPickerState = it.cardPickerState.copy(
