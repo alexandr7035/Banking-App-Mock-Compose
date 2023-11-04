@@ -20,6 +20,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -38,15 +39,7 @@ class HomeViewModel(
     val state = _state.asStateFlow()
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        when (exception) {
-            is AppError -> {
-                reduceError(exception.errorType)
-            }
-
-            else -> {
-                reduceError(ErrorType.UNKNOWN_ERROR)
-            }
-        }
+        reduceThrowable(exception)
     }
 
     private fun loadData() {
@@ -81,9 +74,13 @@ class HomeViewModel(
             val cards = cardsJob.await()
             val saving = savingsJob.await()
 
-            val balanceFlow = getTotalAccountBalanceUseCase.execute().map { accountBalance ->
-                BalanceValueUi.mapFromDomain(accountBalance)
-            }
+            val balanceFlow = getTotalAccountBalanceUseCase.execute()
+                .map { accountBalance ->
+                    BalanceValueUi.mapFromDomain(accountBalance)
+                }
+                .catch {
+                    reduceThrowable(it)
+                }
 
             // Success state
             reduceData(
@@ -116,6 +113,18 @@ class HomeViewModel(
             HomeState.Error(
                 error = error.asUiTextError()
             )
+        }
+    }
+
+    private fun reduceThrowable(it: Throwable) {
+        when (it) {
+            is AppError -> {
+                reduceError(it.errorType)
+            }
+
+            else -> {
+                reduceError(ErrorType.UNKNOWN_ERROR)
+            }
         }
     }
 
