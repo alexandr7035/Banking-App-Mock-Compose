@@ -109,6 +109,7 @@ fun M2BottomNavigation(
                 .defaultMinSize(minHeight = BottomNavigationHeight)
                 .selectableGroup(),
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
             content = content
         )
     }
