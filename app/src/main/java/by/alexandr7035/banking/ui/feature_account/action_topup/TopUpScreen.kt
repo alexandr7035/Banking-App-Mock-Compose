@@ -50,7 +50,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TopUpScreen(
-    viewModel: TopUpScreenViewModel = koinViewModel(), onBack: () -> Unit
+    viewModel: TopUpScreenViewModel = koinViewModel(),
+    selectedCardId: String? = null,
+    onBack: () -> Unit
 ) {
     val snackbarHostState = LocalScopedSnackbarState.current
     val context = LocalContext.current
@@ -70,7 +72,7 @@ fun TopUpScreen(
     }
 
     EnterScreenEffect {
-        viewModel.emitIntent(TopUpScreenIntent.EnterScreen)
+        viewModel.emitIntent(TopUpScreenIntent.EnterScreen(selectedCardId = selectedCardId))
     }
 }
 

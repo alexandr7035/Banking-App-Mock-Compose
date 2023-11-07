@@ -41,7 +41,7 @@ class TopUpScreenViewModel(
     fun emitIntent(intent: TopUpScreenIntent) {
         when (intent) {
             is TopUpScreenIntent.EnterScreen -> {
-                reduceLoadDefaultCard()
+                reduceInitialCard(intent.selectedCardId)
             }
 
             is TopUpScreenIntent.UpdateSelectedValue -> {
@@ -121,7 +121,7 @@ class TopUpScreenViewModel(
         }
     }
 
-    private fun reduceLoadDefaultCard() {
+    private fun reduceInitialCard(selectedCardId: String?) {
         _state.update {
             it.copy(
                 cardPickerState = it.cardPickerState.copy(
@@ -131,17 +131,24 @@ class TopUpScreenViewModel(
         }
 
         viewModelScope.launch {
-            val defaultCardRes = OperationResult.runWrapped {
-                getDefaultCardUseCase.execute()
+            val cardRes = if (selectedCardId == null) {
+                OperationResult.runWrapped {
+                    getDefaultCardUseCase.execute()
+                }
+            }
+            else {
+                OperationResult.runWrapped {
+                    getCardByIdUseCase.execute(selectedCardId)
+                }
             }
 
-            when (defaultCardRes) {
+            when (cardRes) {
                 is OperationResult.Success -> {
-                    if (defaultCardRes.data != null) {
+                    if (cardRes.data != null) {
                         _state.update {
                             it.copy(
                                 cardPickerState = it.cardPickerState.copy(
-                                    selectedCard = CardUi.mapFromDomain(defaultCardRes.data),
+                                    selectedCard = CardUi.mapFromDomain(cardRes.data),
                                     isLoading = false
                                 )
                             )

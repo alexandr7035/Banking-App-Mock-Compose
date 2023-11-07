@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -101,40 +102,55 @@ fun AccountActionPanel(
             }
         }
 
-        Divider(
-            thickness = 2.dp,
+        HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
+            thickness = 2.dp,
             color = Color(0xFFF2F2F2)
         )
 
 
         BoxWithConstraints(Modifier.fillMaxWidth()) {
-
-            Row(
-                modifier = Modifier
-                    .padding(top = 16.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
-                    .width(maxWidth)
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                val items = listOf(
-                    AccountAction.SendMoney,
-                    AccountAction.RequestMoney,
-                    AccountAction.Pay,
-                    AccountAction.TopUp
-                )
-
-                items.forEach { it ->
-                    AccountActionItem(actionType = it, onActionClick = { accountAction ->
-                        onActionClick.invoke(accountAction)
-                    })
-                }
-            }
+            AccountActionRow(
+                modifier = Modifier.width(maxWidth),
+                paddingValues = PaddingValues(
+                    top = 16.dp,
+                    bottom = 8.dp,
+                    start = 12.dp,
+                    end = 12.dp
+                ),
+                onActionClick = onActionClick
+            )
         }
+    }
+}
 
+@Composable
+fun AccountActionRow(
+    modifier: Modifier = Modifier,
+    onActionClick: (action: AccountAction) -> Unit = {},
+    paddingValues: PaddingValues = PaddingValues()
+) {
+    Row(
+        modifier = modifier.then(Modifier
+            .padding(paddingValues)
+            .horizontalScroll(rememberScrollState())),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        val items = listOf(
+            AccountAction.SendMoney,
+            AccountAction.RequestMoney,
+            AccountAction.Pay,
+            AccountAction.TopUp
+        )
+
+        items.forEach { it ->
+            AccountActionItem(actionType = it, onActionClick = { accountAction ->
+                onActionClick(accountAction)
+            })
+        }
     }
 }
 
@@ -229,11 +245,11 @@ fun AccountActionPanel_Skeleton() {
             )
         }
 
-        Divider(
-            thickness = 2.dp,
+        HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
+            thickness = 2.dp,
             color = Color(0xFFF2F2F2)
         )
 

@@ -39,6 +39,8 @@ import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import by.alexandr7035.banking.ui.feature_home.components.AccountActionRow
+import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
@@ -49,7 +51,11 @@ fun CardDetailsScreen(
     viewModel: CardDetailsViewModel = koinViewModel(),
     cardId: String,
     onBack: () -> Unit,
+    onAccountAction: (AccountAction) -> Unit,
 ) {
+
+    val ctx = LocalContext.current
+    val snackbarState = LocalScopedSnackbarState.current
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -71,7 +77,8 @@ fun CardDetailsScreen(
                 is CardDetailsState.Success -> {
                     CardDetailsScreen_Ui(
                         cardUi = state.card,
-                        onIntent = { viewModel.emitIntent(it) }
+                        onIntent = { viewModel.emitIntent(it) },
+                        onAccountAction = onAccountAction
                     )
 
                     if (state.showDeleteCardDialog) {
@@ -92,9 +99,6 @@ fun CardDetailsScreen(
                     if (state.showLoading) {
                         FullscreenProgressBar()
                     }
-
-                    val ctx = LocalContext.current
-                    val snackbarState = LocalScopedSnackbarState.current
 
                     EventEffect(
                         event = state.cardDeletedResultEvent,
@@ -141,6 +145,7 @@ private fun CardDetailsScreen_Ui(
     modifier: Modifier = Modifier,
     cardUi: CardUi,
     onIntent: (intent: CardDetailsIntent) -> Unit = {},
+    onAccountAction: (AccountAction) -> Unit = {}
 ) {
     Column(
         modifier = modifier.then(
@@ -151,10 +156,6 @@ private fun CardDetailsScreen_Ui(
                     horizontal = 24.dp
                 ),
         ),
-//        Modifier.padding(
-//            vertical = 16.dp,
-//            horizontal = 24.dp
-//        ),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         PaymentCard(cardUi = cardUi)
@@ -206,7 +207,12 @@ private fun CardDetailsScreen_Ui(
             )
         )
 
-        Spacer(Modifier.height(16.dp))
+        AccountActionRow(
+            modifier = Modifier.fillMaxWidth(),
+            onActionClick = onAccountAction
+        )
+
+        Spacer(Modifier.weight(1f))
 
         SecondaryButton(
             onClick = {

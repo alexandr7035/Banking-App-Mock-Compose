@@ -58,8 +58,7 @@ fun AppNavHost(
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (conditionalNavigation.requireCreateAppLock) {
                 navController.navigate(NavEntries.Graphs.CreateAppLock.route) {
                     popUpTo(NavEntries.Graphs.HomeGraph.route) {
@@ -122,6 +121,7 @@ fun AppNavHost(
                             AccountAction.TopUp -> {
                                 navController.navigate(NavEntries.AccountTopUp.route)
                             }
+
                             AccountAction.Pay -> TODO()
                             AccountAction.RequestMoney -> TODO()
                             AccountAction.SendMoney -> TODO()
@@ -185,12 +185,34 @@ fun AppNavHost(
 
             composable(
                 route = "${NavEntries.CardDetails.route}/{cardId}", arguments = listOf(navArgument("cardId") { type = NavType.StringType })
-            ) {
+            ) { it ->
+                val cardId = it.arguments?.getString("cardId")!!
+
                 CardDetailsScreen(
-                    cardId = it.arguments?.getString("cardId")!!,
+                    cardId = cardId,
                     onBack = {
                         navController.popBackStack()
                     },
+                    onAccountAction = { action ->
+                        when (action) {
+                            AccountAction.Pay -> {
+
+                            }
+
+                            AccountAction.RequestMoney -> {
+
+                            }
+
+                            AccountAction.SendMoney -> {
+
+                            }
+
+                            AccountAction.TopUp -> {
+                                val route = "${NavEntries.AccountTopUp.route}?selectedCard=${cardId}"
+                                navController.navigate(route)
+                            }
+                        }
+                    }
                 )
             }
 
@@ -237,11 +259,23 @@ fun AppNavHost(
                 )
             }
 
-            composable(route = NavEntries.AccountTopUp.route) {
+            composable(
+                route = "${NavEntries.AccountTopUp.route}?selectedCard={selectedCard}",
+                arguments = listOf(
+                    navArgument("selectedCard") {
+                        nullable = true
+                        defaultValue = null
+                        type = NavType.StringType
+                    }
+                )
+            ) {
+                val selectedCard = it.arguments?.getString("selectedCard")
+
                 TopUpScreen(
                     onBack = {
                         navController.popBackStack()
-                    }
+                    },
+                    selectedCardId = selectedCard
                 )
             }
         }
