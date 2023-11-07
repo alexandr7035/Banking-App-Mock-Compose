@@ -2,8 +2,8 @@ package by.alexandr7035.banking.ui.feature_home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.features.account.GetCardBalanceObservableUseCase
 import by.alexandr7035.banking.domain.features.account.GetTotalAccountBalanceUseCase
 import by.alexandr7035.banking.domain.features.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.domain.features.profile.GetCompactProfileUseCase
@@ -29,7 +29,8 @@ class HomeViewModel(
     private val getCompactProfileUseCase: GetCompactProfileUseCase,
     private val getHomeCardsUseCase: GetHomeCardsUseCase,
     private val getHomeSavingsUseCase: GetHomeSavingsUseCase,
-    private val getTotalAccountBalanceUseCase: GetTotalAccountBalanceUseCase
+    private val getTotalAccountBalanceUseCase: GetTotalAccountBalanceUseCase,
+    private val getCardBalanceObservableUseCase: GetCardBalanceObservableUseCase
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(
@@ -38,8 +39,14 @@ class HomeViewModel(
 
     val state = _state.asStateFlow()
 
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        reduceThrowable(exception)
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        reduceError(ErrorType.fromThrowable(exception))
+    }
+
+    fun emitIntent(intent: HomeIntent) {
+        when (intent) {
+            is HomeIntent.EnterScreen -> loadData()
+        }
     }
 
     private fun loadData() {
@@ -47,8 +54,7 @@ class HomeViewModel(
             HomeState.Loading
         }
 
-        viewModelScope.launch(coroutineExceptionHandler) {
-
+        viewModelScope.launch(errorHandler) {
             val profileJob = async() {
                 val res = getCompactProfileUseCase.execute()
                 ProfileUi.mapFromDomain(res)
@@ -58,7 +64,10 @@ class HomeViewModel(
                 val res = getHomeCardsUseCase.execute()
 
                 res.map {
-                    CardUi.mapFromDomain(it)
+                    CardUi.mapFromDomain(
+                        card = it,
+                        balanceFlow = getCardBalanceFlow(it.cardId)
+                    )
                 }
             }
 
@@ -79,7 +88,7 @@ class HomeViewModel(
                     BalanceValueUi.mapFromDomain(accountBalance)
                 }
                 .catch {
-                    reduceThrowable(it)
+                    reduceError(ErrorType.fromThrowable(it))
                 }
 
             // Success state
@@ -116,21 +125,13 @@ class HomeViewModel(
         }
     }
 
-    private fun reduceThrowable(it: Throwable) {
-        when (it) {
-            is AppError -> {
-                reduceError(it.errorType)
+    private suspend fun getCardBalanceFlow(cardId: String): Flow<String> {
+        return getCardBalanceObservableUseCase.execute(cardId)
+            .map {
+                BalanceValueUi.mapFromDomain(it).balanceStr
             }
-
-            else -> {
-                reduceError(ErrorType.UNKNOWN_ERROR)
+            .catch {
+                reduceError(ErrorType.fromThrowable(it))
             }
-        }
-    }
-
-    fun emitIntent(intent: HomeIntent) {
-        when (intent) {
-            is HomeIntent.EnterScreen -> loadData()
-        }
     }
 }

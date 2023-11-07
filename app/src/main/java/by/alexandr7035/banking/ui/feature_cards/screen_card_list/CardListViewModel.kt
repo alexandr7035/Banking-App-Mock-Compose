@@ -3,23 +3,31 @@ package by.alexandr7035.banking.ui.feature_cards.screen_card_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
-import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.domain.features.account.GetCardBalanceObservableUseCase
 import by.alexandr7035.banking.domain.features.cards.GetAllCardsUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
+import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CardListViewModel(
-    private val getAllCardsUseCase: GetAllCardsUseCase
-): ViewModel() {
+    private val getAllCardsUseCase: GetAllCardsUseCase, private val getCardBalanceObservableUseCase: GetCardBalanceObservableUseCase
+) : ViewModel() {
     private val _state: MutableStateFlow<CardListState> = MutableStateFlow(
         CardListState.Loading
     )
 
     val state = _state.asStateFlow()
+
+    private val errorHandler = CoroutineExceptionHandler { _, throwable ->
+        reduceError(ErrorType.fromThrowable(throwable))
+    }
 
     fun emitIntent(intent: CardListIntent) {
         when (intent) {
@@ -34,27 +42,23 @@ class CardListViewModel(
     }
 
     private fun load() {
-        viewModelScope.launch {
+        viewModelScope.launch(errorHandler) {
+            // TODO fix array crash without loading
             reduceLoading()
 
-            val res = OperationResult.runWrapped {
-                getAllCardsUseCase.execute()
-            }
-
-            when (res) {
-                is OperationResult.Success -> {
-                    val cardsUi = res.data.map {
-                        CardUi.mapFromDomain(it)
+            val cards = getAllCardsUseCase.execute()
+            val cardsUi = cards.map {card ->
+                CardUi.mapFromDomain(
+                    card = card,
+                    balanceFlow = getCardBalanceObservableUseCase.execute(card.cardId).map {
+                        BalanceValueUi.mapFromDomain(it).balanceStr
+                    }.catch { err ->
+                        reduceError(ErrorType.fromThrowable(err))
                     }
-
-                    reduceData(cardsUi)
-                }
-
-                is OperationResult.Failure -> {
-                    reduceError(res.error.errorType)
-                }
+                )
             }
 
+            reduceData(cardsUi)
         }
     }
 

@@ -34,6 +34,7 @@ val presentationModule = module {
             validatePasswordUseCase = get()
         )
     }
+
     viewModel {
         AppViewModel(
             checkIfLoggedInUseCase = get(),
@@ -41,25 +42,36 @@ val presentationModule = module {
             checkAppLockUseCase = get()
         )
     }
+
     viewModel {
         ProfileViewModel(
             getCompactProfileUseCase = get(),
             logoutUseCase = get()
         )
     }
+
     viewModel {
         HomeViewModel(
             getHomeCardsUseCase = get(),
             getHomeSavingsUseCase = get(),
             getCompactProfileUseCase = get(),
-            getTotalAccountBalanceUseCase = get()
+            getTotalAccountBalanceUseCase = get(),
+            getCardBalanceObservableUseCase = get()
         )
     }
-    viewModel { CardListViewModel(getAllCardsUseCase = get()) }
+
+    viewModel {
+        CardListViewModel(
+            getAllCardsUseCase = get(),
+            getCardBalanceObservableUseCase = get()
+        )
+    }
+
     viewModel {
         CardDetailsViewModel(
             getCardByIdUseCase = get(),
-            deleteCardByNumberUseCase = get()
+            deleteCardByNumberUseCase = get(),
+            getCardBalanceObservableUseCase = get()
         )
     }
 

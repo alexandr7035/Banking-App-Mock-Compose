@@ -4,44 +4,48 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.domain.features.account.GetCardBalanceObservableUseCase
 import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
 import by.alexandr7035.banking.domain.features.cards.RemoveCardUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
+import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class CardDetailsViewModel(
     private val getCardByIdUseCase: GetCardByIdUseCase,
-    private val deleteCardByNumberUseCase: RemoveCardUseCase
+    private val deleteCardByNumberUseCase: RemoveCardUseCase,
+    private val getCardBalanceObservableUseCase: GetCardBalanceObservableUseCase
 ) : ViewModel() {
     private val _state: MutableStateFlow<CardDetailsState> = MutableStateFlow(CardDetailsState.Loading)
     val state = _state.asStateFlow()
+
+    private val errorHandler = CoroutineExceptionHandler { _, throwable ->
+        reduceError(ErrorType.fromThrowable(throwable))
+    }
 
     fun emitIntent(intent: CardDetailsIntent) {
         when (intent) {
             is CardDetailsIntent.EnterScreen -> {
                 reduceScreenLoading()
 
-                viewModelScope.launch {
-                    val cardResult = OperationResult.runWrapped {
-                        getCardByIdUseCase.execute(intent.cardNumber)
-                    }
+                viewModelScope.launch(errorHandler) {
+                    val card = getCardByIdUseCase.execute(intent.cardId)
+                    val cardBalanceFlow = getCardBalanceObservableUseCase
+                        .execute(intent.cardId)
+                        .map { BalanceValueUi.mapFromDomain(it).balanceStr }
+                        .catch { reduceError(ErrorType.fromThrowable(it)) }
 
-                    when (cardResult) {
-                        is OperationResult.Success -> {
-                            reduceSuccessData(cardResult.data)
-                        }
-
-                        is OperationResult.Failure -> {
-                            reduceError(cardResult.error.errorType)
-                        }
-                    }
-
+                    reduceSuccessData(card, cardBalanceFlow)
                 }
             }
 
@@ -62,8 +66,16 @@ class CardDetailsViewModel(
         _state.value = CardDetailsState.Loading
     }
 
-    private fun reduceSuccessData(card: PaymentCard) {
-        _state.value = CardDetailsState.Success(card = CardUi.mapFromDomain(card))
+    private fun reduceSuccessData(
+        card: PaymentCard,
+        balanceFlow: Flow<String>
+    ) {
+        _state.value = CardDetailsState.Success(
+            card = CardUi.mapFromDomain(
+                card = card,
+                balanceFlow = balanceFlow
+            )
+        )
     }
 
     private fun reduceDeleteCardDialog(
@@ -84,7 +96,7 @@ class CardDetailsViewModel(
         if (currentState is CardDetailsState.Success) {
             _state.value = currentState.copy(showLoading = true)
 
-            viewModelScope.launch {
+            viewModelScope.launch(errorHandler) {
                 val res = OperationResult.runWrapped {
                     deleteCardByNumberUseCase.execute(currentState.card.id)
                 }

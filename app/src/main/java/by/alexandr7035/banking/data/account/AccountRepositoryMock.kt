@@ -37,8 +37,6 @@ class AccountRepositoryMock(
                 // For mock app emit last card balance saved in db
                 emit(MoneyAmount(card.recentBalance))
                 delay(MOCK_DELAY)
-                emit(MoneyAmount(100F))
-                delay(MOCK_DELAY)
             }
         }.flowOn(coroutineDispatcher)
     }
@@ -52,6 +50,6 @@ class AccountRepositoryMock(
     }
 
     companion object {
-        private const val MOCK_DELAY = 500L
+        private const val MOCK_DELAY = 5000L
     }
 }
