@@ -1,9 +1,11 @@
 package by.alexandr7035.banking.data.account
 
-import by.alexandr7035.banking.data.helpers.sumMoneyAmounts
+import by.alexandr7035.banking.core.extensions.sumFloat
+import by.alexandr7035.banking.data.cards.cache.CardsDao
+import by.alexandr7035.banking.domain.core.AppError
+import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.account.AccountRepository
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
-import by.alexandr7035.banking.domain.features.cards.CardsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +14,8 @@ import kotlinx.coroutines.flow.flowOn
 
 class AccountRepositoryMock(
     private val coroutineDispatcher: CoroutineDispatcher,
-    private val cardsRepository: CardsRepository,
+    // For mock app simply use last cached card balances
+    private val cardsDao: CardsDao
 ) : AccountRepository {
 
     override fun getBalanceFlow(): Flow<MoneyAmount> {
@@ -27,15 +30,28 @@ class AccountRepositoryMock(
         }.flowOn(coroutineDispatcher)
     }
 
+    override suspend fun getCardBalanceFlow(cardId: String): Flow<MoneyAmount> {
+        val card = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.UNKNOWN_ERROR)
+        return flow {
+            while (true) {
+                // For mock app emit last card balance saved in db
+                emit(MoneyAmount(card.recentBalance))
+                delay(MOCK_DELAY)
+                emit(MoneyAmount(100F))
+                delay(MOCK_DELAY)
+            }
+        }.flowOn(coroutineDispatcher)
+    }
+
     private suspend fun calculateBalance(): MoneyAmount {
-        val amount = cardsRepository.getCards().sumMoneyAmounts {
+        val amount = cardsDao.getCards().sumFloat {
             it.recentBalance
         }
 
-        return amount
+        return MoneyAmount(amount)
     }
 
     companion object {
-        private const val MOCK_DELAY = 5000L
+        private const val MOCK_DELAY = 500L
     }
 }

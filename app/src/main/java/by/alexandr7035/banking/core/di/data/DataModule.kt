@@ -70,7 +70,7 @@ val dataModule = module {
 
     single<CardsRepository> {
         CardsRepositoryMock(
-            cacheDao = get(),
+            cardsDao = get(),
             coroutineDispatcher = Dispatchers.IO
         )
     }
@@ -119,7 +119,8 @@ val dataModule = module {
     single<AccountRepository> {
         AccountRepositoryMock(
             coroutineDispatcher = Dispatchers.IO,
-            cardsRepository = get()
+            cardsDao = get(),
+//            cardsRepository = get()
         )
     }
 }

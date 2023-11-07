@@ -5,4 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
     fun getBalanceFlow(): Flow<MoneyAmount>
+
+    suspend fun getCardBalanceFlow(cardId: String): Flow<MoneyAmount>
 }

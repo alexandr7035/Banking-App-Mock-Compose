@@ -14,25 +14,25 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class CardsRepositoryMock(
-    private val cacheDao: CardsDao,
+    private val cardsDao: CardsDao,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : CardsRepository {
     override suspend fun getCards(): List<PaymentCard> = withContext(coroutineDispatcher) {
         delay(MOCK_DELAY)
 
-        return@withContext cacheDao.getCards().map { cardEntity ->
+        return@withContext cardsDao.getCards().map { cardEntity ->
             mapCachedCardToDomain(cardEntity)
         }
     }
 
     override suspend fun addCard(data: AddCardPayload) = withContext(coroutineDispatcher) {
-        val card = cacheDao.getCardByNumber(data.cardNumber)
+        val card = cardsDao.getCardByNumber(data.cardNumber)
 
         if (card == null) {
             delay(MOCK_DELAY)
 
             val entity = mapAddCardPayloadToCache(data)
-            cacheDao.addCard(entity)
+            cardsDao.addCard(entity)
         }
         else {
             throw AppError(ErrorType.CARD_ALREADY_ADDED)
@@ -40,7 +40,7 @@ class CardsRepositoryMock(
     }
 
     override suspend fun getCardById(id: String): PaymentCard = withContext(coroutineDispatcher) {
-        val cardEntity = cacheDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+        val cardEntity = cardsDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
         delay(MOCK_DELAY)
         return@withContext mapCachedCardToDomain(cardEntity)
     }
@@ -69,16 +69,16 @@ class CardsRepositoryMock(
     )
 
     override suspend fun deleteCardById(id: String) {
-        val cardEntity = cacheDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+        val cardEntity = cardsDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
         delay(MOCK_DELAY)
-        cacheDao.deleteCard(cardEntity)
+        cardsDao.deleteCard(cardEntity)
     }
 
     override suspend fun topUpCard(cardId: String, amount: MoneyAmount) {
-        val cardEntity = cacheDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+        val cardEntity = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
         delay(MOCK_DELAY)
         val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
-        cacheDao.updateCard(updated)
+        cardsDao.updateCard(updated)
     }
 
     companion object {
