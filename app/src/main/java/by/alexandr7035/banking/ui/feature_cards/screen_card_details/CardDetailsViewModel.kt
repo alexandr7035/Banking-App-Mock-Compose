@@ -54,10 +54,6 @@ class CardDetailsViewModel(
             is CardDetailsIntent.ConfirmDeleteCard -> {
                 reduceDeleteCard()
             }
-
-            CardDetailsIntent.ConsumeCardDeletedEvent -> {
-
-            }
         }
     }
 

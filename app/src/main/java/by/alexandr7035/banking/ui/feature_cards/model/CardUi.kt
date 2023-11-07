@@ -8,12 +8,15 @@ import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
 import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 data class CardUi(
     val id: String,
     val cardNumber: String,
     val expiration: String,
-    val balance: String,
+    val recentBalance: String,
+    val balanceFlow: Flow<String>,
     val addressFirstLine: String,
     val addressSecondLine: String?,
     val dateAdded: String,
@@ -30,7 +33,8 @@ data class CardUi(
                 id = mockNumber,
                 cardNumber = mockNumber.splitStringWithDivider(),
                 expiration = "02/24",
-                balance = "\$2887.65",
+                recentBalance = "\$2887.65",
+                balanceFlow = flowOf("\$2887.65"),
                 addressFirstLine = "2890 Pangandaran Street",
                 addressSecondLine = null,
                 dateAdded = "12 Jan 2021 22:12",
@@ -39,14 +43,20 @@ data class CardUi(
             )
         }
 
-        fun mapFromDomain(card: PaymentCard): CardUi {
+        fun mapFromDomain(
+            card: PaymentCard,
+            // TODO fix
+            balanceFlow: Flow<String>? = null
+        ): CardUi {
             val date = card.expiration.getFormattedDate("MM/yy")
+            val recentBalance = BalanceValueUi.mapFromDomain(card.recentBalance).balanceStr
 
             return CardUi(
                 id = card.cardId,
                 cardNumber = card.cardNumber.splitStringWithDivider(),
                 expiration = date,
-                balance = BalanceValueUi.mapFromDomain(card.recentBalance).balanceStr,
+                recentBalance = recentBalance,
+                balanceFlow = balanceFlow ?: flowOf(recentBalance),
                 addressFirstLine = card.addressFirstLine,
                 addressSecondLine = card.addressSecondLine.ifBlank { null },
                 dateAdded = card.addedDate.getFormattedDate("dd MMM yyyy HH:mm"),
@@ -58,6 +68,7 @@ data class CardUi(
                     CardType.DEBIT -> {
                         Color(0xFF100D40)
                     }
+
                     CardType.CREDIT -> {
                         Color(0xFF262627)
                     }

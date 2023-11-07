@@ -81,7 +81,7 @@ fun SmallCardIcon() {
                     Spacer(Modifier.height(6.dp))
 
                     Text(
-                        text = cardUi.balance, style = TextStyle(
+                        text = cardUi.recentBalance, style = TextStyle(
                             fontSize = 4.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight(600),
@@ -177,7 +177,7 @@ fun SmallCardIconCustomizable(
                 Spacer(Modifier.weight(1f))
 
                 Text(
-                    text = cardUi.balance,
+                    text = cardUi.recentBalance,
                     style = TextStyle(
                         fontFamily = primaryFontFamily,
                         fontSize = balanceSize,

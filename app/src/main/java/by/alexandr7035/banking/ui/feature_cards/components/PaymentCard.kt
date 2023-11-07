@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
 import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
@@ -121,8 +122,12 @@ fun PaymentCard(
 
                     Spacer(Modifier.height(50.dp))
 
+                    val balance = cardUi.balanceFlow
+                        .collectAsStateWithLifecycle(initialValue = cardUi.recentBalance)
+                        .value
+
                     Text(
-                        text = cardUi.balance, style = TextStyle(
+                        text = balance, style = TextStyle(
                             fontSize = 20.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight(600),

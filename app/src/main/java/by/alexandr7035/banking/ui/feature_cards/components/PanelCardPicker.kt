@@ -112,7 +112,7 @@ fun PanelCardPicker(
 
                 TextButton(onClick = { onCardPickerClick() }) {
                     Text(
-                        text = selectedCard.balance, style = TextStyle(
+                        text = selectedCard.recentBalance, style = TextStyle(
                             fontSize = 16.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight(600),

@@ -4,5 +4,4 @@ sealed class CardDetailsIntent {
     data class EnterScreen(val cardNumber: String): CardDetailsIntent()
     data class ToggleDeleteCardDialog(val isDialogShown: Boolean): CardDetailsIntent()
     object ConfirmDeleteCard: CardDetailsIntent()
-    object ConsumeCardDeletedEvent: CardDetailsIntent()
 }
