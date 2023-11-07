@@ -17,5 +17,14 @@ enum class ErrorType {
     GENERIC_VALIDATION_ERROR,
     GENERIC_NOT_FOUND_ERROR,
 
-    UNKNOWN_ERROR,
+    UNKNOWN_ERROR,;
+
+    companion object {
+        fun fromThrowable(e: Throwable): ErrorType {
+            return when (e) {
+                is AppError -> e.errorType
+                else -> UNKNOWN_ERROR
+            }
+        }
+    }
 }
