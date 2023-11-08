@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_home
+package by.alexandr7035.banking.ui.feature_home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -37,15 +38,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
+import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun AccountActionPanel(
-    balance: Float,
+    balanceFlow: Flow<BalanceValueUi?>,
     onActionClick: (action: AccountAction) -> Unit
 ) {
+    val balance = balanceFlow.collectAsStateWithLifecycle(initialValue = null).value
 
     val shape = RoundedCornerShape(size = 10.dp)
     Column(
@@ -58,9 +65,12 @@ fun AccountActionPanel(
             )
             .background(color = Color(0xFFFFFFFF), shape = shape)
     ) {
-        Row(Modifier.padding(horizontal = 24.dp, vertical = 18.dp)) {
+        Row(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                text = "My Balance",
+                text = stringResource(R.string.my_balance),
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
@@ -72,51 +82,75 @@ fun AccountActionPanel(
 
             Spacer(Modifier.weight(1f))
 
-            Text(
-                text = "\$${balance}",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF100D40),
+            if (balance != null) {
+                Text(
+                    text = balance.balanceStr,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF100D40),
+                    )
                 )
-            )
+            } else {
+                SkeletonShape(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(18.dp),
+                    shape = RoundedCornerShape(4.dp)
+                )
+            }
         }
 
-        Divider(
-            thickness = 2.dp,
+        HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
+            thickness = 2.dp,
             color = Color(0xFFF2F2F2)
         )
 
 
         BoxWithConstraints(Modifier.fillMaxWidth()) {
-
-            Row(
-                modifier = Modifier
-                    .padding(top = 16.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
-                    .width(maxWidth)
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                val items = listOf(
-                    AccountAction.SendMoney,
-                    AccountAction.RequestMoney,
-                    AccountAction.Pay,
-                    AccountAction.TopUp
-                )
-
-                items.forEach { it ->
-                    AccountActionItem(actionType = it, onActionClick = { accountAction ->
-                        onActionClick.invoke(accountAction)
-                    })
-                }
-            }
+            AccountActionRow(
+                modifier = Modifier.width(maxWidth),
+                paddingValues = PaddingValues(
+                    top = 16.dp,
+                    bottom = 8.dp,
+                    start = 12.dp,
+                    end = 12.dp
+                ),
+                onActionClick = onActionClick
+            )
         }
+    }
+}
 
+@Composable
+fun AccountActionRow(
+    modifier: Modifier = Modifier,
+    onActionClick: (action: AccountAction) -> Unit = {},
+    paddingValues: PaddingValues = PaddingValues()
+) {
+    Row(
+        modifier = modifier.then(Modifier
+            .padding(paddingValues)
+            .horizontalScroll(rememberScrollState())),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        val items = listOf(
+            AccountAction.SendMoney,
+            AccountAction.RequestMoney,
+            AccountAction.Pay,
+            AccountAction.TopUp
+        )
+
+        items.forEach { it ->
+            AccountActionItem(actionType = it, onActionClick = { accountAction ->
+                onActionClick(accountAction)
+            })
+        }
     }
 }
 
@@ -186,9 +220,12 @@ fun AccountActionPanel_Skeleton() {
             )
             .background(color = Color(0xFFFFFFFF), shape = shape)
     ) {
-        Row(Modifier.padding(horizontal = 24.dp, vertical = 18.dp)) {
+        Row(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                text = "My Balance",
+                text = stringResource(id = R.string.my_balance),
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
@@ -208,11 +245,11 @@ fun AccountActionPanel_Skeleton() {
             )
         }
 
-        Divider(
-            thickness = 2.dp,
+        HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
+            thickness = 2.dp,
             color = Color(0xFFF2F2F2)
         )
 
@@ -230,7 +267,7 @@ fun AccountActionPanel_Skeleton() {
 @Preview
 @Composable
 fun AccountActionPanel_Preview() {
-    AccountActionPanel(balance = 2000.52F, onActionClick = {})
+    AccountActionPanel(balanceFlow = flowOf(BalanceValueUi("$2000"))) {}
 }
 
 @Preview

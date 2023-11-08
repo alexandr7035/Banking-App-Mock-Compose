@@ -86,7 +86,10 @@ fun ScreenHeader(
                     } else {
                         top.linkTo(cover.bottom, margin = -panelVerticalOffset)
                     }
-                }, contentAlignment = Alignment.Center
+                    start.linkTo(cover.start)
+                    end.linkTo(cover.end)
+                },
+            contentAlignment = Alignment.Center
         ) {
             content()
         }

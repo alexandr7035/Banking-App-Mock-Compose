@@ -1,9 +1,11 @@
 package by.alexandr7035.banking.core.di.presentation
 
 import by.alexandr7035.banking.ui.app_host.AppViewModel
+import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreenViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.lock_screen.LockScreenViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.biometrics.EnableBiometricsViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.pin.CreatePinViewModel
+import by.alexandr7035.banking.ui.feature_cards.dialog_card_picker.CardPickerViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
@@ -32,6 +34,7 @@ val presentationModule = module {
             validatePasswordUseCase = get()
         )
     }
+
     viewModel {
         AppViewModel(
             checkIfLoggedInUseCase = get(),
@@ -39,24 +42,37 @@ val presentationModule = module {
             checkAppLockUseCase = get()
         )
     }
+
     viewModel {
         ProfileViewModel(
             getCompactProfileUseCase = get(),
             logoutUseCase = get()
         )
     }
+
     viewModel {
         HomeViewModel(
             getHomeCardsUseCase = get(),
             getHomeSavingsUseCase = get(),
-            getCompactProfileUseCase = get()
+            getCompactProfileUseCase = get(),
+            getTotalAccountBalanceUseCase = get(),
+            getCardBalanceObservableUseCase = get()
         )
     }
-    viewModel { CardListViewModel(getAllCardsUseCase = get()) }
+
+    viewModel {
+        CardListViewModel(
+            getAllCardsUseCase = get(),
+            getCardBalanceObservableUseCase = get()
+        )
+    }
+
     viewModel {
         CardDetailsViewModel(
             getCardByIdUseCase = get(),
-            deleteCardByNumberUseCase = get()
+            deleteCardByNumberUseCase = get(),
+            getCardBalanceObservableUseCase = get(),
+            setCardAsPrimaryUseCase = get()
         )
     }
 
@@ -119,6 +135,21 @@ val presentationModule = module {
         EnableBiometricsViewModel(
             setupAppLockedWithBiometricsUseCase = get(),
             checkIfBiometricsAvailableUseCase = get(),
+        )
+    }
+
+    viewModel {
+        TopUpScreenViewModel(
+            getSuggestedTopUpValuesUseCase = get(),
+            getCardByIdUseCase = get(),
+            getDefaultCardUseCase = get(),
+            topUpAccountUseCase = get(),
+        )
+    }
+
+    viewModel {
+        CardPickerViewModel(
+            getAllCardsUseCase = get()
         )
     }
 }

@@ -23,10 +23,12 @@ import by.alexandr7035.banking.ui.app_host.navigation.graphs.signUpGraph
 import by.alexandr7035.banking.ui.app_host.navigation.model.ConditionalNavigation
 import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.core.EnterScreenEffect
+import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.HomeScreen
+import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
@@ -56,8 +58,7 @@ fun AppNavHost(
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (conditionalNavigation.requireCreateAppLock) {
                 navController.navigate(NavEntries.Graphs.CreateAppLock.route) {
                     popUpTo(NavEntries.Graphs.HomeGraph.route) {
@@ -114,6 +115,17 @@ fun AppNavHost(
                     },
                     onSavingDetails = { id ->
                         navController.navigate("${NavEntries.SavingDetails.route}/${id}")
+                    },
+                    onAccountAction = {
+                        when (it) {
+                            AccountAction.TopUp -> {
+                                navController.navigate(NavEntries.AccountTopUp.route)
+                            }
+
+                            AccountAction.Pay -> TODO()
+                            AccountAction.RequestMoney -> TODO()
+                            AccountAction.SendMoney -> TODO()
+                        }
                     }
                 )
             }
@@ -173,12 +185,34 @@ fun AppNavHost(
 
             composable(
                 route = "${NavEntries.CardDetails.route}/{cardId}", arguments = listOf(navArgument("cardId") { type = NavType.StringType })
-            ) {
+            ) { it ->
+                val cardId = it.arguments?.getString("cardId")!!
+
                 CardDetailsScreen(
-                    cardId = it.arguments?.getString("cardId")!!,
+                    cardId = cardId,
                     onBack = {
                         navController.popBackStack()
                     },
+                    onAccountAction = { action ->
+                        when (action) {
+                            AccountAction.Pay -> {
+
+                            }
+
+                            AccountAction.RequestMoney -> {
+
+                            }
+
+                            AccountAction.SendMoney -> {
+
+                            }
+
+                            AccountAction.TopUp -> {
+                                val route = "${NavEntries.AccountTopUp.route}?selectedCard=${cardId}"
+                                navController.navigate(route)
+                            }
+                        }
+                    }
                 )
             }
 
@@ -222,6 +256,26 @@ fun AppNavHost(
                     onBack = {
                         navController.popBackStack()
                     }
+                )
+            }
+
+            composable(
+                route = "${NavEntries.AccountTopUp.route}?selectedCard={selectedCard}",
+                arguments = listOf(
+                    navArgument("selectedCard") {
+                        nullable = true
+                        defaultValue = null
+                        type = NavType.StringType
+                    }
+                )
+            ) {
+                val selectedCard = it.arguments?.getString("selectedCard")
+
+                TopUpScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    selectedCardId = selectedCard
                 )
             }
         }

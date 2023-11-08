@@ -46,6 +46,7 @@ import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
 import by.alexandr7035.banking.ui.feature_logout.LogoutState
 import by.alexandr7035.banking.ui.theme.primaryFontFamily

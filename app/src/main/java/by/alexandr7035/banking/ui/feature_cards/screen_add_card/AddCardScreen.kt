@@ -15,12 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,9 +50,11 @@ import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.PrimaryTextField
 import by.alexandr7035.banking.ui.components.ReadonlyTextField
 import by.alexandr7035.banking.ui.components.ScreenPreview
+import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.dialogs.DatePickerDialog
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
+import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.CardNumberField
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
@@ -106,9 +108,7 @@ fun AddCardScreen_Ui(
 
     Scaffold(
         topBar = {
-            ToolBar(
-                onBack = onBack
-            )
+            SecondaryToolBar(onBack = onBack, title = UiText.StringResource(R.string.add_a_card))
         },
     ) { pv ->
 
@@ -249,38 +249,7 @@ fun AddCardScreen_Ui(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ToolBar(onBack: () -> Unit) {
-
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = stringResource(id = R.string.add_a_card),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF262626),
-                    textAlign = TextAlign.Center,
-                ),
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = { onBack.invoke() }, modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_nav_back), contentDescription = null
-                )
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
-    )
-}
-
-
+// TODO refactoring
 @Composable
 private fun FormField(
     title: String,

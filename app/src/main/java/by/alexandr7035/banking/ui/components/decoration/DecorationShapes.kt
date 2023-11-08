@@ -16,32 +16,37 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 
 @Composable
-fun DecorationRectangle(modifier: Modifier) {
+fun DecorationRectangle(
+    modifier: Modifier,
+    strokeWidth: Dp = 16.dp
+) {
     Box(
         modifier = modifier.then(
             Modifier.border(
-                width = 16.dp,
+                width = strokeWidth,
                 shape = RectangleShape,
                 brush = Brush.linearGradient(
                     colors = listOf(Color(0x7AFFFFFF), Color(0x00FFFFFF)),
                 )
             )
         )
-    ) {
-
-    }
+    )
 }
 
 @Composable
-fun DecorationCircle(modifier: Modifier) {
+fun DecorationCircle(
+    modifier: Modifier,
+    strokeWidth: Dp = 16.dp
+) {
     Box(
         modifier = modifier.then(
             Modifier.border(
-                width = 16.dp,
+                width = strokeWidth,
                 shape = CircleShape,
                 brush = Brush.linearGradient(
                     colors = listOf(Color(0x7AFFFFFF), Color(0x00FFFFFF)),
@@ -50,9 +55,7 @@ fun DecorationCircle(modifier: Modifier) {
                 )
             )
         )
-    ) {
-
-    }
+    )
 }
 
 @Preview

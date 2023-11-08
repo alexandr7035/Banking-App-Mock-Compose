@@ -123,6 +123,12 @@ sealed class NavEntries(
         label = "Enable Biometrics"
     )
 
+    object AccountTopUp: NavEntries(
+        route = "account_topup",
+        navIcons = null,
+        label = "Account topup"
+    )
+
     sealed class Graphs(val route: String) {
         object HomeGraph : Graphs("homeGraph")
         object SignUpGraph : Graphs("signUpGraph")

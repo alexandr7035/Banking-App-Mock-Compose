@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface CardsDao {
@@ -19,4 +20,16 @@ interface CardsDao {
 
     @Delete
     suspend fun deleteCard(card: CardEntity)
+
+    @Update
+    suspend fun updateCard(card: CardEntity)
+
+    @Query("UPDATE cards_cache SET isPrimary = CASE WHEN number = :cardId THEN 1 ELSE 0 END")
+    suspend fun markCardAsPrimary(cardId: String)
+
+    @Query("SELECT * FROM cards_cache WHERE isPrimary = 1")
+    suspend fun getPrimaryCard(): CardEntity?
+
+    @Query("UPDATE cards_cache SET isPrimary = 0 WHERE number = :cardId")
+    suspend fun unmarkCardAsPrimary(cardId: String)
 }

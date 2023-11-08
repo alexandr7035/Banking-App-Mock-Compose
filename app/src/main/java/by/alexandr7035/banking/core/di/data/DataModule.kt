@@ -3,6 +3,7 @@ package by.alexandr7035.banking.core.di.data
 import androidx.room.Room
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import by.alexandr7035.banking.data.account.AccountRepositoryMock
 import by.alexandr7035.banking.data.app.AppRepositoryImpl
 import by.alexandr7035.banking.data.app.AppSettignsRepository
 import by.alexandr7035.banking.data.app_lock.AppLockRepositoryImpl
@@ -14,6 +15,7 @@ import by.alexandr7035.banking.data.otp.OtpRepositoryMock
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.data.savings.SavingsRepositoryMock
 import by.alexandr7035.banking.data.signup.SignUpRepositoryMock
+import by.alexandr7035.banking.domain.features.account.AccountRepository
 import by.alexandr7035.banking.domain.features.app_lock.AppLockRepository
 import by.alexandr7035.banking.domain.features.cards.CardsRepository
 import by.alexandr7035.banking.domain.features.login.LoginRepository
@@ -68,7 +70,7 @@ val dataModule = module {
 
     single<CardsRepository> {
         CardsRepositoryMock(
-            cacheDao = get(),
+            cardsDao = get(),
             coroutineDispatcher = Dispatchers.IO
         )
     }
@@ -111,6 +113,14 @@ val dataModule = module {
         AppLockRepositoryImpl(
             securedPreferences = get(named("encryptedPrefs")),
             context = androidApplication().applicationContext
+        )
+    }
+
+    single<AccountRepository> {
+        AccountRepositoryMock(
+            coroutineDispatcher = Dispatchers.IO,
+            cardsDao = get(),
+//            cardsRepository = get()
         )
     }
 }

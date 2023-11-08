@@ -1,5 +1,7 @@
 package by.alexandr7035.banking.ui.feature_cards.components
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -12,20 +14,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
 import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
@@ -33,22 +39,56 @@ import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentCard(
+    modifier: Modifier = Modifier,
     cardUi: CardUi,
+    isSelected: Boolean = false,
     onCLick: (cardId: String) -> Unit = {}
 ) {
     Card(
-        backgroundColor = MaterialTheme.colorScheme.primary,
+        colors = CardDefaults.cardColors(
+            containerColor = cardUi.cardColor
+        ),
         shape = RoundedCornerShape(10.dp),
         onClick = { onCLick.invoke(cardUi.cardNumber) }
     ) {
+
+        val selectedBorder = if (isSelected) {
+            Modifier.border(
+                brush = Brush.horizontalGradient(
+                    listOf(
+                        Color(0x1AFFFFFF),
+                        Color(0x80FFFFFF),
+                        Color(0x4DFFFFFF),
+                    )
+                ),
+                width = 8.dp,
+                shape = RoundedCornerShape(10.dp)
+            )
+        } else {
+            Modifier
+        }
+
         Box(
-            modifier = Modifier
-                .height(IntrinsicSize.Max)
-                .wrapContentWidth()
+            modifier = modifier
+                .then(selectedBorder)
+                .then(
+                    Modifier
+                        .height(IntrinsicSize.Max)
+                        .wrapContentWidth()
+                )
         ) {
+
+            if (cardUi.isPrimary) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_bookmark_filled),
+                    contentDescription = "Default card",
+                    tint = Color(0xCCFF0000),
+                )
+            }
 
             DecorationRectangle(
                 modifier = Modifier
@@ -93,8 +133,12 @@ fun PaymentCard(
 
                     Spacer(Modifier.height(50.dp))
 
+                    val balance = cardUi.balanceFlow
+                        .collectAsStateWithLifecycle(initialValue = cardUi.recentBalance)
+                        .value
+
                     Text(
-                        text = cardUi.balance, style = TextStyle(
+                        text = balance, style = TextStyle(
                             fontSize = 20.sp,
                             fontFamily = primaryFontFamily,
                             fontWeight = FontWeight(600),
@@ -134,8 +178,24 @@ fun PaymentCard(
 @Preview
 fun PaymentCard_Preview() {
     BankingAppTheme() {
-        PaymentCard(
-            CardUi.mock()
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            PaymentCard(
+                cardUi = CardUi.mock()
+            )
+
+            PaymentCard(
+                cardUi = CardUi.mock(),
+                isSelected = true
+            )
+
+            PaymentCard(
+                cardUi = CardUi.mock(Color(0xFF000000)),
+            )
+
+            PaymentCard(
+                cardUi = CardUi.mock(Color(0xFF000000)),
+                isSelected = true
+            )
+        }
     }
 }

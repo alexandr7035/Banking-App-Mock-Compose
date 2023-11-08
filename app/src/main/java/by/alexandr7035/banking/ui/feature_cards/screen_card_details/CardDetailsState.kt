@@ -11,7 +11,8 @@ sealed class CardDetailsState {
         val card: CardUi,
         val showLoading: Boolean = false,
         val showDeleteCardDialog: Boolean = false,
-        val cardDeletedResultEvent: StateEventWithContent<OperationResult<Unit>> = consumed()
+        val cardDeletedResultEvent: StateEventWithContent<OperationResult<Unit>> = consumed(),
+        val setCardAsPrimaryEvent: StateEventWithContent<OperationResult<Unit>> = consumed()
     ) : CardDetailsState()
 
     data class Error(val error: UiText) : CardDetailsState()

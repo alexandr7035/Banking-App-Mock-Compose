@@ -36,17 +36,19 @@ fun ErrorFullScreen(
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier
-                .height(maxHeight)
-                .width(maxWidth)
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    vertical = 40.dp,
-                    horizontal = 24.dp
-                ),
+            modifier = modifier.then(
+                Modifier
+                    .height(maxHeight)
+                    .width(maxWidth)
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        vertical = 40.dp,
+                        horizontal = 24.dp
+                    )
+            ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(72.dp))
+            Spacer(Modifier.weight(0.5f))
 
             Text(
                 text = stringResource(R.string.error_happened),

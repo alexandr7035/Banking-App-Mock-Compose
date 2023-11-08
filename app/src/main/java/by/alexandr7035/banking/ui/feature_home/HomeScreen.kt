@@ -18,12 +18,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -46,20 +44,26 @@ import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.ScreenSectionDivider
 import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.core.resources.UiText
+import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import by.alexandr7035.banking.ui.feature_home.components.AccountActionPanel
+import by.alexandr7035.banking.ui.feature_home.components.AccountActionPanel_Skeleton
+import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
 import by.alexandr7035.banking.ui.feature_profile.ProfileUi
 import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+import kotlinx.coroutines.flow.flowOf
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     onGoToDestination: (navEntry: NavEntries) -> Unit = {},
+    onAccountAction: (AccountAction) -> Unit = {},
     onCardDetails: (cardId: String) -> Unit = {},
     onSavingDetails: (id: Long) -> Unit = {}
 ) {
@@ -74,7 +78,8 @@ fun HomeScreen(
             state = state,
             onGoToDestination = onGoToDestination,
             onCardDetails = onCardDetails,
-            onSavingDetails = onSavingDetails
+            onSavingDetails = onSavingDetails,
+            onAccountAction = onAccountAction
         )
 
         is HomeState.Loading -> HomeScreen_Skeleton()
@@ -92,7 +97,8 @@ fun HomeScreen_Ui(
     state: HomeState.Success,
     onGoToDestination: (navEntry: NavEntries) -> Unit = {},
     onCardDetails: (cardId: String) -> Unit = {},
-    onSavingDetails: (id: Long) -> Unit = {}
+    onSavingDetails: (id: Long) -> Unit = {},
+    onAccountAction: (AccountAction) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -112,12 +118,10 @@ fun HomeScreen_Ui(
             }, panelVerticalOffset = 24.dp
         ) {
             AccountActionPanel(
-                balance = state.profile.balance,
-                onActionClick = {
-                    // TODO
-                    ctx.showToast("TODO")
-                }
-            )
+                balanceFlow = state.balance
+            ) {
+                onAccountAction(it)
+            }
         }
 
         Spacer(Modifier.height(8.dp))
@@ -327,7 +331,8 @@ fun HomeScreen_Empty() {
             HomeState.Success(
                 profile = ProfileUi.mock(),
                 cards = emptyList(),
-                savings = emptyList()
+                savings = emptyList(),
+                balance = flowOf(BalanceValueUi("$2000"))
             ),
         )
     }

@@ -8,9 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +44,8 @@ import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import by.alexandr7035.banking.ui.feature_home.components.AccountActionRow
+import by.alexandr7035.banking.ui.feature_home.model.AccountAction
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
@@ -49,7 +56,11 @@ fun CardDetailsScreen(
     viewModel: CardDetailsViewModel = koinViewModel(),
     cardId: String,
     onBack: () -> Unit,
+    onAccountAction: (AccountAction) -> Unit,
 ) {
+
+    val ctx = LocalContext.current
+    val snackbarState = LocalScopedSnackbarState.current
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -57,7 +68,27 @@ fun CardDetailsScreen(
         topBar = {
             SecondaryToolBar(
                 onBack = onBack,
-                title = UiText.StringResource(R.string.card_details)
+                title = UiText.StringResource(R.string.card_details),
+                actions = {
+                    if (state is CardDetailsState.Success) {
+                        IconButton(
+                            onClick = {
+                                viewModel.emitIntent(
+                                    CardDetailsIntent.SetCardAsPrimary(
+                                        makePrimary = !state.card.isPrimary
+                                    )
+                                )
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_bookmark_filled),
+                                contentDescription = stringResource(R.string.set_card_as_default),
+                                tint = if (state.card.isPrimary) MaterialTheme.colorScheme.primary else Color.LightGray,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                },
             )
         }
     ) { pv ->
@@ -71,7 +102,8 @@ fun CardDetailsScreen(
                 is CardDetailsState.Success -> {
                     CardDetailsScreen_Ui(
                         cardUi = state.card,
-                        onIntent = { viewModel.emitIntent(it) }
+                        onIntent = { viewModel.emitIntent(it) },
+                        onAccountAction = onAccountAction
                     )
 
                     if (state.showDeleteCardDialog) {
@@ -93,9 +125,6 @@ fun CardDetailsScreen(
                         FullscreenProgressBar()
                     }
 
-                    val ctx = LocalContext.current
-                    val snackbarState = LocalScopedSnackbarState.current
-
                     EventEffect(
                         event = state.cardDeletedResultEvent,
                         onConsumed = viewModel::consumeDeleteResultEvent,
@@ -109,6 +138,23 @@ fun CardDetailsScreen(
 
                                 onBack.invoke()
                             }
+
+                            is OperationResult.Failure -> {
+                                snackbarState.show(
+                                    message = result.error.errorType.asUiTextError().asString(ctx),
+                                    snackBarMode = SnackBarMode.Negative
+                                )
+                            }
+                        }
+
+                    }
+
+                    EventEffect(
+                        event = state.setCardAsPrimaryEvent,
+                        onConsumed = viewModel::consumeSetCardAsDefaultEvent,
+                    ) { result ->
+                        when (result) {
+                            is OperationResult.Success -> {}
 
                             is OperationResult.Failure -> {
                                 snackbarState.show(
@@ -141,6 +187,7 @@ private fun CardDetailsScreen_Ui(
     modifier: Modifier = Modifier,
     cardUi: CardUi,
     onIntent: (intent: CardDetailsIntent) -> Unit = {},
+    onAccountAction: (AccountAction) -> Unit = {}
 ) {
     Column(
         modifier = modifier.then(
@@ -151,10 +198,6 @@ private fun CardDetailsScreen_Ui(
                     horizontal = 24.dp
                 ),
         ),
-//        Modifier.padding(
-//            vertical = 16.dp,
-//            horizontal = 24.dp
-//        ),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         PaymentCard(cardUi = cardUi)
@@ -206,7 +249,12 @@ private fun CardDetailsScreen_Ui(
             )
         )
 
-        Spacer(Modifier.height(16.dp))
+        AccountActionRow(
+            modifier = Modifier.fillMaxWidth(),
+            onActionClick = onAccountAction
+        )
+
+        Spacer(Modifier.weight(1f))
 
         SecondaryButton(
             onClick = {
