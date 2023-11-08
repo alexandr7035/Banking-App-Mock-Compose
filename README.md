@@ -51,7 +51,7 @@ For example, for banking profile the app uses local mock Repositories with stati
     - [X] Cards
     - [X] Savings
     - [X] Profile
-    - [ ] Balance observable
+    - [X] Balance observable
     - [ ] Notifications observable
 - [ ] Cards
     - [X] Card list
@@ -64,7 +64,7 @@ For example, for banking profile the app uses local mock Repositories with stati
 - [ ] Account operations
     - [ ] Send money
     - [ ] Request money
-    - [ ] Top up
+    - [X] Top up
     - [ ] Pay
     - [ ] Transaction history
     - [ ] Transaction contacts
