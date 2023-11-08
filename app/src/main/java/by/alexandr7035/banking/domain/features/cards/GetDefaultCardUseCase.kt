@@ -6,7 +6,10 @@ class GetDefaultCardUseCase(
     private val cardsRepository: CardsRepository
 ) {
     suspend fun execute(): PaymentCard? {
-        // TODO default card logic
-        return cardsRepository.getCards().firstOrNull()
+        val cards = cardsRepository.getCards()
+
+        return cards.find {
+            it.isPrimary
+        } ?: cards.firstOrNull()
     }
 }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.flowOf
 
 data class CardUi(
     val id: String,
+    val isPrimary: Boolean,
     val cardNumber: String,
     val expiration: String,
     val recentBalance: String,
@@ -39,7 +40,8 @@ data class CardUi(
                 addressSecondLine = null,
                 dateAdded = "12 Jan 2021 22:12",
                 cardType = UiText.DynamicString("Debit"),
-                cardColor = cardColor
+                cardColor = cardColor,
+                isPrimary = true
             )
         }
 
@@ -54,6 +56,7 @@ data class CardUi(
             return CardUi(
                 id = card.cardId,
                 cardNumber = card.cardNumber.splitStringWithDivider(),
+                isPrimary = card.isPrimary,
                 expiration = date,
                 recentBalance = recentBalance,
                 balanceFlow = balanceFlow ?: flowOf(recentBalance),

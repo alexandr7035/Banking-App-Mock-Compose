@@ -48,6 +48,7 @@ class CardsRepositoryMock(
     private fun mapCachedCardToDomain(cardEntity: CardEntity) = PaymentCard(
         cardId = cardEntity.number,
         cardNumber = cardEntity.number,
+        isPrimary = cardEntity.isPrimary,
         cardHolder = cardEntity.cardHolder,
         addressFirstLine = cardEntity.addressFirstLine,
         addressSecondLine = cardEntity.addressSecondLine,
@@ -59,6 +60,7 @@ class CardsRepositoryMock(
 
     private fun mapAddCardPayloadToCache(addCardPayload: AddCardPayload): CardEntity = CardEntity(
         number = addCardPayload.cardNumber,
+        isPrimary = false,
         cardHolder = addCardPayload.cardHolder,
         addressFirstLine = addCardPayload.addressFirstLine,
         addressSecondLine = addCardPayload.addressSecondLine,
@@ -79,6 +81,22 @@ class CardsRepositoryMock(
         delay(MOCK_DELAY)
         val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
         cardsDao.updateCard(updated)
+    }
+
+    override suspend fun markCardAsPrimary(cardId: String, isPrimary: Boolean) {
+        when (isPrimary) {
+            true ->  cardsDao.markCardAsPrimary(cardId)
+            false -> cardsDao.unmarkCardAsPrimary(cardId)
+        }
+    }
+
+    override suspend fun getPrimaryCard(): PaymentCard? {
+        val card = cardsDao.getPrimaryCard()
+        return if (card != null) {
+            mapCachedCardToDomain(card)
+        } else {
+            null
+        }
     }
 
     companion object {

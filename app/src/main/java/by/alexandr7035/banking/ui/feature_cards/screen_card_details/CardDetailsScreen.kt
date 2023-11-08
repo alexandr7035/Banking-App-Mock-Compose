@@ -8,9 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -63,7 +68,27 @@ fun CardDetailsScreen(
         topBar = {
             SecondaryToolBar(
                 onBack = onBack,
-                title = UiText.StringResource(R.string.card_details)
+                title = UiText.StringResource(R.string.card_details),
+                actions = {
+                    if (state is CardDetailsState.Success) {
+                        IconButton(
+                            onClick = {
+                                viewModel.emitIntent(
+                                    CardDetailsIntent.SetCardAsPrimary(
+                                        makePrimary = !state.card.isPrimary
+                                    )
+                                )
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_bookmark_filled),
+                                contentDescription = stringResource(R.string.set_card_as_default),
+                                tint = if (state.card.isPrimary) MaterialTheme.colorScheme.primary else Color.LightGray,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                },
             )
         }
     ) { pv ->
@@ -113,6 +138,23 @@ fun CardDetailsScreen(
 
                                 onBack.invoke()
                             }
+
+                            is OperationResult.Failure -> {
+                                snackbarState.show(
+                                    message = result.error.errorType.asUiTextError().asString(ctx),
+                                    snackBarMode = SnackBarMode.Negative
+                                )
+                            }
+                        }
+
+                    }
+
+                    EventEffect(
+                        event = state.setCardAsPrimaryEvent,
+                        onConsumed = viewModel::consumeSetCardAsDefaultEvent,
+                    ) { result ->
+                        when (result) {
+                            is OperationResult.Success -> {}
 
                             is OperationResult.Failure -> {
                                 snackbarState.show(

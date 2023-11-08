@@ -71,7 +71,8 @@ val presentationModule = module {
         CardDetailsViewModel(
             getCardByIdUseCase = get(),
             deleteCardByNumberUseCase = get(),
-            getCardBalanceObservableUseCase = get()
+            getCardBalanceObservableUseCase = get(),
+            setCardAsPrimaryUseCase = get()
         )
     }
 

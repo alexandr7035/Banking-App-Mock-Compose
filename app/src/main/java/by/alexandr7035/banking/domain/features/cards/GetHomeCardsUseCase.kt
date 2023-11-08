@@ -6,9 +6,17 @@ class GetHomeCardsUseCase(
     private val cardsRepository: CardsRepository
 ) {
     suspend fun execute(): List<PaymentCard> {
-        return cardsRepository.getCards().sortedByDescending {
-            it.addedDate
-        }.take(DISPLAYED_COUNT)
+        val all = cardsRepository.getCards()
+
+        val primary = all
+            .filter { it.isPrimary }
+            .sortedByDescending { it.addedDate }
+
+        val other = all
+            .filter { !it.isPrimary }
+            .sortedByDescending { it.addedDate }
+
+        return (primary + other).take(DISPLAYED_COUNT)
     }
 
     companion object {

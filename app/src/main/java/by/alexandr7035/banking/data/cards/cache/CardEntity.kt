@@ -8,6 +8,7 @@ import by.alexandr7035.banking.domain.features.cards.model.CardType
 data class CardEntity(
     @PrimaryKey(autoGenerate = false)
     val number: String,
+    val isPrimary: Boolean,
     val cardType: CardType,
     val recentBalance: Float,
     val cardHolder: String,

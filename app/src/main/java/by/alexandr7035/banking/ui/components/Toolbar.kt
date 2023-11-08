@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 fun SecondaryToolBar(
     onBack: () -> Unit,
     title: UiText,
+    actions: @Composable RowScope.() -> Unit = {},
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = Color(0xFF262626),
     modifier: Modifier = Modifier
@@ -64,6 +66,7 @@ fun SecondaryToolBar(
                 )
             }
         },
+        actions = actions,
         modifier = modifier.then(Modifier.fillMaxWidth()),
         colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor)
     )
@@ -89,10 +92,6 @@ private fun SecondaryToolBar_Preview() {
                     .background(Color.LightGray)
                     .fillMaxSize()) {
             }
-        }
-
-        BottomAppBar() {
-            
         }
     }
 }

@@ -7,6 +7,7 @@ import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.account.GetCardBalanceObservableUseCase
 import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
+import by.alexandr7035.banking.domain.features.cards.SetCardAsPrimaryUseCase
 import by.alexandr7035.banking.domain.features.cards.RemoveCardUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
@@ -19,12 +20,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CardDetailsViewModel(
     private val getCardByIdUseCase: GetCardByIdUseCase,
     private val deleteCardByNumberUseCase: RemoveCardUseCase,
-    private val getCardBalanceObservableUseCase: GetCardBalanceObservableUseCase
+    private val getCardBalanceObservableUseCase: GetCardBalanceObservableUseCase,
+    private val setCardAsPrimaryUseCase: SetCardAsPrimaryUseCase
 ) : ViewModel() {
     private val _state: MutableStateFlow<CardDetailsState> = MutableStateFlow(CardDetailsState.Loading)
     val state = _state.asStateFlow()
@@ -57,6 +60,40 @@ class CardDetailsViewModel(
 
             is CardDetailsIntent.ConfirmDeleteCard -> {
                 reduceDeleteCard()
+            }
+
+            is CardDetailsIntent.SetCardAsPrimary -> {
+                val currentState = _state.value
+
+                if (currentState is CardDetailsState.Success) {
+                    viewModelScope.launch(errorHandler) {
+                        val res = OperationResult.runWrapped {
+                            setCardAsPrimaryUseCase.execute(
+                                cardId = currentState.card.id,
+                                setAsPrimary = intent.makePrimary
+                            )
+                        }
+
+                        val updatedState = when (res) {
+                            is OperationResult.Success -> {
+                                    currentState.copy(
+                                        setCardAsPrimaryEvent = triggered(res),
+                                        card = currentState.card.copy(isPrimary = intent.makePrimary)
+                                    )
+                            }
+
+                            is OperationResult.Failure -> {
+                                    currentState.copy(
+                                        setCardAsPrimaryEvent = triggered(res),
+                                        card = currentState.card.copy(isPrimary = intent.makePrimary)
+                                    )
+                            }
+
+                        }
+
+                        _state.update { updatedState }
+                    }
+                }
             }
         }
     }
@@ -119,6 +156,16 @@ class CardDetailsViewModel(
             _state.value = currentState.copy(
                 showLoading = false,
                 cardDeletedResultEvent = consumed()
+            )
+        }
+    }
+
+    fun consumeSetCardAsDefaultEvent() {
+        val currentState = _state.value
+        if (currentState is CardDetailsState.Success) {
+            _state.value = currentState.copy(
+                showLoading = false,
+                setCardAsPrimaryEvent = consumed()
             )
         }
     }
