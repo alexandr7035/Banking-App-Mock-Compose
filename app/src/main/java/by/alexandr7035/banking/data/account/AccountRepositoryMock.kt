@@ -25,7 +25,7 @@ class AccountRepositoryMock(
             // A simple way to imitate server polling for balance
             while (true) {
                 emit(calculateBalance())
-                delay(MOCK_DELAY)
+                delay(MOCK_OBSERVING_DELAY)
             }
         }.flowOn(coroutineDispatcher)
     }
@@ -36,9 +36,16 @@ class AccountRepositoryMock(
             while (true) {
                 // For mock app emit last card balance saved in db
                 emit(MoneyAmount(card.recentBalance))
-                delay(MOCK_DELAY)
+                delay(MOCK_OBSERVING_DELAY)
             }
         }.flowOn(coroutineDispatcher)
+    }
+
+    override suspend fun topUpCard(cardId: String, amount: MoneyAmount) {
+        val cardEntity = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+        delay(MOCK_DELAY)
+        val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
+        cardsDao.updateCard(updated)
     }
 
     private suspend fun calculateBalance(): MoneyAmount {
@@ -50,6 +57,7 @@ class AccountRepositoryMock(
     }
 
     companion object {
-        private const val MOCK_DELAY = 5000L
+        private const val MOCK_OBSERVING_DELAY = 5000L
+        private const val MOCK_DELAY = 300L
     }
 }

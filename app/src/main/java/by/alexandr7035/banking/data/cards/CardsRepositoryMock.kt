@@ -76,13 +76,6 @@ class CardsRepositoryMock(
         cardsDao.deleteCard(cardEntity)
     }
 
-    override suspend fun topUpCard(cardId: String, amount: MoneyAmount) {
-        val cardEntity = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
-        delay(MOCK_DELAY)
-        val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
-        cardsDao.updateCard(updated)
-    }
-
     override suspend fun markCardAsPrimary(cardId: String, isPrimary: Boolean) {
         when (isPrimary) {
             true ->  cardsDao.markCardAsPrimary(cardId)
