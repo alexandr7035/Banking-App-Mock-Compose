@@ -33,6 +33,7 @@ import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsScreen
+import by.alexandr7035.banking.ui.feature_transactions.TransactionHistoryScreen
 import by.alexandr7035.banking.ui.feature_webview.WebViewScreen
 
 @Composable
@@ -131,14 +132,7 @@ fun AppNavHost(
             }
 
             composable(NavEntries.History.route) {
-                Box(
-                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = NavEntries.History.label,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                TransactionHistoryScreen()
             }
 
             composable(NavEntries.Statistics.route) {
