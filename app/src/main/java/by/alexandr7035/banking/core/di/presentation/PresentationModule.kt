@@ -17,6 +17,7 @@ import by.alexandr7035.banking.ui.feature_savings.SavingsViewModel
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsViewModel
 import by.alexandr7035.banking.ui.feature_signup.InitSignUpViewModel
 import by.alexandr7035.banking.ui.feature_signup.confirm_signup.ConfirmEmailSignUpVIewModel
+import by.alexandr7035.banking.ui.feature_transactions.TransactionHistoryViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -151,5 +152,9 @@ val presentationModule = module {
         CardPickerViewModel(
             getAllCardsUseCase = get()
         )
+    }
+
+    viewModel {
+        TransactionHistoryViewModel()
     }
 }
