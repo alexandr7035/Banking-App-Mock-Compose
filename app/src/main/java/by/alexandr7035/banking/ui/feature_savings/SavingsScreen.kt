@@ -16,19 +16,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.ScreenPreview
@@ -40,7 +33,6 @@ import by.alexandr7035.banking.ui.components.pages.PagerTabRow
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
-import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -151,45 +143,6 @@ private fun SavingsList(
             SavingCard(savingUi = savingUi, onClick = {
                 onSavingDetails.invoke(it)
             })
-        }
-    }
-}
-
-
-@Composable
-private fun PagerTab(
-    isSelected: Boolean, text: String, onClick: () -> Unit = {}
-) {
-    Tab(
-        selected = isSelected, onClick = onClick
-    ) {
-
-        Box(
-            modifier = Modifier.padding(vertical = 16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-
-            if (isSelected) {
-                Text(
-                    text = text, style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF100D40),
-                    )
-                )
-            } else {
-                Text(
-                    text = text, style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        color = Color(0xFFCCCCCC),
-                    )
-                )
-            }
         }
     }
 }
