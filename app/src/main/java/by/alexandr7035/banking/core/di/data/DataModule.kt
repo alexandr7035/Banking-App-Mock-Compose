@@ -15,6 +15,7 @@ import by.alexandr7035.banking.data.otp.OtpRepositoryMock
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.data.savings.SavingsRepositoryMock
 import by.alexandr7035.banking.data.signup.SignUpRepositoryMock
+import by.alexandr7035.banking.data.transactions.TransactionRepositoryMock
 import by.alexandr7035.banking.domain.features.account.AccountRepository
 import by.alexandr7035.banking.domain.features.app_lock.AppLockRepository
 import by.alexandr7035.banking.domain.features.cards.CardsRepository
@@ -23,6 +24,7 @@ import by.alexandr7035.banking.domain.features.otp.OtpRepository
 import by.alexandr7035.banking.domain.features.profile.ProfileRepository
 import by.alexandr7035.banking.domain.features.savings.SavingsRepository
 import by.alexandr7035.banking.domain.features.signup.SignUpRepository
+import by.alexandr7035.banking.domain.features.transactions.TransactionRepository
 import com.cioccarellia.ksprefs.KsPrefs
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
@@ -122,5 +124,9 @@ val dataModule = module {
             cardsDao = get(),
 //            cardsRepository = get()
         )
+    }
+
+    single<TransactionRepository> {
+        TransactionRepositoryMock()
     }
 }
