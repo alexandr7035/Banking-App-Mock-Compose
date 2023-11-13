@@ -155,6 +155,8 @@ val presentationModule = module {
     }
 
     viewModel {
-        TransactionHistoryViewModel()
+        TransactionHistoryViewModel(
+            getTransactionsUseCase = get()
+        )
     }
 }
