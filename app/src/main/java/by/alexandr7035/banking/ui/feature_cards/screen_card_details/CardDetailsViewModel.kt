@@ -10,7 +10,7 @@ import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
 import by.alexandr7035.banking.domain.features.cards.SetCardAsPrimaryUseCase
 import by.alexandr7035.banking.domain.features.cards.RemoveCardUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
-import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
@@ -45,7 +45,7 @@ class CardDetailsViewModel(
                     val card = getCardByIdUseCase.execute(intent.cardId)
                     val cardBalanceFlow = getCardBalanceObservableUseCase
                         .execute(intent.cardId)
-                        .map { BalanceValueUi.mapFromDomain(it).balanceStr }
+                        .map { MoneyAmountUi.mapFromDomain(it).amountStr }
                         .catch { reduceError(ErrorType.fromThrowable(it)) }
 
                     reduceSuccessData(card, cardBalanceFlow)

@@ -7,7 +7,7 @@ import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
 import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -51,7 +51,7 @@ data class CardUi(
             balanceFlow: Flow<String>? = null
         ): CardUi {
             val date = card.expiration.getFormattedDate("MM/yy")
-            val recentBalance = BalanceValueUi.mapFromDomain(card.recentBalance).balanceStr
+            val recentBalance = MoneyAmountUi.mapFromDomain(card.recentBalance).amountStr
 
             return CardUi(
                 id = card.cardId,

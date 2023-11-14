@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.ui.components.SimpleGridView
-import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
@@ -84,7 +84,7 @@ private fun GridButton(
             .wrapContentSize()
     ) {
         Text(
-            text = BalanceValueUi.mapFromDomain(value).balanceStr,
+            text = MoneyAmountUi.mapFromDomain(value).amountStr,
             style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,

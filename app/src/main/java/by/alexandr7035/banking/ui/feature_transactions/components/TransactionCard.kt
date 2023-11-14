@@ -24,15 +24,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.components.PercentageIndicator
 import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
-import by.alexandr7035.banking.ui.feature_savings.components.SavingCard
-import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import by.alexandr7035.banking.ui.feature_transactions.model.TransactionUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -125,7 +121,7 @@ fun TransactionCard(
             Spacer(modifier = Modifier.width(16.dp))
 
             Text(
-                text = transactionUi.value.balanceStr,
+                text = transactionUi.value.amountStr,
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,

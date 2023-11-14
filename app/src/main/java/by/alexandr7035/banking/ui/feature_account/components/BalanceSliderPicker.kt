@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.ui.components.CustomSlider
-import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
@@ -115,7 +115,7 @@ fun BalanceSliderPicker(
             }
 
             Text(
-                text = BalanceValueUi.mapFromDomain(selectedValue).balanceStr,
+                text = MoneyAmountUi.mapFromDomain(selectedValue).amountStr,
                 style = TextStyle(
                     fontSize = 32.sp,
                     fontFamily = primaryFontFamily,

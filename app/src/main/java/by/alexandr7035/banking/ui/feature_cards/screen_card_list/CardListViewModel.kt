@@ -6,7 +6,7 @@ import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.account.GetCardBalanceObservableUseCase
 import by.alexandr7035.banking.domain.features.cards.GetAllCardsUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
-import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +51,7 @@ class CardListViewModel(
                 CardUi.mapFromDomain(
                     card = card,
                     balanceFlow = getCardBalanceObservableUseCase.execute(card.cardId).map {
-                        BalanceValueUi.mapFromDomain(it).balanceStr
+                        MoneyAmountUi.mapFromDomain(it).amountStr
                     }.catch { err ->
                         reduceError(ErrorType.fromThrowable(err))
                     }
