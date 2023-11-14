@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
     fun getTransactions(filterByType: TransactionType?): Flow<PagingData<Transaction>>
+//    fun sendTransaction(transaction: Transaction)
 }

@@ -10,12 +10,14 @@ import by.alexandr7035.banking.data.app_lock.AppLockRepositoryImpl
 import by.alexandr7035.banking.data.cards.CardsRepositoryMock
 import by.alexandr7035.banking.data.cards.cache.CardsDao
 import by.alexandr7035.banking.data.db.CacheDatabase
+import by.alexandr7035.banking.data.db.convertors.MoneyAmountConvertor
 import by.alexandr7035.banking.data.login.LoginRepositoryMock
 import by.alexandr7035.banking.data.otp.OtpRepositoryMock
 import by.alexandr7035.banking.data.profile.ProfileRepositoryMock
 import by.alexandr7035.banking.data.savings.SavingsRepositoryMock
 import by.alexandr7035.banking.data.signup.SignUpRepositoryMock
 import by.alexandr7035.banking.data.transactions.TransactionRepositoryMock
+import by.alexandr7035.banking.data.transactions.db.TransactionDao
 import by.alexandr7035.banking.domain.features.account.AccountRepository
 import by.alexandr7035.banking.domain.features.app_lock.AppLockRepository
 import by.alexandr7035.banking.domain.features.cards.CardsRepository
@@ -38,12 +40,20 @@ val dataModule = module {
             androidApplication().applicationContext,
             CacheDatabase::class.java,
             "cache.db"
-        ).fallbackToDestructiveMigration().build()
+        )
+            .fallbackToDestructiveMigration()
+            .addTypeConverter(MoneyAmountConvertor())
+            .build()
     }
 
     single<CardsDao> {
         val db: CacheDatabase = get()
         db.getCardsDao()
+    }
+
+    single<TransactionDao> {
+        val db: CacheDatabase = get()
+        db.getTransactionsDao()
     }
 
     single<AppSettignsRepository> {
@@ -122,11 +132,13 @@ val dataModule = module {
         AccountRepositoryMock(
             coroutineDispatcher = Dispatchers.IO,
             cardsDao = get(),
-//            cardsRepository = get()
+            transactionsDao = get()
         )
     }
 
     single<TransactionRepository> {
-        TransactionRepositoryMock()
+        TransactionRepositoryMock(
+            transactionDao = get()
+        )
     }
 }

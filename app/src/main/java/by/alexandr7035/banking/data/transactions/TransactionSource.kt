@@ -2,14 +2,15 @@ package by.alexandr7035.banking.data.transactions
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
+import by.alexandr7035.banking.data.transactions.db.TransactionDao
+import by.alexandr7035.banking.data.transactions.db.TransactionEntity
 import by.alexandr7035.banking.domain.features.contacts.Contact
 import by.alexandr7035.banking.domain.features.transactions.model.Transaction
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
-import kotlinx.coroutines.delay
 
 class TransactionSource(
     // Add more advanced filters / sorting if necessary
+    private val transactionDao: TransactionDao,
     private val filterByType: TransactionType?
 ) : PagingSource<Int, Transaction>() {
     override fun getRefreshKey(state: PagingState<Int, Transaction>): Int? {
@@ -19,17 +20,11 @@ class TransactionSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Transaction> {
         return try {
             val currentPage = params.key ?: 1
-            delay(100)
 
-            val transactions = if (currentPage > 1) {
-                emptyList()
-            }
-            else {
-                loadFromDbCache(
-                    filterByType = filterByType,
-                    params = params
-                )
-            }
+            val transactions = loadFromDbCache(
+                filterByType = filterByType,
+                params = params
+            )
 
             LoadResult.Page(
                 data = transactions,
@@ -43,62 +38,48 @@ class TransactionSource(
         }
     }
 
-    private fun loadFromDbCache(
+    private suspend fun loadFromDbCache(
         filterByType: TransactionType?,
-        params: LoadParams<Int>
+        params: LoadParams<Int>,
     ): List<Transaction> {
-        val transactions = when (filterByType) {
-            null -> {
-                List(3) {
-                    Transaction(
-                        id = 0,
-                        linkedContact = Contact(
-                            id = "0000",
-                            name = "All test",
-                            profilePic = ""
-                        ),
-                        type = TransactionType.SEND,
-                        value = MoneyAmount(250F)
-                    )
-                }
+        val currentPage = params.key ?: 1
+        val startPosition = (currentPage - 1) * params.loadSize
+
+        return when (filterByType) {
+            null -> transactionDao.getTransactionFromCacheWithPagination(
+                startPosition = startPosition,
+                loadSize = params.loadSize
+            ).map {
+                mapTransactionFromDb(it)
             }
 
-            TransactionType.SEND -> {
-                List(2) {
-
-                    Transaction(
-                        id = 0,
-                        linkedContact = Contact(
-                            id = "0000",
-                            name = "Send test",
-                            profilePic = ""
-                        ),
-                        type = TransactionType.SEND,
-                        value = MoneyAmount(250F)
-                    )
-                }
-            }
-
-            TransactionType.RECEIVE -> {
-                List(1) {
-                    Transaction(
-                        id = 0,
-                        linkedContact = Contact(
-                            id = "0000",
-                            name = "Receive test",
-                            profilePic = ""
-                        ),
-                        type = TransactionType.SEND,
-                        value = MoneyAmount(250F)
-                    )
-                }
-            }
-
-            TransactionType.TOP_UP -> {
-                emptyList()
+            else -> transactionDao.getTransactionFromCacheByTypeWithPagination(
+                filterType = filterByType,
+                startPosition = startPosition,
+                loadSize = params.loadSize
+            ).map {
+                mapTransactionFromDb(it)
             }
         }
+    }
 
-        return transactions
+    private fun mapTransactionFromDb(entity: TransactionEntity): Transaction {
+        return Transaction(
+            id = entity.id,
+            type = entity.type,
+            value = entity.value,
+            recentStatus = entity.recentStatus,
+            // TODO getting contact
+            linkedContact = when (entity.type) {
+                TransactionType.TOP_UP -> null
+                else -> Contact(
+                    id = "0000",
+                    name = "Test name ${entity.type}",
+                    profilePic = "todo"
+                )
+            },
+            createdDate = entity.createdDate,
+            updatedStatusDate = entity.updatedStatusDate
+        )
     }
 }

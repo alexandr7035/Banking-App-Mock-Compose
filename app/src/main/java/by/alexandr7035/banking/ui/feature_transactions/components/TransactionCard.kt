@@ -70,8 +70,9 @@ fun TransactionCard(
             modifier = Modifier.height(IntrinsicSize.Max),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // TODO separate ui with // without contact
             val imageReq = ImageRequest.Builder(LocalContext.current)
-                .data(transactionUi.contact.profilePictureUrl)
+                .data(transactionUi.contact?.profilePictureUrl)
                 .decoderFactory(SvgDecoder.Factory())
                 .crossfade(true)
                 .build()
@@ -98,8 +99,9 @@ fun TransactionCard(
                     .weight(1f, fill = true),
             ) {
 
+                // FIXME
                 Text(
-                    text =  transactionUi.contact.name,
+                    text =  transactionUi.contact?.name ?: "TODO",
                     style = TextStyle(
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
@@ -123,7 +125,7 @@ fun TransactionCard(
             Spacer(modifier = Modifier.width(16.dp))
 
             Text(
-                text = "+$230.00",
+                text = transactionUi.value.balanceStr,
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,

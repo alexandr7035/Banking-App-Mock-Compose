@@ -2,10 +2,16 @@ package by.alexandr7035.banking.data.account
 
 import by.alexandr7035.banking.core.extensions.sumFloat
 import by.alexandr7035.banking.data.cards.cache.CardsDao
+import by.alexandr7035.banking.data.transactions.db.TransactionDao
+import by.alexandr7035.banking.data.transactions.db.TransactionEntity
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.account.AccountRepository
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
+import by.alexandr7035.banking.domain.features.transactions.TransactionRepository
+import by.alexandr7035.banking.domain.features.transactions.model.Transaction
+import by.alexandr7035.banking.domain.features.transactions.model.TransactionStatus
+import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +21,8 @@ import kotlinx.coroutines.flow.flowOn
 class AccountRepositoryMock(
     private val coroutineDispatcher: CoroutineDispatcher,
     // For mock app simply use last cached card balances
-    private val cardsDao: CardsDao
+    private val cardsDao: CardsDao,
+    private val transactionsDao: TransactionDao
 ) : AccountRepository {
 
     override fun getBalanceFlow(): Flow<MoneyAmount> {
@@ -46,6 +53,15 @@ class AccountRepositoryMock(
         delay(MOCK_DELAY)
         val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
         cardsDao.updateCard(updated)
+        transactionsDao.addTransaction(
+            TransactionEntity(
+                type = TransactionType.TOP_UP,
+                value = amount,
+                recentStatus = TransactionStatus.COMPLETED,
+                createdDate = System.currentTimeMillis(),
+                updatedStatusDate = System.currentTimeMillis()
+            )
+        )
     }
 
     private suspend fun calculateBalance(): MoneyAmount {
