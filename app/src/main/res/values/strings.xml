@@ -82,4 +82,5 @@
     <string name="top_up_successfully">Top Up Successfully</string>
     <string name="topup_exaplanation">The amount  will be reflected in your account with in few minutes</string>
     <string name="set_card_as_default">Set card as default</string>
+    <string name="unknown_user">Unknown user</string>
 </resources>
