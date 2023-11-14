@@ -5,13 +5,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.transactions.GetTransactionsUseCase
+import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -27,29 +26,29 @@ class TransactionHistoryViewModel(
 
     fun emitIntent(intent: TransactionHistoryIntent) {
         when (intent) {
-            TransactionHistoryIntent.InitLoad -> {
-                viewModelScope.launch(errorHandler) {
-                    val listFlow = getTransactionsUseCase.execute()
-                        .distinctUntilChanged()
-                        .cachedIn(viewModelScope)
-                        .catch {
-                            reduceError(ErrorType.fromThrowable(it))
-                        }
+            is TransactionHistoryIntent.InitLoad -> {
+                loadTransactions()
+            }
 
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            transactionsPagingState = listFlow)
-                    }
+            is TransactionHistoryIntent.ChangeTransactionFilter -> {
+                loadTransactions(intent.filterByType)
+            }
+        }
+    }
 
-//                        .collect { pagingData ->
-//                            _state.update {
-//                                it.copy(
-//                                    transactionsPagingState = pagingData
-//                                )
-//                            }
-//                        }
+    private fun loadTransactions(filterType: TransactionType? = null) {
+        viewModelScope.launch(errorHandler) {
+            val listFlow = getTransactionsUseCase.execute(filterType)
+                .distinctUntilChanged()
+                .cachedIn(viewModelScope)
+                .catch {
+                    reduceError(ErrorType.fromThrowable(it))
                 }
+
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    transactionsPagingState = listFlow)
             }
         }
     }

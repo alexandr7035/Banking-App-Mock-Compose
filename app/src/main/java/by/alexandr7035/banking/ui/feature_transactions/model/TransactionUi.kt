@@ -21,7 +21,7 @@ data class TransactionUi(
             return TransactionUi(
                 id = transaction.id,
                 transactionDate = "13 Oct 2021",
-                contact = ContactUi.mock()
+                contact = ContactUi.mapFromDomain(transaction.linkedContact)
             )
         }
     }

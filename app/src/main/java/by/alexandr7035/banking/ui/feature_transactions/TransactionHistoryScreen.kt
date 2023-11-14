@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
@@ -103,8 +105,6 @@ private fun TransactionHistoryScreen_Ui(
     onIntent: (TransactionHistoryIntent) -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-//        Spacer(Modifier.height(24.dp))
-
         val pages: List<Page<Int>> = listOf(
             Page(0, title = "All"),
             Page(1, title = "Send"),
@@ -129,9 +129,11 @@ private fun TransactionHistoryScreen_Ui(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp)
             ) {
-
                 items(txPagingState.itemCount) { index ->
-                    TransactionCard(transactionUi = TransactionUi.mapFromDomain(txPagingState[index]!!))
+                    val tx = txPagingState[index]
+                    tx?.let {
+                        TransactionCard(transactionUi = TransactionUi.mapFromDomain(tx))
+                    }
                 }
 
                 txPagingState.apply {
@@ -156,7 +158,7 @@ private fun TransactionHistoryScreen_Ui(
                                     imageSize = 100.dp,
                                     enableScroll = false,
                                     onRetry = {
-                                        onIntent(TransactionHistoryIntent.InitLoad)
+                                        retry()
                                     }
                                 )
                             }
@@ -188,13 +190,26 @@ private fun TransactionHistoryScreen_Ui(
                                         e = pagerError.error
                                     ).asUiTextError(),
                                     onRetry = {
-                                        // TODO
+                                        retry()
                                     }
                                 )
                             }
                         }
                     }
                 }
+            }
+        }
+
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                val filter = when (page) {
+                    0 -> null
+                    1 -> TransactionType.SEND
+                    2 -> TransactionType.RECEIVE
+                    else -> error("Unexpected page index $page. Failed to choose filter")
+                }
+
+                onIntent(TransactionHistoryIntent.ChangeTransactionFilter(filter))
             }
         }
     }
@@ -207,7 +222,7 @@ private fun TransactionHistoryScreen_Skeleton() {
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        repeat(4) {
+        repeat(10) {
             SkeletonShape(
                 Modifier
                     .fillMaxWidth()
