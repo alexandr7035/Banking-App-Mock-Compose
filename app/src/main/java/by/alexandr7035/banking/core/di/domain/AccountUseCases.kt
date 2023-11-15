@@ -18,7 +18,7 @@ val accountUseCasesModule = module {
 
     factory {
         TopUpAccountUseCase(
-            accountRepository = get()
+            transactionRepository = get()
         )
     }
 }

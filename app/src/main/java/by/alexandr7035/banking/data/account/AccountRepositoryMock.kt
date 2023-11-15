@@ -3,15 +3,10 @@ package by.alexandr7035.banking.data.account
 import by.alexandr7035.banking.core.extensions.sumFloat
 import by.alexandr7035.banking.data.cards.cache.CardsDao
 import by.alexandr7035.banking.data.transactions.db.TransactionDao
-import by.alexandr7035.banking.data.transactions.db.TransactionEntity
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.account.AccountRepository
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
-import by.alexandr7035.banking.domain.features.transactions.TransactionRepository
-import by.alexandr7035.banking.domain.features.transactions.model.Transaction
-import by.alexandr7035.banking.domain.features.transactions.model.TransactionStatus
-import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -38,11 +33,12 @@ class AccountRepositoryMock(
     }
 
     override suspend fun getCardBalanceFlow(cardId: String): Flow<MoneyAmount> {
-        val card = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.UNKNOWN_ERROR)
         return flow {
             while (true) {
                 // For mock app emit last card balance saved in db
+                val card = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.UNKNOWN_ERROR)
                 emit(MoneyAmount(card.recentBalance))
+
                 delay(MOCK_OBSERVING_DELAY)
             }
         }.flowOn(coroutineDispatcher)
@@ -53,15 +49,16 @@ class AccountRepositoryMock(
         delay(MOCK_DELAY)
         val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
         cardsDao.updateCard(updated)
-        transactionsDao.addTransaction(
-            TransactionEntity(
-                type = TransactionType.TOP_UP,
-                value = amount,
-                recentStatus = TransactionStatus.COMPLETED,
-                createdDate = System.currentTimeMillis(),
-                updatedStatusDate = System.currentTimeMillis()
-            )
-        )
+//        transactionsDao.addTransaction(
+//            TransactionEntity(
+//                type = TransactionType.TOP_UP,
+//                value = amount,
+//                recentStatus = TransactionStatus.COMPLETED,
+//                createdDate = System.currentTimeMillis(),
+//                updatedStatusDate = System.currentTimeMillis(),
+//                cardId = cardId
+//            )
+//        )
     }
 
     private suspend fun calculateBalance(): MoneyAmount {
