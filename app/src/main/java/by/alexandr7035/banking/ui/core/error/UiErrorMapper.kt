@@ -19,6 +19,8 @@ fun ErrorType.asUiTextError(): UiText {
         ErrorType.CARD_NOT_FOUND ->  UiText.StringResource(R.string.card_not_found)
         ErrorType.CARD_ALREADY_ADDED ->  UiText.StringResource(R.string.card_already_added)
 
+        ErrorType.TRANSACTION_NOT_FOUND -> UiText.StringResource(R.string.transaction_not_found)
+
         ErrorType.INVALID_PASSWORD_FIELD -> UiText.StringResource(R.string.invalid_password_field)
         ErrorType.INVALID_EMAIL_FIELD ->  UiText.StringResource(R.string.invalid_email_field)
 

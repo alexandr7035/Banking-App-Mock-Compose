@@ -84,4 +84,6 @@
     <string name="set_card_as_default">Set card as default</string>
     <string name="unknown_user">Unknown user</string>
     <string name="all">All</string>
+    <string name="transaction_not_found">Transaction not found</string>
+    <string name="NOTIFICATION_CHANNEL_ID">BANKING_WORKER_CHANNEL</string>
 </resources>
