@@ -17,3 +17,7 @@ fun String.splitStringWithDivider(
 
     return formattedStringBuilder.toString()
 }
+
+fun String.maskCardId(visibleCharacters: Int = 4): String {
+    return "*" + substring(length - visibleCharacters)
+}
