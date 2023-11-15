@@ -156,7 +156,8 @@ val presentationModule = module {
 
     viewModel {
         TransactionHistoryViewModel(
-            getTransactionsUseCase = get()
+            getTransactionsUseCase = get(),
+            observeTransactionStatusUseCase = get()
         )
     }
 }

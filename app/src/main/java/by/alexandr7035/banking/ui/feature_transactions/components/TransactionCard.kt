@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionStatus
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
@@ -96,13 +97,9 @@ private fun ContactTransactionCard(
                     .padding(8.dp), contentDescription = null, placeholder = debugPlaceholder(debugPreview = R.drawable.ic_home)
             )
 
-            Image(
-                modifier = Modifier
-                    .size(16.dp)
-                    .offset(0.dp, -4.dp)
-                    .align(Alignment.TopEnd),
-                painter = getTxStatusMark(transactionUi),
-                contentDescription = "${transactionUi.status}"
+            TransactionStatusMark(
+                modifier = Modifier.align(Alignment.TopEnd),
+                transactionUi = transactionUi
             )
         }
 
@@ -170,13 +167,9 @@ private fun TopUpTransactionCard(
                     .padding(8.dp)
             )
 
-            Image(
-                modifier = Modifier
-                    .size(16.dp)
-                    .offset(0.dp, -4.dp)
-                    .align(Alignment.TopEnd),
-                painter = getTxStatusMark(transactionUi),
-                contentDescription = "${transactionUi.status}"
+            TransactionStatusMark(
+                modifier = Modifier.align(Alignment.TopEnd),
+                transactionUi = transactionUi
             )
         }
 
@@ -251,6 +244,31 @@ fun TransactionCardUi_Preview() {
     }
 }
 
+@Composable
+private fun TransactionStatusMark(
+    modifier: Modifier,
+    transactionUi: TransactionUi
+) {
+
+    val status = if (transactionUi.recentStatus == TransactionStatus.PENDING) {
+        transactionUi.statusFlow.collectAsStateWithLifecycle(
+            initialValue = transactionUi.recentStatus
+        ).value
+    }
+    else {
+        transactionUi.recentStatus
+    }
+
+    Image(
+        modifier = Modifier
+            .then(modifier)
+            .size(16.dp)
+            .offset(0.dp, -4.dp),
+        painter = getTxStatusMark(status),
+        contentDescription = "${transactionUi.recentStatus}"
+    )
+}
+
 
 private fun getTxValueWithPrefix(
     transactionUi: TransactionUi
@@ -263,8 +281,8 @@ private fun getTxValueWithPrefix(
 }
 
 @Composable
-private fun getTxStatusMark(transactionUi: TransactionUi): Painter {
-    val res = when (transactionUi.status) {
+private fun getTxStatusMark(status: TransactionStatus): Painter {
+    val res = when (status) {
         TransactionStatus.PENDING -> R.drawable.ic_status_pending
         TransactionStatus.COMPLETED -> R.drawable.ic_status_accepted
         TransactionStatus.FAILED -> R.drawable.ic_status_rejected

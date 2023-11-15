@@ -6,11 +6,14 @@ import by.alexandr7035.banking.domain.features.transactions.model.TransactionTyp
 import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
 import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 data class TransactionUi(
     val id: Long,
     val type: TransactionType,
-    val status: TransactionStatus,
+    val recentStatus: TransactionStatus,
+    val statusFlow: Flow<TransactionStatus>,
     val value: MoneyAmountUi,
     val transactionDate: String,
     val contact: ContactUi?
@@ -28,13 +31,17 @@ data class TransactionUi(
                 id = id,
                 type = type,
                 transactionDate = transactionDate,
-                status = status,
+                recentStatus = status,
+                statusFlow = flowOf(status),
                 value = value,
-                contact = contact
+                contact = contact,
             )
         }
 
-        fun mapFromDomain(transaction: Transaction): TransactionUi {
+        fun mapFromDomain(
+            transaction: Transaction,
+            statusFlow: Flow<TransactionStatus>? = null
+        ): TransactionUi {
             val contact = if (transaction.linkedContact != null) {
                 ContactUi.mapFromDomain(transaction.linkedContact)
             } else {
@@ -47,7 +54,8 @@ data class TransactionUi(
                 transactionDate = transaction.createdDate.getFormattedDate("dd MMM yyyy HH:mm"),
                 contact = contact,
                 type = transaction.type,
-                status = transaction.recentStatus
+                recentStatus = transaction.recentStatus,
+                statusFlow = statusFlow ?: flowOf(transaction.recentStatus)
             )
         }
     }

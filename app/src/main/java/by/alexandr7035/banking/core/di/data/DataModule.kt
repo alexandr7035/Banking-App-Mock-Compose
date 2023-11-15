@@ -138,7 +138,8 @@ val dataModule = module {
 
     single<TransactionRepository> {
         TransactionRepositoryMock(
-            transactionDao = get()
+            transactionDao = get(),
+            coroutineDispatcher = Dispatchers.IO
         )
     }
 }

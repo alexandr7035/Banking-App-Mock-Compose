@@ -10,6 +10,9 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER by id")
     suspend fun getTransactionFromCache(): List<TransactionEntity>
 
+    @Query("SELECT * FROM transactions WHERE id = (:id)")
+    suspend fun getTransaction(id: Long): TransactionEntity?
+
     @Query("SELECT * FROM transactions WHERE type = :filterType ORDER by id")
     suspend fun getTransactionFromCacheByType(filterType: TransactionType): List<TransactionEntity>
 

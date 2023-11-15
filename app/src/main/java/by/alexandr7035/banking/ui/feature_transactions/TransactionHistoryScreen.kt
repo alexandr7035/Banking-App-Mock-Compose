@@ -23,6 +23,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
@@ -39,12 +41,10 @@ import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.error.ErrorListItem
-import by.alexandr7035.banking.ui.components.error.ErrorListItem_Preview
 import by.alexandr7035.banking.ui.components.pages.Page
 import by.alexandr7035.banking.ui.components.pages.PagerTabRow
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_transactions.components.TransactionCard
-import by.alexandr7035.banking.ui.feature_transactions.model.TransactionUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
 
@@ -106,9 +106,10 @@ private fun TransactionHistoryScreen_Ui(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         val pages: List<Page<Int>> = listOf(
-            Page(0, title = "All"),
-            Page(1, title = "Send"),
-            Page(2, title = "Request"),
+            Page(0, title = stringResource(id = R.string.all)),
+            Page(1, title = stringResource(id = R.string.send)),
+            Page(2, title = stringResource(id = R.string.request)),
+            Page(3, title = stringResource(id = R.string.top_up)),
         )
 
         val pagerState = rememberPagerState() { pages.size }
@@ -132,7 +133,7 @@ private fun TransactionHistoryScreen_Ui(
                 items(txPagingState.itemCount) { index ->
                     val tx = txPagingState[index]
                     tx?.let {
-                        TransactionCard(transactionUi = TransactionUi.mapFromDomain(tx))
+                        TransactionCard(transactionUi = tx)
                     }
                 }
 
@@ -206,6 +207,7 @@ private fun TransactionHistoryScreen_Ui(
                     0 -> null
                     1 -> TransactionType.SEND
                     2 -> TransactionType.RECEIVE
+                    3 -> TransactionType.TOP_UP
                     else -> error("Unexpected page index $page. Failed to choose filter")
                 }
 
