@@ -9,6 +9,7 @@ import by.alexandr7035.banking.data.app.AppSettignsRepository
 import by.alexandr7035.banking.data.app_lock.AppLockRepositoryImpl
 import by.alexandr7035.banking.data.cards.CardsRepositoryMock
 import by.alexandr7035.banking.data.cards.cache.CardsDao
+import by.alexandr7035.banking.data.contacts.ContactsRepositoryMock
 import by.alexandr7035.banking.data.db.CacheDatabase
 import by.alexandr7035.banking.data.db.convertors.MoneyAmountConvertor
 import by.alexandr7035.banking.data.login.LoginRepositoryMock
@@ -21,6 +22,7 @@ import by.alexandr7035.banking.data.transactions.db.TransactionDao
 import by.alexandr7035.banking.domain.features.account.AccountRepository
 import by.alexandr7035.banking.domain.features.app_lock.AppLockRepository
 import by.alexandr7035.banking.domain.features.cards.CardsRepository
+import by.alexandr7035.banking.domain.features.contacts.ContactsRepository
 import by.alexandr7035.banking.domain.features.login.LoginRepository
 import by.alexandr7035.banking.domain.features.otp.OtpRepository
 import by.alexandr7035.banking.domain.features.profile.ProfileRepository
@@ -142,5 +144,9 @@ val dataModule = module {
             transactionDao = get(),
             coroutineDispatcher = Dispatchers.IO
         )
+    }
+
+    single<ContactsRepository> {
+        ContactsRepositoryMock()
     }
 }
