@@ -73,9 +73,10 @@ class TransactionSource(
             linkedContact = when (entity.type) {
                 TransactionType.TOP_UP -> null
                 else -> Contact(
-                    id = "0000",
+                    id = 0,
                     name = "Test name ${entity.type}",
-                    profilePic = "todo"
+                    profilePic = "todo",
+                    linkedCardNumber = "1111222233334444"
                 )
             },
             createdDate = entity.createdDate,

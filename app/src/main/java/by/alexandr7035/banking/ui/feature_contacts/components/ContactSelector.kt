@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
+import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import coil.compose.AsyncImage
@@ -87,7 +88,7 @@ fun ContactSelector(
                 Spacer(Modifier.height(8.dp))
 
                 Text(
-                    text = selectedContact.id,
+                    text = selectedContact.cardNumber.splitStringWithDivider(),
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontFamily = primaryFontFamily,

@@ -6,19 +6,22 @@ import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 // TODO
 data class ContactUi(
     val name: String,
-    val id: String,
+    val id: Long,
+    val cardNumber: String,
     val profilePictureUrl: String
 ) {
     companion object {
         fun mock() = ContactUi(
             name = "Vina Andini",
-            id = "0821 2103 1120",
+            id = 0,
+            cardNumber = "0000111122223333",
             profilePictureUrl = ""
         )
 
         fun mapFromDomain(contact: Contact) = ContactUi(
             name = contact.name,
-            id = contact.id.splitStringWithDivider(),
+            id = contact.id,
+            cardNumber = "0000111122223333",
             profilePictureUrl = contact.profilePic
         )
     }

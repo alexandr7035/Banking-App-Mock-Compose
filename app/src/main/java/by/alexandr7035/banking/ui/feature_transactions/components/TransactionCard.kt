@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -93,8 +94,10 @@ private fun ContactTransactionCard(
                         color = Color(0xFFF2F2F2),
                         shape = CircleShape,
                     )
-                    .size(48.dp)
-                    .padding(8.dp), contentDescription = null, placeholder = debugPlaceholder(debugPreview = R.drawable.ic_home)
+                    .clip(CircleShape)
+                    .size(48.dp),
+                contentDescription = null,
+                placeholder = debugPlaceholder(debugPreview = R.drawable.ic_home)
             )
 
             TransactionStatusMark(
