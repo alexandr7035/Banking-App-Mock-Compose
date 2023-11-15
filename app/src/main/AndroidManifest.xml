@@ -15,8 +15,10 @@
         android:theme="@style/Theme.App.Starting"
         android:supportsRtl="true"
         tools:targetApi="31">
+        <!-- With singleTop avoid reopening from notification -->
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
