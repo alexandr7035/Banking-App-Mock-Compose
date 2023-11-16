@@ -4,9 +4,12 @@ import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.contacts.Contact
 import by.alexandr7035.banking.domain.features.contacts.ContactsRepository
+import kotlinx.coroutines.delay
 
 class ContactsRepositoryMock: ContactsRepository {
-    override fun getContacts(): List<Contact> {
+    override suspend fun getContacts(): List<Contact> {
+        delay(MOCK_DELAY)
+
         return listOf(
             Contact(
                 id = 0,
@@ -29,9 +32,13 @@ class ContactsRepositoryMock: ContactsRepository {
         )
     }
 
-    override fun getContactById(contactId: Long): Contact {
+    override suspend fun getContactById(contactId: Long): Contact {
         return getContacts().find {
             it.id == contactId
         } ?: throw AppError(ErrorType.GENERIC_NOT_FOUND_ERROR)
+    }
+
+    companion object {
+        private const val MOCK_DELAY = 200L
     }
 }
