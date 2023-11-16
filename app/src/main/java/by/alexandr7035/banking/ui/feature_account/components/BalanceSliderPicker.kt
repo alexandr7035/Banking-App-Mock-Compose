@@ -48,7 +48,8 @@ fun BalanceSliderPicker(
     btnStep: MoneyAmount = MoneyAmount(0.01F),
     sliderStep: MoneyAmount = MoneyAmount(1f),
     minValue: MoneyAmount = MoneyAmount(0F),
-    maxValue: MoneyAmount = MoneyAmount(1000F)
+    maxValue: MoneyAmount = MoneyAmount(1000F),
+    pickerEnabled: Boolean = true
 ) {
     require(sliderStep > btnStep) { "Slider step must be bigger then btn step for UI consistency" }
 
@@ -97,7 +98,7 @@ fun BalanceSliderPicker(
                         selectedValue - btnStep
                     )
                 },
-                enabled = decreaseEnabled,
+                enabled = decreaseEnabled && pickerEnabled,
             ) {
                 Box(
                     Modifier.background(
@@ -109,7 +110,7 @@ fun BalanceSliderPicker(
                         painter = painterResource(id = R.drawable.ic_minus_rounded),
                         contentDescription = "Minus",
 //                        tint = if (decreaseEnabled) MaterialTheme.colorScheme.primary else  Color(0xFFF5F5F5)
-                        tint = Color(0xFFF5F5F5)
+                        tint = Color(0xFFF5F5F5),
                     )
                 }
             }
@@ -131,7 +132,7 @@ fun BalanceSliderPicker(
                         selectedValue + btnStep
                     )
                 },
-                enabled = increaseEnabled,
+                enabled = increaseEnabled && pickerEnabled,
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_plus_rouned),
@@ -157,6 +158,7 @@ fun BalanceSliderPicker(
                 },
                 modifier = Modifier.padding(horizontal = 6.dp),
                 stepsCount = stepsCount,
+                enabled = pickerEnabled
             )
         }
     }

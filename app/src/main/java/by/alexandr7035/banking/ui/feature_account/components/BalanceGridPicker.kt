@@ -32,7 +32,8 @@ fun BalanceGridPicker(
     proposedValues: Set<MoneyAmount>,
     selectedValue: MoneyAmount,
     modifier: Modifier = Modifier,
-    onValueSelected: (MoneyAmount) -> Unit = {}
+    onValueSelected: (MoneyAmount) -> Unit = {},
+    pickerEnabled: Boolean = true,
 ) {
     val items = proposedValues.toList()
 
@@ -48,7 +49,8 @@ fun BalanceGridPicker(
         GridButton(
             value = item,
             isSelected = item == selectedValue,
-            onClick = onValueSelected
+            onClick = onValueSelected,
+            enabled = pickerEnabled
         )
     }
 }
@@ -62,6 +64,7 @@ private fun GridButton(
     selectedColor: Color = MaterialTheme.colorScheme.primary,
     textColor: Color = Color(0xFF999999),
     selectedTextColor: Color = MaterialTheme.colorScheme.onPrimary,
+    enabled: Boolean = true
 ) {
     val shape = RoundedCornerShape(6.dp)
 
@@ -73,7 +76,7 @@ private fun GridButton(
                 shape = shape
             )
             .clip(shape)
-            .clickable {
+            .clickable(enabled = enabled) {
                 onClick(value)
             }
             .padding(
