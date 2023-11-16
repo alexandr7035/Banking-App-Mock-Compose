@@ -141,7 +141,9 @@ private fun SendMoneyScreen_Ui(
 
             ContactPicker(
                 selectedContact = state.contactPickerState.selectedContact,
-                modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth(),
                 onChooseContactClick = {
                     onIntent(SendMoneyScreenIntent.ToggleContactPicker(show = true))
                 },
@@ -168,16 +170,20 @@ private fun SendMoneyScreen_Ui(
                 selectedValue = state.amountState.selectedAmount,
                 onValueSelected = {
                     onIntent(SendMoneyScreenIntent.UpdateSelectedValue(it))
-                })
+                },
+                pickerEnabled = state.amountPickersEnabled
+                )
 
             Spacer(Modifier.height(24.dp))
 
             BalanceGridPicker(
                 proposedValues = state.amountState.proposedValues, selectedValue = state.amountState.selectedAmount, onValueSelected = {
                     onIntent(SendMoneyScreenIntent.UpdateSelectedValue(it))
-                }, modifier = Modifier
+                },
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp),
+                pickerEnabled = state.amountPickersEnabled
             )
 
             Spacer(Modifier.weight(1f))

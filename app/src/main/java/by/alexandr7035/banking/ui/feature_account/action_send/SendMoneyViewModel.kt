@@ -3,8 +3,8 @@ package by.alexandr7035.banking.ui.feature_account.action_send
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.alexandr7035.banking.domain.core.OperationResult
-import by.alexandr7035.banking.domain.features.account.account_topup.GetSuggestedTopUpValuesUseCase
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
+import by.alexandr7035.banking.domain.features.account.send_money.GetSuggestedSendValuesForCardBalance
 import by.alexandr7035.banking.domain.features.account.send_money.SendMoneyUseCase
 import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
 import by.alexandr7035.banking.domain.features.cards.GetDefaultCardUseCase
@@ -20,8 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SendMoneyViewModel(
-    // FIXME
-    private val getSuggestedTopUpValuesUseCase: GetSuggestedTopUpValuesUseCase,
+    private val getSuggestedSendValuesForCardBalance: GetSuggestedSendValuesForCardBalance,
     private val getCardByIdUseCase: GetCardByIdUseCase,
     private val getDefaultCardUseCase: GetDefaultCardUseCase,
     private val getRecentContactUseCase: GetRecentContactUseCase,
@@ -30,18 +29,6 @@ class SendMoneyViewModel(
 ) : ViewModel() {
     private val _state = MutableStateFlow(SendMoneyScreenState())
     val state = _state.asStateFlow()
-
-    init {
-        val proposedTopUpValues = getSuggestedTopUpValuesUseCase.execute()
-        _state.update {
-            it.copy(
-                amountState = it.amountState.copy(
-                    proposedValues = proposedTopUpValues,
-                    selectedAmount = proposedTopUpValues.first()
-                )
-            )
-        }
-    }
 
     fun emitIntent(intent: SendMoneyScreenIntent) {
         when (intent) {
@@ -217,6 +204,8 @@ class SendMoneyViewModel(
                                 )
                             )
                         }
+
+                        reduceAmountPickerValues(cardRes.data.recentBalance)
                     } else {
                         _state.update {
                             it.copy(
@@ -267,6 +256,8 @@ class SendMoneyViewModel(
                             )
                         )
                     }
+
+                    reduceAmountPickerValues(card.data.recentBalance)
                 }
 
                 is OperationResult.Failure -> {
@@ -281,6 +272,18 @@ class SendMoneyViewModel(
                     }
                 }
             }
+        }
+    }
+
+    private fun reduceAmountPickerValues(cardBalance: MoneyAmount) {
+        val proposedSendValues = getSuggestedSendValuesForCardBalance.execute(cardBalance)
+        _state.update {
+            it.copy(
+                amountState = it.amountState.copy(
+                    proposedValues = proposedSendValues,
+                    selectedAmount = proposedSendValues.firstOrNull() ?: MoneyAmount(0f)
+                )
+            )
         }
     }
 

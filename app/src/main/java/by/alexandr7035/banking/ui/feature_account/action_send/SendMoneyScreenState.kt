@@ -18,9 +18,10 @@ data class SendMoneyScreenState(
     val showSuccessDialog: Boolean = false
 ) {
     val proceedButtonEnabled
-        get(): Boolean {
-            return amountState.selectedAmount != MoneyAmount(0f)
+        get() = amountState.selectedAmount != MoneyAmount(0f)
                     && cardPickerState.selectedCard != null
                     && contactPickerState.selectedContact != null
-        }
+
+    val amountPickersEnabled
+        get() = cardPickerState.selectedCard != null
 }
