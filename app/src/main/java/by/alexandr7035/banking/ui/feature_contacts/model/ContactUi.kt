@@ -3,7 +3,6 @@ package by.alexandr7035.banking.ui.feature_contacts.model
 import by.alexandr7035.banking.domain.features.contacts.Contact
 import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 
-// TODO
 data class ContactUi(
     val name: String,
     val id: Long,
@@ -21,7 +20,7 @@ data class ContactUi(
         fun mapFromDomain(contact: Contact) = ContactUi(
             name = contact.name,
             id = contact.id,
-            cardNumber = "0000111122223333",
+            cardNumber = contact.linkedCardNumber.splitStringWithDivider(),
             profilePictureUrl = contact.profilePic
         )
     }
