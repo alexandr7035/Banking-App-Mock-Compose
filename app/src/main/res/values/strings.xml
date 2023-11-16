@@ -92,4 +92,5 @@
     <string name="enter_nominal">Enter Nominal</string>
     <string name="choose_contact">Choose Contact</string>
     <string name="send_to">Send to</string>
+    <string name="you_have_no_contacts">You have no contacts</string>
 </resources>
