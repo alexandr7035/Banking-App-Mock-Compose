@@ -31,6 +31,7 @@
     <string name="send">Send</string>
     <string name="request">Request</string>
     <string name="top_up">Top up</string>
+    <string name="send_money">Send Money</string>
     <string name="pay">Pay</string>
     <string name="your_profile">Your Profile</string>
     <string name="payment_card">Payment Card</string>
@@ -79,11 +80,16 @@
 
     <string name="credit">Credit</string>
     <string name="debit">Debit</string>
-    <string name="top_up_successfully">Top Up Successfully</string>
-    <string name="topup_exaplanation">The amount  will be reflected in your account with in few minutes</string>
+    <string name="top_up_successfully">Top Up Submitted</string>
+    <string name="topup_exaplanation">The amount will be reflected in your account with in few minutes</string>
+    <string name="transaction_submitted">Your Transaction Submitted</string>
+    <string name="transaction_explanation">The amount will be reflected in your account with in few minutes</string>
     <string name="set_card_as_default">Set card as default</string>
     <string name="unknown_user">Unknown user</string>
     <string name="all">All</string>
     <string name="transaction_not_found">Transaction not found</string>
     <string name="NOTIFICATION_CHANNEL_ID">BANKING_WORKER_CHANNEL</string>
+    <string name="enter_nominal">Enter Nominal</string>
+    <string name="choose_contact">Choose Contact</string>
+    <string name="send_to">Send to</string>
 </resources>
