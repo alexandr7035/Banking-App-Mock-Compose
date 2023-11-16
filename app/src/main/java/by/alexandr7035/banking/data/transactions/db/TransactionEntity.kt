@@ -14,7 +14,7 @@ data class TransactionEntity(
     val value: MoneyAmount,
     val recentStatus: TransactionStatus,
     val cardId: String,
-    val linkedContactId: String? = null,
+    val linkedContactId: Long? = null,
     val createdDate: Long,
     val updatedStatusDate: Long,
 )
