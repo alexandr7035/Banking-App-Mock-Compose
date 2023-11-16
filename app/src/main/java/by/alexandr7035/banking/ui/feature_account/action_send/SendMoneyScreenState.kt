@@ -10,7 +10,9 @@ import de.palm.composestateevents.consumed
 
 data class SendMoneyScreenState(
     val cardPickerState: CardPickerState = CardPickerState(),
-    val amountState: AmountPickersState = AmountPickersState(),
+    val amountState: AmountPickersState = AmountPickersState(
+        pickersEnabled = false,
+    ),
     val contactPickerState: ContactPickerState = ContactPickerState(),
     val isLoading: Boolean = false,
     val error: UiText? = null,
@@ -22,6 +24,6 @@ data class SendMoneyScreenState(
                     && cardPickerState.selectedCard != null
                     && contactPickerState.selectedContact != null
 
-    val amountPickersEnabled
-        get() = cardPickerState.selectedCard != null
+//    val amountPickersEnabled
+//        get() = cardPickerState.selectedCard != null
 }

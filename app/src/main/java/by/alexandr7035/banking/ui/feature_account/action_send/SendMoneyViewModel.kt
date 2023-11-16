@@ -2,14 +2,17 @@ package by.alexandr7035.banking.ui.feature_account.action_send
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.domain.features.account.send_money.GetSuggestedSendValuesForCardBalance
 import by.alexandr7035.banking.domain.features.account.send_money.SendMoneyUseCase
 import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
 import by.alexandr7035.banking.domain.features.cards.GetDefaultCardUseCase
+import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import by.alexandr7035.banking.domain.features.contacts.GetContactByIdUseCase
 import by.alexandr7035.banking.domain.features.contacts.GetRecentContactUseCase
+import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi
 import de.palm.composestateevents.consumed
@@ -33,21 +36,27 @@ class SendMoneyViewModel(
     fun emitIntent(intent: SendMoneyScreenIntent) {
         when (intent) {
             is SendMoneyScreenIntent.EnterScreen -> {
-                reduceInitialCard(intent.selectedCardId)
-                reduceInitialContact()
+                reduceLoadCard(
+                    cardId = intent.selectedCardId, showErrorIfAny = false
+                )
+
+                reduceLoadContact(
+                    contactId = null,
+                    showErrorIfAny = false
+                )
             }
 
             is SendMoneyScreenIntent.ChooseCard -> {
-                _state.value.cardPickerState.selectedCard?.let {
-                    reduceLoadCard(it.id)
-                }
+                reduceLoadCard(
+                    cardId = intent.cardId, showErrorIfAny = true
+                )
             }
-
-            is SendMoneyScreenIntent.RefreshCard -> {
-                _state.value.cardPickerState.selectedCard?.let {
-                    reduceLoadCard(it.id)
-                }
-            }
+//
+//            is SendMoneyScreenIntent.RefreshCard -> {
+//                _state.value.cardPickerState.selectedCard?.let {
+//                    reduceLoadCard(it.id)
+//                }
+//            }
 
             is SendMoneyScreenIntent.ToggleCardPicker -> {
                 _state.update {
@@ -64,44 +73,10 @@ class SendMoneyViewModel(
             }
 
             is SendMoneyScreenIntent.ChooseContact -> {
-                _state.update {
-                    it.copy(
-                        contactPickerState = it.contactPickerState.copy(
-                            isLoading = true
-                        )
-                    )
-                }
-
-                viewModelScope.launch {
-                    val contact = OperationResult.runWrapped {
-                        getContactByIdUseCase.execute(intent.contactId)
-                    }
-
-                    when (contact) {
-                        is OperationResult.Success -> {
-                            _state.update {
-                                it.copy(
-                                   contactPickerState = it.contactPickerState.copy(
-                                        selectedContact = ContactUi.mapFromDomain(contact.data),
-                                        isLoading = false
-                                    )
-                                )
-                            }
-                        }
-
-                        is OperationResult.Failure -> {
-                            _state.update {
-                                // Left previous contact
-                                it.copy(
-                                    contactPickerState = it.contactPickerState.copy(
-                                        isLoading = false,
-                                        contactSelectedErrorEvent = triggered(contact.error.errorType)
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
+                reduceLoadContact(
+                    contactId = intent.contactId,
+                    showErrorIfAny = true
+                )
             }
 
             is SendMoneyScreenIntent.ToggleContactPicker -> {
@@ -126,23 +101,32 @@ class SendMoneyViewModel(
         }
     }
 
-    private fun reduceInitialContact() {
+    private fun reduceLoadContact(
+        contactId: Long?,
+        showErrorIfAny: Boolean
+    ) {
         _state.update {
             it.copy(contactPickerState = it.contactPickerState.copy(isLoading = true))
         }
 
         viewModelScope.launch {
-            val res = OperationResult.runWrapped {
-                getRecentContactUseCase.execute()
+            val contactResult = if (contactId != null) {
+                OperationResult.runWrapped {
+                    getContactByIdUseCase.execute(contactId)
+                }
+            } else {
+                OperationResult.runWrapped {
+                    getRecentContactUseCase.execute()
+                }
             }
 
-            when (res) {
+            when (contactResult) {
                 is OperationResult.Success -> {
                     _state.update {
                         it.copy(
                             contactPickerState = it.contactPickerState.copy(
                                 isLoading = false,
-                                selectedContact = res.data?.let { ContactUi.mapFromDomain(it) }
+                                selectedContact = contactResult.data?.let { ContactUi.mapFromDomain(it) }
                             )
                         )
                     }
@@ -153,9 +137,19 @@ class SendMoneyViewModel(
                         it.copy(
                             contactPickerState = it.contactPickerState.copy(
                                 isLoading = false,
-                                selectedContact = null
+                                selectedContact = null,
                             )
                         )
+                    }
+
+                    if (showErrorIfAny) {
+                        _state.update {
+                            it.copy(
+                                contactPickerState = it.contactPickerState.copy(
+                                    contactSelectedErrorEvent = triggered(contactResult.error.errorType)
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -173,7 +167,10 @@ class SendMoneyViewModel(
         }
     }
 
-    private fun reduceInitialCard(selectedCardId: String?) {
+
+    private fun reduceLoadCard(
+        cardId: String?, showErrorIfAny: Boolean
+    ) {
         _state.update {
             it.copy(
                 cardPickerState = it.cardPickerState.copy(
@@ -183,105 +180,89 @@ class SendMoneyViewModel(
         }
 
         viewModelScope.launch {
-            val cardRes = if (selectedCardId == null) {
+            val cardResult = if (cardId == null) {
                 OperationResult.runWrapped {
                     getDefaultCardUseCase.execute()
                 }
             } else {
                 OperationResult.runWrapped {
-                    getCardByIdUseCase.execute(selectedCardId)
+                    getCardByIdUseCase.execute(cardId)
                 }
             }
 
-            when (cardRes) {
+            when (cardResult) {
                 is OperationResult.Success -> {
-                    if (cardRes.data != null) {
+                    if (cardResult.data != null) {
                         _state.update {
                             it.copy(
                                 cardPickerState = it.cardPickerState.copy(
-                                    selectedCard = CardUi.mapFromDomain(cardRes.data),
-                                    isLoading = false
+                                    selectedCard = CardUi.mapFromDomain(cardResult.data), isLoading = false
                                 )
                             )
                         }
 
-                        reduceAmountPickerValues(cardRes.data.recentBalance)
+                        reduceAmountPickersState(card = cardResult.data)
                     } else {
                         _state.update {
                             it.copy(
                                 cardPickerState = it.cardPickerState.copy(
-                                    selectedCard = null,
-                                    isLoading = false
+                                    selectedCard = null, isLoading = false
+                                )
+                            )
+                        }
+
+                        reduceAmountPickersState(card = null)
+                    }
+                }
+
+                is OperationResult.Failure -> {
+                    _state.update {
+                        it.copy(
+                            cardPickerState = it.cardPickerState.copy(
+                                selectedCard = null,
+                                isLoading = false,
+                            )
+                        )
+                    }
+
+                    if (showErrorIfAny) {
+                        _state.update {
+                            it.copy(
+                                cardPickerState = it.cardPickerState.copy(
+                                    cardSelectErrorEvent = triggered(cardResult.error.errorType)
                                 )
                             )
                         }
                     }
-                }
 
-                is OperationResult.Failure -> {
-                    _state.update {
-                        it.copy(
-                            cardPickerState = it.cardPickerState.copy(
-                                selectedCard = null,
-                                isLoading = false,
-                            )
-                        )
-                    }
+                    reduceAmountPickersState(card = null)
                 }
             }
         }
     }
 
-    private fun reduceLoadCard(cardId: String) {
-        _state.update {
-            it.copy(
-                cardPickerState = it.cardPickerState.copy(
-                    isLoading = true
-                )
-            )
+    private fun reduceAmountPickersState(
+        card: PaymentCard?
+    ) {
+        val proposedSendValues = card?.let { getSuggestedSendValuesForCardBalance.execute(it.recentBalance) } ?: emptySet()
+
+        val balanceValue = card?.recentBalance?.value ?: 0f
+        val showInsufficientBalance = card != null && balanceValue == 0F
+
+        val insufficientBalanceError = if (showInsufficientBalance) {
+            UiText.DynamicString("Insufficient balance")
+        }
+        else {
+            null
         }
 
-        viewModelScope.launch {
-            val card = OperationResult.runWrapped {
-                getCardByIdUseCase.execute(cardId)
-            }
-
-            when (card) {
-                is OperationResult.Success -> {
-                    _state.update {
-                        it.copy(
-                            cardPickerState = it.cardPickerState.copy(
-                                selectedCard = CardUi.mapFromDomain(card.data),
-                                isLoading = false
-                            )
-                        )
-                    }
-
-                    reduceAmountPickerValues(card.data.recentBalance)
-                }
-
-                is OperationResult.Failure -> {
-                    _state.update {
-                        it.copy(
-                            cardPickerState = it.cardPickerState.copy(
-                                selectedCard = null,
-                                isLoading = false,
-                                cardSelectErrorEvent = triggered(card.error.errorType)
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun reduceAmountPickerValues(cardBalance: MoneyAmount) {
-        val proposedSendValues = getSuggestedSendValuesForCardBalance.execute(cardBalance)
         _state.update {
             it.copy(
                 amountState = it.amountState.copy(
                     proposedValues = proposedSendValues,
-                    selectedAmount = proposedSendValues.firstOrNull() ?: MoneyAmount(0f)
+                    selectedAmount = proposedSendValues.firstOrNull() ?: MoneyAmount(0f),
+                    pickersEnabled = balanceValue > 0f,
+                    error = insufficientBalanceError
                 )
             )
         }

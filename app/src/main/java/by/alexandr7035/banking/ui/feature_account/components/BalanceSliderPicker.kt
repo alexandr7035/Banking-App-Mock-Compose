@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.ui.components.CustomSlider
+import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -49,7 +50,8 @@ fun BalanceSliderPicker(
     sliderStep: MoneyAmount = MoneyAmount(1f),
     minValue: MoneyAmount = MoneyAmount(0F),
     maxValue: MoneyAmount = MoneyAmount(1000F),
-    pickerEnabled: Boolean = true
+    pickerEnabled: Boolean = true,
+    error: UiText? = null
 ) {
     require(sliderStep > btnStep) { "Slider step must be bigger then btn step for UI consistency" }
 
@@ -69,15 +71,13 @@ fun BalanceSliderPicker(
         )
     ) {
         Text(
-            text = stringResource(R.string.set_the_nominal),
-            style = TextStyle(
+            text = stringResource(R.string.set_the_nominal), style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 fontFamily = primaryFontFamily,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xFF999999),
-            ),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            ), modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         Spacer(Modifier.height(24.dp))
@@ -102,8 +102,7 @@ fun BalanceSliderPicker(
             ) {
                 Box(
                     Modifier.background(
-                        shape = CircleShape,
-                        color = Color(0xFFC6C6C6)
+                        shape = CircleShape, color = Color(0xFFC6C6C6)
                     )
                 ) {
                     Icon(
@@ -116,8 +115,7 @@ fun BalanceSliderPicker(
             }
 
             Text(
-                text = MoneyAmountUi.mapFromDomain(selectedValue).amountStr,
-                style = TextStyle(
+                text = MoneyAmountUi.mapFromDomain(selectedValue).amountStr, style = TextStyle(
                     fontSize = 32.sp,
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight.SemiBold,
@@ -156,9 +154,21 @@ fun BalanceSliderPicker(
                 onValueChange = {
                     onValueSelected(MoneyAmount(it))
                 },
-                modifier = Modifier.padding(horizontal = 6.dp),
+                modifier = Modifier.padding(
+                    horizontal = 6.dp
+                ),
                 stepsCount = stepsCount,
                 enabled = pickerEnabled
+            )
+        }
+
+        if (error != null) {
+            Text(
+                text = error.asString(),
+                style = TextStyle(
+                    color = Color.Red
+                ),
+                modifier = Modifier.padding(start = 12.dp, top = 8.dp)
             )
         }
     }
@@ -174,7 +184,10 @@ fun BalanceSliderPicker_Preview() {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-            BalanceSliderPicker(selectedValue = MoneyAmount(100F))
+            BalanceSliderPicker(
+                selectedValue = MoneyAmount(100F),
+                error = UiText.DynamicString("Insufficient balance")
+            )
         }
     }
 }

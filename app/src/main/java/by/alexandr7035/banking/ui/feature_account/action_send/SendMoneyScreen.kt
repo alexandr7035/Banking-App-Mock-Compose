@@ -171,20 +171,22 @@ private fun SendMoneyScreen_Ui(
                 onValueSelected = {
                     onIntent(SendMoneyScreenIntent.UpdateSelectedValue(it))
                 },
-                pickerEnabled = state.amountPickersEnabled
-                )
-
-            Spacer(Modifier.height(24.dp))
-
-            BalanceGridPicker(
-                proposedValues = state.amountState.proposedValues, selectedValue = state.amountState.selectedAmount, onValueSelected = {
-                    onIntent(SendMoneyScreenIntent.UpdateSelectedValue(it))
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                pickerEnabled = state.amountPickersEnabled
+                pickerEnabled = state.amountState.pickersEnabled,
+                error = state.amountState.error
             )
+
+            if (state.amountState.proposedValues.isNotEmpty()) {
+                Spacer(Modifier.height(24.dp))
+                BalanceGridPicker(
+                    proposedValues = state.amountState.proposedValues, selectedValue = state.amountState.selectedAmount, onValueSelected = {
+                        onIntent(SendMoneyScreenIntent.UpdateSelectedValue(it))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    pickerEnabled = state.amountState.pickersEnabled
+                )
+            }
 
             Spacer(Modifier.weight(1f))
             Spacer(Modifier.height(36.dp))
@@ -241,7 +243,7 @@ private fun SendMoneyScreen_Ui(
             message = UiText.StringResource(R.string.transaction_explanation),
             onDismiss = {
                 onIntent(SendMoneyScreenIntent.DismissSuccessDialog)
-                onIntent(SendMoneyScreenIntent.RefreshCard)
+//                onIntent(SendMoneyScreenIntent.RefreshCard)
             }
         )
     }
