@@ -165,7 +165,7 @@ val presentationModule = module {
 
     viewModel {
         SendMoneyViewModel(
-            getSuggestedTopUpValuesUseCase = get(),
+            getSuggestedSendValuesForCardBalance = get(),
             getCardByIdUseCase = get(),
             getDefaultCardUseCase = get(),
             getRecentContactUseCase = get(),
