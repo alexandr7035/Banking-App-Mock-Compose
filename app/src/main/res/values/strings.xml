@@ -93,4 +93,5 @@
     <string name="choose_contact">Choose Contact</string>
     <string name="send_to">Send to</string>
     <string name="you_have_no_contacts">You have no contacts</string>
+    <string name="insufficient_card_balance">Insufficient card balance.</string>
 </resources>

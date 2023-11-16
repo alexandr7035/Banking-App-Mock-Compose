@@ -250,7 +250,7 @@ class SendMoneyViewModel(
         val showInsufficientBalance = card != null && balanceValue == 0F
 
         val insufficientBalanceError = if (showInsufficientBalance) {
-            UiText.DynamicString("Insufficient balance")
+            UiText.StringResource(R.string.insufficient_card_balance)
         }
         else {
             null
