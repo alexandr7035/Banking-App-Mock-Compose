@@ -23,6 +23,7 @@ import by.alexandr7035.banking.ui.app_host.navigation.graphs.signUpGraph
 import by.alexandr7035.banking.ui.app_host.navigation.model.ConditionalNavigation
 import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.core.EnterScreenEffect
+import by.alexandr7035.banking.ui.feature_account.action_send.SendMoneyScreen
 import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsScreen
@@ -123,9 +124,15 @@ fun AppNavHost(
                                 navController.navigate(NavEntries.AccountTopUp.route)
                             }
 
-                            AccountAction.Pay -> TODO()
-                            AccountAction.RequestMoney -> TODO()
-                            AccountAction.SendMoney -> TODO()
+                            AccountAction.Pay -> {
+
+                            }
+                            AccountAction.RequestMoney -> {
+
+                            }
+                            AccountAction.SendMoney -> {
+                                navController.navigate(NavEntries.AccountSend.route)
+                            }
                         }
                     }
                 )
@@ -198,7 +205,8 @@ fun AppNavHost(
                             }
 
                             AccountAction.SendMoney -> {
-
+                                val route = "${NavEntries.AccountSend.route}?selectedCard=${cardId}"
+                                navController.navigate(route)
                             }
 
                             AccountAction.TopUp -> {
@@ -266,6 +274,26 @@ fun AppNavHost(
                 val selectedCard = it.arguments?.getString("selectedCard")
 
                 TopUpScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    selectedCardId = selectedCard
+                )
+            }
+
+            composable(
+                route = "${NavEntries.AccountSend.route}?selectedCard={selectedCard}",
+                arguments = listOf(
+                    navArgument("selectedCard") {
+                        nullable = true
+                        defaultValue = null
+                        type = NavType.StringType
+                    }
+                )
+            ) {
+                val selectedCard = it.arguments?.getString("selectedCard")
+
+                SendMoneyScreen(
                     onBack = {
                         navController.popBackStack()
                     },

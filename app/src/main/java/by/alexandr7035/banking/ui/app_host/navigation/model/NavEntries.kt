@@ -129,6 +129,12 @@ sealed class NavEntries(
         label = "Account topup"
     )
 
+    object AccountSend: NavEntries(
+        route = "account_send",
+        navIcons = null,
+        label = "Account send"
+    )
+
     sealed class Graphs(val route: String) {
         object HomeGraph : Graphs("homeGraph")
         object SignUpGraph : Graphs("signUpGraph")
