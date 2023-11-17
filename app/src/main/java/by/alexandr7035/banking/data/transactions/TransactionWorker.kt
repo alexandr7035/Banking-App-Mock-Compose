@@ -1,20 +1,10 @@
 package by.alexandr7035.banking.data.transactions
 
-import android.Manifest
-import android.app.Notification
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import by.alexandr7035.banking.MainActivity
-import by.alexandr7035.banking.R
 import by.alexandr7035.banking.data.transactions.db.TransactionDao
 import by.alexandr7035.banking.data.transactions.db.TransactionEntity
 import by.alexandr7035.banking.domain.core.AppError
@@ -40,7 +30,7 @@ class TransactionWorker(
     }
 
     override suspend fun doWork(): Result {
-        return try {
+      try {
             val transactionId = inputData.getLong(TRANSACTION_ID_KEY, -1)
             Log.d("WORKER_TAG", "Run transaction operation for transaction: $transactionId")
 
@@ -48,30 +38,36 @@ class TransactionWorker(
                 delay(MOCK_TRANSACTION_DELAY)
 
                 val transaction = transactionDao.getTransaction(transactionId) ?: throw AppError(ErrorType.TRANSACTION_NOT_FOUND)
-                executeTransaction(transaction = transaction)
+                val transactionResult = executeTransaction(transaction = transaction)
 
-                transactionNotificationHelper.apply {
-                    val notificationUi = successMessage(
-                        transactionType = transaction.type,
-                        cardId = transaction.cardId,
-                        amount = transaction.value
-                    )
+                return when (transactionResult) {
+                    is OperationResult.Success -> {
+                        transactionNotificationHelper.apply {
+                            val notificationUi = successMessage(
+                                transactionType = transaction.type,
+                                cardId = transaction.cardId,
+                                amount = transaction.value
+                            )
 
-                    showNotification(notificationUi)
+                            showNotification(notificationUi)
+                        }
+
+                        Result.success()
+                    }
+                    is OperationResult.Failure -> {
+                        transactionNotificationHelper.apply {
+                            val notificationUi = errorMessage(transactionResult.error)
+                            showNotification(notificationUi)
+                        }
+
+                        Result.failure()
+                    }
                 }
-
-                Result.success()
             } else {
-                Result.failure()
+                return Result.failure()
             }
         } catch (e: Exception) {
-
-            transactionNotificationHelper.apply {
-                val notificationUi = errorMessage(e)
-                showNotification(notificationUi)
-            }
-
-            Result.failure()
+            return Result.failure()
         }
     }
 
@@ -88,7 +84,7 @@ class TransactionWorker(
         )
     }
 
-    private suspend fun executeTransaction(transaction: TransactionEntity) {
+    private suspend fun executeTransaction(transaction: TransactionEntity): OperationResult<Unit> {
         val transactionResult = when (transaction.type) {
             TransactionType.SEND -> {
                 OperationResult.runWrapped {
@@ -112,23 +108,11 @@ class TransactionWorker(
             }
         }
 
-        reduceExecutedTransaction(
-            transaction = transaction,
-            operationResult = transactionResult
-        )
-    }
-
-    private suspend fun <T> reduceExecutedTransaction(
-        transaction: TransactionEntity,
-        operationResult: OperationResult<T>
-    ) {
-        when (operationResult) {
+        when (transactionResult) {
             is OperationResult.Failure -> {
                 transactionDao.updateTransaction(
                     transaction.copy(recentStatus = TransactionStatus.FAILED)
                 )
-
-                throw operationResult.error
             }
 
             is OperationResult.Success -> {
@@ -137,5 +121,7 @@ class TransactionWorker(
                 )
             }
         }
+
+        return transactionResult
     }
 }
