@@ -57,6 +57,7 @@ For example, for banking profile the app uses local mock Repositories with stati
     - [X] Card list
     - [X] Create card
     - [X] Delete carrd
+    - [X] Default card
     - [ ] Card Statistics
 - [X] Savings
     - [X] Savings list
