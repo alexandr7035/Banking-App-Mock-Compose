@@ -44,7 +44,7 @@ import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.ScreenSectionDivider
 import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.components.AccountActionPanel
@@ -332,7 +332,7 @@ fun HomeScreen_Empty() {
                 profile = ProfileUi.mock(),
                 cards = emptyList(),
                 savings = emptyList(),
-                balance = flowOf(BalanceValueUi("$2000"))
+                balance = flowOf(MoneyAmountUi("$2000"))
             ),
         )
     }

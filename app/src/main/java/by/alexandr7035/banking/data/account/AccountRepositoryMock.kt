@@ -2,6 +2,7 @@ package by.alexandr7035.banking.data.account
 
 import by.alexandr7035.banking.core.extensions.sumFloat
 import by.alexandr7035.banking.data.cards.cache.CardsDao
+import by.alexandr7035.banking.data.transactions.db.TransactionDao
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.account.AccountRepository
@@ -15,7 +16,8 @@ import kotlinx.coroutines.flow.flowOn
 class AccountRepositoryMock(
     private val coroutineDispatcher: CoroutineDispatcher,
     // For mock app simply use last cached card balances
-    private val cardsDao: CardsDao
+    private val cardsDao: CardsDao,
+    private val transactionsDao: TransactionDao
 ) : AccountRepository {
 
     override fun getBalanceFlow(): Flow<MoneyAmount> {
@@ -31,11 +33,12 @@ class AccountRepositoryMock(
     }
 
     override suspend fun getCardBalanceFlow(cardId: String): Flow<MoneyAmount> {
-        val card = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.UNKNOWN_ERROR)
         return flow {
             while (true) {
                 // For mock app emit last card balance saved in db
+                val card = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.UNKNOWN_ERROR)
                 emit(MoneyAmount(card.recentBalance))
+
                 delay(MOCK_OBSERVING_DELAY)
             }
         }.flowOn(coroutineDispatcher)
@@ -43,8 +46,14 @@ class AccountRepositoryMock(
 
     override suspend fun topUpCard(cardId: String, amount: MoneyAmount) {
         val cardEntity = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
-        delay(MOCK_DELAY)
         val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
+        cardsDao.updateCard(updated)
+    }
+
+    override suspend fun sendFromCard(cardId: String, amount: MoneyAmount, contactId: Long) {
+        val cardEntity = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+        if (cardEntity.recentBalance < amount.value) throw AppError(ErrorType.INSUFFICIENT_CARD_BALANCE)
+        val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance - amount.value)
         cardsDao.updateCard(updated)
     }
 

@@ -34,7 +34,8 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.ui.components.CustomSlider
-import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import by.alexandr7035.banking.ui.core.resources.UiText
+import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
@@ -47,10 +48,16 @@ fun BalanceSliderPicker(
     onValueSelected: (MoneyAmount) -> Unit = {},
     btnStep: MoneyAmount = MoneyAmount(0.01F),
     sliderStep: MoneyAmount = MoneyAmount(1f),
-    minValue: MoneyAmount = MoneyAmount(0F),
-    maxValue: MoneyAmount = MoneyAmount(1000F)
+    minValue: MoneyAmount? = MoneyAmount(0F),
+    maxValue: MoneyAmount? = MoneyAmount(1000F),
+    pickerEnabled: Boolean = true,
+    error: UiText? = null
 ) {
+    val min = minValue ?: MoneyAmount(0f)
+    val max = maxValue ?: MoneyAmount(1000f)
+
     require(sliderStep > btnStep) { "Slider step must be bigger then btn step for UI consistency" }
+    require(min < max) { "Slider max value must be greater then min value"}
 
     val shape = RoundedCornerShape(16.dp)
 
@@ -68,15 +75,13 @@ fun BalanceSliderPicker(
         )
     ) {
         Text(
-            text = stringResource(R.string.set_the_nominal),
-            style = TextStyle(
+            text = stringResource(R.string.set_the_nominal), style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 fontFamily = primaryFontFamily,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xFF999999),
-            ),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            ), modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         Spacer(Modifier.height(24.dp))
@@ -90,33 +95,31 @@ fun BalanceSliderPicker(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val decreaseEnabled = selectedValue - btnStep >= minValue
+            val decreaseEnabled = selectedValue - btnStep >= min
             IconButton(
                 onClick = {
                     onValueSelected(
                         selectedValue - btnStep
                     )
                 },
-                enabled = decreaseEnabled,
+                enabled = decreaseEnabled && pickerEnabled,
             ) {
                 Box(
                     Modifier.background(
-                        shape = CircleShape,
-                        color = Color(0xFFC6C6C6)
+                        shape = CircleShape, color = Color(0xFFC6C6C6)
                     )
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_minus_rounded),
                         contentDescription = "Minus",
 //                        tint = if (decreaseEnabled) MaterialTheme.colorScheme.primary else  Color(0xFFF5F5F5)
-                        tint = Color(0xFFF5F5F5)
+                        tint = Color(0xFFF5F5F5),
                     )
                 }
             }
 
             Text(
-                text = BalanceValueUi.mapFromDomain(selectedValue).balanceStr,
-                style = TextStyle(
+                text = MoneyAmountUi.mapFromDomain(selectedValue).amountStr, style = TextStyle(
                     fontSize = 32.sp,
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight.SemiBold,
@@ -124,14 +127,14 @@ fun BalanceSliderPicker(
                 )
             )
 
-            val increaseEnabled = selectedValue + btnStep <= maxValue
+            val increaseEnabled = selectedValue + btnStep <= max
             IconButton(
                 onClick = {
                     onValueSelected(
                         selectedValue + btnStep
                     )
                 },
-                enabled = increaseEnabled,
+                enabled = increaseEnabled && pickerEnabled,
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_plus_rouned),
@@ -144,8 +147,8 @@ fun BalanceSliderPicker(
         Spacer(Modifier.height(24.dp))
 
         // Prepare slider state
-        val valueRange = (minValue.value..maxValue.value)
-        val stepsCountCheck = (maxValue.value / sliderStep.value).toInt() - 1
+        val valueRange = (min.value..max.value)
+        val stepsCountCheck = (max.value / sliderStep.value).toInt() - 1
         val stepsCount = if (stepsCountCheck >= 0) stepsCountCheck else 0
 
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
@@ -155,8 +158,21 @@ fun BalanceSliderPicker(
                 onValueChange = {
                     onValueSelected(MoneyAmount(it))
                 },
-                modifier = Modifier.padding(horizontal = 6.dp),
+                modifier = Modifier.padding(
+                    horizontal = 6.dp
+                ),
                 stepsCount = stepsCount,
+                enabled = pickerEnabled
+            )
+        }
+
+        if (error != null) {
+            Text(
+                text = error.asString(),
+                style = TextStyle(
+                    color = Color.Red
+                ),
+                modifier = Modifier.padding(start = 12.dp, top = 8.dp)
             )
         }
     }
@@ -172,7 +188,10 @@ fun BalanceSliderPicker_Preview() {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-            BalanceSliderPicker(selectedValue = MoneyAmount(100F))
+            BalanceSliderPicker(
+                selectedValue = MoneyAmount(100F),
+                error = UiText.DynamicString("Insufficient balance")
+            )
         }
     }
 }

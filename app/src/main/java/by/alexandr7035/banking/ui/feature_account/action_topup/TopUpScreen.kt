@@ -40,12 +40,14 @@ import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.EnterScreenEffect
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
+import by.alexandr7035.banking.ui.feature_account.AmountPickersState
 import by.alexandr7035.banking.ui.feature_account.components.BalanceGridPicker
 import by.alexandr7035.banking.ui.feature_account.components.BalanceSliderPicker
 import by.alexandr7035.banking.ui.feature_cards.components.PanelCardPicker
 import by.alexandr7035.banking.ui.feature_cards.dialog_card_picker.CardPickerDialog
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
+import de.palm.composestateevents.NavigationEventEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -71,14 +73,23 @@ fun TopUpScreen(
         snackbarHostState.show(it.asUiTextError().asString(context), SnackBarMode.Negative)
     }
 
+    NavigationEventEffect(
+        event = state.requiredBackNavEvent,
+        onConsumed = viewModel::consumeBackNavEvent
+    ) {
+        onBack()
+    }
+
     EnterScreenEffect {
         viewModel.emitIntent(TopUpScreenIntent.EnterScreen(selectedCardId = selectedCardId))
     }
 }
 
 @Composable
-fun TopUpScreen_Ui(
-    state: TopUpScreenState, onIntent: (TopUpScreenIntent) -> Unit = {}, onBack: () -> Unit = {}
+private fun TopUpScreen_Ui(
+    state: TopUpScreenState,
+    onIntent: (TopUpScreenIntent) -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         Column(
@@ -182,7 +193,6 @@ fun TopUpScreen_Ui(
             message = UiText.StringResource(R.string.topup_exaplanation),
             onDismiss = {
                 onIntent(TopUpScreenIntent.DismissSuccessDialog)
-                onIntent(TopUpScreenIntent.RefreshCard)
             }
         )
     }
@@ -198,7 +208,7 @@ fun TopUpScreen_Preview() {
 
         TopUpScreen_Ui(
             state = TopUpScreenState(
-                amountState = TopUpScreenState.AmountPickersState(
+                amountState = AmountPickersState(
                     selectedAmount = MoneyAmount(100f), proposedValues = amounts
                 )
             )

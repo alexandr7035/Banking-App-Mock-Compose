@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
@@ -31,8 +32,17 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 fun ErrorFullScreen(
     error: UiText,
     modifier: Modifier = Modifier,
+    imageSize: Dp = 200.dp,
+    enableScroll: Boolean = true,
     onRetry: (() -> Unit)? = null,
 ) {
+
+    val scrollModifier = if (enableScroll) {
+        Modifier.verticalScroll(rememberScrollState())
+    }
+    else {
+        Modifier
+    }
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
         Column(
@@ -40,7 +50,7 @@ fun ErrorFullScreen(
                 Modifier
                     .height(maxHeight)
                     .width(maxWidth)
-                    .verticalScroll(rememberScrollState())
+                    .then(scrollModifier)
                     .padding(
                         vertical = 40.dp,
                         horizontal = 24.dp
@@ -76,14 +86,16 @@ fun ErrorFullScreen(
             )
 
             Spacer(Modifier.weight(1f))
+            Spacer(Modifier.height(16.dp))
 
             Image(
                 painter = painterResource(id = R.drawable.img_error),
                 contentDescription = "Error image",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier.size(imageSize)
             )
 
+            Spacer(Modifier.height(16.dp))
             Spacer(Modifier.weight(1f))
 
             if (onRetry != null) {

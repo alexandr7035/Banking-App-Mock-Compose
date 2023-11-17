@@ -6,11 +6,11 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 
-data class BalanceValueUi(
-    val balanceStr: String,
+data class MoneyAmountUi(
+    val amountStr: String,
 ) {
     companion object {
-        fun mapFromDomain(balance: MoneyAmount): BalanceValueUi {
+        fun mapFromDomain(balance: MoneyAmount): MoneyAmountUi {
             val symbols = DecimalFormatSymbols(Locale.US)
             val decimalFormat = DecimalFormat("#,##0.##", symbols)
             decimalFormat.isGroupingUsed = false
@@ -20,7 +20,7 @@ data class BalanceValueUi(
             // Add currency prefixes
             return when (balance.currency) {
                 BalanceCurrency.USD -> {
-                    BalanceValueUi("$$formattedValue")
+                    MoneyAmountUi("$$formattedValue")
                 }
             }
         }

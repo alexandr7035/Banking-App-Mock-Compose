@@ -83,6 +83,9 @@ fun CardPickerDialog(
                 scope.launch {
                     dialogState.expand()
                 }
+            },
+            onRequestLoad = {
+                viewModel.emitIntent(CardPickerIntent.LoadCards(defaultSelectedCard))
             }
         )
     }

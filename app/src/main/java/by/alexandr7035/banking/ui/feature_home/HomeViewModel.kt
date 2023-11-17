@@ -9,7 +9,7 @@ import by.alexandr7035.banking.domain.features.cards.GetHomeCardsUseCase
 import by.alexandr7035.banking.domain.features.profile.GetCompactProfileUseCase
 import by.alexandr7035.banking.domain.features.savings.GetHomeSavingsUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
-import by.alexandr7035.banking.ui.feature_account.BalanceValueUi
+import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
@@ -85,7 +85,7 @@ class HomeViewModel(
 
             val balanceFlow = getTotalAccountBalanceUseCase.execute()
                 .map { accountBalance ->
-                    BalanceValueUi.mapFromDomain(accountBalance)
+                    MoneyAmountUi.mapFromDomain(accountBalance)
                 }
                 .catch {
                     reduceError(ErrorType.fromThrowable(it))
@@ -105,7 +105,7 @@ class HomeViewModel(
         profile: ProfileUi,
         cards: List<CardUi>,
         savings: List<SavingUi>,
-        balance: Flow<BalanceValueUi>,
+        balance: Flow<MoneyAmountUi>,
     ) {
         _state.update {
             HomeState.Success(
@@ -128,7 +128,7 @@ class HomeViewModel(
     private suspend fun getCardBalanceFlow(cardId: String): Flow<String> {
         return getCardBalanceObservableUseCase.execute(cardId)
             .map {
-                BalanceValueUi.mapFromDomain(it).balanceStr
+                MoneyAmountUi.mapFromDomain(it).amountStr
             }
             .catch {
                 reduceError(ErrorType.fromThrowable(it))
