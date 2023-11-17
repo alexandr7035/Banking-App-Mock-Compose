@@ -12,6 +12,7 @@ import by.alexandr7035.banking.domain.features.cards.GetDefaultCardUseCase
 import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import by.alexandr7035.banking.domain.features.contacts.GetContactByIdUseCase
 import by.alexandr7035.banking.domain.features.contacts.GetRecentContactUseCase
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi
@@ -90,12 +91,55 @@ class SendMoneyViewModel(
             }
 
             is SendMoneyScreenIntent.ProceedClick -> {
-                // TODO
+                reduceSubmit()
             }
 
             is SendMoneyScreenIntent.DismissSuccessDialog -> {
                 _state.update {
                     it.copy(showSuccessDialog = false)
+                }
+            }
+        }
+    }
+
+    private fun reduceSubmit() {
+        _state.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+
+        viewModelScope.launch {
+            val cardId = _state.value.cardPickerState.selectedCard?.id
+            val contactId = _state.value.contactPickerState.selectedContact?.id
+
+            if (cardId != null && contactId != null) {
+                val sendRes = OperationResult.runWrapped {
+                    sendMoneyUseCase.execute(
+                        amount = _state.value.amountState.selectedAmount,
+                        fromCardId = cardId,
+                        contactId = contactId,
+                    )
+                }
+
+                when (sendRes) {
+                    is OperationResult.Success -> {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                showSuccessDialog = true,
+                            )
+                        }
+                    }
+
+                    is OperationResult.Failure -> {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                error = sendRes.error.errorType.asUiTextError()
+                            )
+                        }
+                    }
                 }
             }
         }

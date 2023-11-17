@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetTransactionsUseCase(
     private val transactionRepository: TransactionRepository
 ) {
-    fun execute(filterByType: TransactionType?): Flow<PagingData<Transaction>> {
+    suspend fun execute(filterByType: TransactionType?): Flow<PagingData<Transaction>> {
         return transactionRepository.getTransactions(filterByType)
     }
 }

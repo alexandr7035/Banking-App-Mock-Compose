@@ -19,6 +19,7 @@ import by.alexandr7035.banking.data.transactions.db.TransactionDao
 import by.alexandr7035.banking.data.transactions.db.TransactionEntity
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.account.AccountRepository
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionStatus
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
@@ -29,8 +30,9 @@ class TransactionWorker(
     appContext: Context,
     workerParams: WorkerParameters,
     private val transactionDao: TransactionDao,
-    private val accountRepository: AccountRepository
-): CoroutineWorker(appContext, workerParams) {
+    private val accountRepository: AccountRepository,
+    private val transactionNotificationHelper: TransactionNotificationHelper
+) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
         const val TRANSACTION_ID_KEY = "transaction_id"
@@ -38,10 +40,9 @@ class TransactionWorker(
     }
 
     override suspend fun doWork(): Result {
-        Log.d("WORKER_TAG", "Test test ")
         return try {
             val transactionId = inputData.getLong(TRANSACTION_ID_KEY, -1)
-            Log.d("WORKER_TAG", "Transaction operation for transaction: $transactionId")
+            Log.d("WORKER_TAG", "Run transaction operation for transaction: $transactionId")
 
             if (transactionId != -1L) {
                 delay(MOCK_TRANSACTION_DELAY)
@@ -49,38 +50,26 @@ class TransactionWorker(
                 val transaction = transactionDao.getTransaction(transactionId) ?: throw AppError(ErrorType.TRANSACTION_NOT_FOUND)
                 executeTransaction(transaction = transaction)
 
-                transactionDao.updateTransaction(transaction.copy(
-                    recentStatus = TransactionStatus.COMPLETED,
-                    updatedStatusDate = System.currentTimeMillis()
-                ))
+                transactionNotificationHelper.apply {
+                    val notificationUi = successMessage(
+                        transactionType = transaction.type,
+                        cardId = transaction.cardId,
+                        amount = transaction.value
+                    )
 
-                val notificationUi = TransactionNotificationHelper.successMessage(
-                    context = applicationContext,
-                    transactionType = transaction.type,
-                    cardId = transaction.cardId,
-                    amount = transaction.value
-                )
-
-                showNotification(
-                    title = notificationUi.title,
-                    message = notificationUi.message
-                )
+                    showNotification(notificationUi)
+                }
 
                 Result.success()
             } else {
                 Result.failure()
             }
-        }
-        catch (e: Exception) {
-            val notificationUi = TransactionNotificationHelper.errorMessage(
-                context = applicationContext,
-                error = e
-            )
+        } catch (e: Exception) {
 
-            showNotification(
-                title = notificationUi.title,
-                message = notificationUi.message
-            )
+            transactionNotificationHelper.apply {
+                val notificationUi = errorMessage(e)
+                showNotification(notificationUi)
+            }
 
             Result.failure()
         }
@@ -89,59 +78,64 @@ class TransactionWorker(
     // When set expedited, work will round in ForegroundService bellow Android 12
     // So here are notification params
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        val notificationUi = TransactionNotificationHelper.pending()
+        val notification = transactionNotificationHelper.getNotification(
+            notificationUi = transactionNotificationHelper.pending()
+        )
 
         return ForegroundInfo(
             System.currentTimeMillis().toInt(),
-            getNotification(
-                title = notificationUi.title,
-                message = notificationUi.message
-            )
+            notification
         )
     }
 
     private suspend fun executeTransaction(transaction: TransactionEntity) {
-        when (transaction.type) {
-            TransactionType.SEND -> TODO()
+        val transactionResult = when (transaction.type) {
+            TransactionType.SEND -> {
+                OperationResult.runWrapped {
+                    accountRepository.sendFromCard(
+                        cardId = transaction.cardId,
+                        amount = transaction.value,
+                        contactId = transaction.linkedContactId ?: error("No contact id in SEND transaction ${transaction.id}")
+                    )
+                }
+            }
+
             TransactionType.RECEIVE -> TODO()
+
             TransactionType.TOP_UP -> {
-                accountRepository.topUpCard(
-                    cardId = transaction.cardId,
-                    amount = transaction.value
+                OperationResult.runWrapped {
+                    accountRepository.topUpCard(
+                        cardId = transaction.cardId,
+                        amount = transaction.value
+                    )
+                }
+            }
+        }
+
+        reduceExecutedTransaction(
+            transaction = transaction,
+            operationResult = transactionResult
+        )
+    }
+
+    private suspend fun <T> reduceExecutedTransaction(
+        transaction: TransactionEntity,
+        operationResult: OperationResult<T>
+    ) {
+        when (operationResult) {
+            is OperationResult.Failure -> {
+                transactionDao.updateTransaction(
+                    transaction.copy(recentStatus = TransactionStatus.FAILED)
+                )
+
+                throw operationResult.error
+            }
+
+            is OperationResult.Success -> {
+                transactionDao.updateTransaction(
+                    transaction.copy(recentStatus = TransactionStatus.COMPLETED)
                 )
             }
         }
-    }
-
-    private fun showNotification(
-        title: String,
-        message: String
-    ) {
-        val notificationId = System.currentTimeMillis().toInt()
-        val notification = getNotification(title, message)
-
-        if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            NotificationManagerCompat.from(applicationContext).notify(notificationId, notification)
-        }
-    }
-
-    private fun getNotification(title: String, message: String): Notification {
-        val notificationIntent = Intent(applicationContext, MainActivity::class.java)
-        val mutabilityFlag = PendingIntent.FLAG_IMMUTABLE
-
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, notificationIntent, mutabilityFlag)
-
-        return NotificationCompat.Builder(applicationContext,
-            applicationContext.getString(R.string.NOTIFICATION_CHANNEL_ID))
-            .setContentTitle(title)
-            .setContentText(message)
-                // FIXME
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setContentIntent(pendingIntent)
-            // Make not dismissible
-//            .setOngoing(true)
-            // Show notification immediately (prevent 10 sec delay)
-//            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-            .build()
     }
 }
