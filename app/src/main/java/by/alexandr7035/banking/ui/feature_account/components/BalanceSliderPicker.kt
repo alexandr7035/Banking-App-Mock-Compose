@@ -48,12 +48,16 @@ fun BalanceSliderPicker(
     onValueSelected: (MoneyAmount) -> Unit = {},
     btnStep: MoneyAmount = MoneyAmount(0.01F),
     sliderStep: MoneyAmount = MoneyAmount(1f),
-    minValue: MoneyAmount = MoneyAmount(0F),
-    maxValue: MoneyAmount = MoneyAmount(1000F),
+    minValue: MoneyAmount? = MoneyAmount(0F),
+    maxValue: MoneyAmount? = MoneyAmount(1000F),
     pickerEnabled: Boolean = true,
     error: UiText? = null
 ) {
+    val min = minValue ?: MoneyAmount(0f)
+    val max = maxValue ?: MoneyAmount(1000f)
+
     require(sliderStep > btnStep) { "Slider step must be bigger then btn step for UI consistency" }
+    require(min < max) { "Slider max value must be greater then min value"}
 
     val shape = RoundedCornerShape(16.dp)
 
@@ -91,7 +95,7 @@ fun BalanceSliderPicker(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val decreaseEnabled = selectedValue - btnStep >= minValue
+            val decreaseEnabled = selectedValue - btnStep >= min
             IconButton(
                 onClick = {
                     onValueSelected(
@@ -123,7 +127,7 @@ fun BalanceSliderPicker(
                 )
             )
 
-            val increaseEnabled = selectedValue + btnStep <= maxValue
+            val increaseEnabled = selectedValue + btnStep <= max
             IconButton(
                 onClick = {
                     onValueSelected(
@@ -143,8 +147,8 @@ fun BalanceSliderPicker(
         Spacer(Modifier.height(24.dp))
 
         // Prepare slider state
-        val valueRange = (minValue.value..maxValue.value)
-        val stepsCountCheck = (maxValue.value / sliderStep.value).toInt() - 1
+        val valueRange = (min.value..max.value)
+        val stepsCountCheck = (max.value / sliderStep.value).toInt() - 1
         val stepsCount = if (stepsCountCheck >= 0) stepsCountCheck else 0
 
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {

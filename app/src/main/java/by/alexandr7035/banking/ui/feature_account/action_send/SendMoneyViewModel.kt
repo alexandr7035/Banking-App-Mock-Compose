@@ -70,7 +70,7 @@ class SendMoneyViewModel(
             }
 
             is SendMoneyScreenIntent.UpdateSelectedValue -> {
-                reduceChooseTopUpAmount(intent.amount)
+                reduceChosenAmount(intent.amount)
             }
 
             is SendMoneyScreenIntent.ChooseContact -> {
@@ -204,7 +204,7 @@ class SendMoneyViewModel(
         }
     }
 
-    private fun reduceChooseTopUpAmount(amount: MoneyAmount) {
+    private fun reduceChosenAmount(amount: MoneyAmount) {
         _state.update {
             it.copy(
                 amountState = it.amountState.copy(
@@ -302,13 +302,21 @@ class SendMoneyViewModel(
             null
         }
 
+        val maxAmount = if (balanceValue > 0f) {
+            MoneyAmount(balanceValue)
+        }
+        else {
+            null
+        }
+
         _state.update {
             it.copy(
                 amountState = it.amountState.copy(
                     proposedValues = proposedSendValues,
                     selectedAmount = proposedSendValues.firstOrNull() ?: MoneyAmount(0f),
                     pickersEnabled = balanceValue > 0f,
-                    error = insufficientBalanceError
+                    error = insufficientBalanceError,
+                    maxAmount = maxAmount
                 )
             )
         }

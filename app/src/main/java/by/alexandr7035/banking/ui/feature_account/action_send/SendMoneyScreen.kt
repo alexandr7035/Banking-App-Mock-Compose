@@ -180,7 +180,8 @@ private fun SendMoneyScreen_Ui(
                     onIntent(SendMoneyScreenIntent.UpdateSelectedValue(it))
                 },
                 pickerEnabled = state.amountState.pickersEnabled,
-                error = state.amountState.error
+                maxValue = state.amountState.maxAmount,
+                error = state.amountState.error,
             )
 
             if (state.amountState.proposedValues.isNotEmpty()) {
