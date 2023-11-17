@@ -62,12 +62,13 @@ For example, for banking profile the app uses local mock Repositories with stati
     - [X] Savings list
     - [X] Saving details
 - [ ] Account operations
-    - [ ] Send money
-    - [ ] Request money
+    - [X] Send money
     - [X] Top up
+    - [ ] Request money
     - [ ] Pay
-    - [ ] Transaction history
-    - [ ] Transaction contacts
+    - [X] Transaction manager
+    - [X] Transaction history
+    - [X] Transaction contacts
  - [ ] Profile
     - [X] Profile info
     - [ ] QR codes (scan, my QR)
