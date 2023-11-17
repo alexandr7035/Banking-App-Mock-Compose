@@ -47,6 +47,7 @@ import by.alexandr7035.banking.ui.feature_cards.components.PanelCardPicker
 import by.alexandr7035.banking.ui.feature_cards.dialog_card_picker.CardPickerDialog
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
+import de.palm.composestateevents.NavigationEventEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -70,6 +71,13 @@ fun TopUpScreen(
         onConsumed = viewModel::consumeLoadCardErrorEvent
     ) {
         snackbarHostState.show(it.asUiTextError().asString(context), SnackBarMode.Negative)
+    }
+
+    NavigationEventEffect(
+        event = state.requiredBackNavEvent,
+        onConsumed = viewModel::consumeBackNavEvent
+    ) {
+        onBack()
     }
 
     EnterScreenEffect {
@@ -185,7 +193,6 @@ private fun TopUpScreen_Ui(
             message = UiText.StringResource(R.string.topup_exaplanation),
             onDismiss = {
                 onIntent(TopUpScreenIntent.DismissSuccessDialog)
-                onIntent(TopUpScreenIntent.RefreshCard)
             }
         )
     }

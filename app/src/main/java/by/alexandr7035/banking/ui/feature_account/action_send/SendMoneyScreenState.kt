@@ -17,7 +17,8 @@ data class SendMoneyScreenState(
     val isLoading: Boolean = false,
     val error: UiText? = null,
     val sendSubmittedEvent: StateEvent = consumed,
-    val showSuccessDialog: Boolean = false
+    val showSuccessDialog: Boolean = false,
+    val requiredBackNavEvent: StateEvent = consumed
 ) {
     val proceedButtonEnabled
         get() = amountState.selectedAmount != MoneyAmount(0f)

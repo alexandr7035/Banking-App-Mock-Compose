@@ -51,6 +51,7 @@ import by.alexandr7035.banking.ui.feature_contacts.dialog_contact_picker.Contact
 import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
+import de.palm.composestateevents.NavigationEventEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -81,6 +82,13 @@ fun SendMoneyScreen(
         onConsumed = viewModel::consumeLoadContactErrorEvent
     ) {
         snackbarHostState.show(it.asUiTextError().asString(context), SnackBarMode.Negative)
+    }
+
+    NavigationEventEffect(
+        event = state.requiredBackNavEvent,
+        onConsumed = viewModel::consumeBackNavEvent
+    ) {
+        onBack()
     }
 
     EnterScreenEffect {
@@ -243,7 +251,6 @@ private fun SendMoneyScreen_Ui(
             message = UiText.StringResource(R.string.transaction_explanation),
             onDismiss = {
                 onIntent(SendMoneyScreenIntent.DismissSuccessDialog)
-//                onIntent(SendMoneyScreenIntent.RefreshCard)
             }
         )
     }

@@ -13,7 +13,8 @@ data class TopUpScreenState(
     val isLoading: Boolean = false,
     val error: UiText? = null,
     val topUpSubmittedEvent: StateEvent = consumed,
-    val showSuccessDialog: Boolean = false
+    val showSuccessDialog: Boolean = false,
+    val requiredBackNavEvent: StateEvent = consumed
 ) {
     val proceedButtonEnabled
         get(): Boolean {

@@ -96,7 +96,10 @@ class SendMoneyViewModel(
 
             is SendMoneyScreenIntent.DismissSuccessDialog -> {
                 _state.update {
-                    it.copy(showSuccessDialog = false)
+                    it.copy(
+                        showSuccessDialog = false,
+                        requiredBackNavEvent = triggered
+                    )
                 }
             }
         }
@@ -295,8 +298,7 @@ class SendMoneyViewModel(
 
         val insufficientBalanceError = if (showInsufficientBalance) {
             UiText.StringResource(R.string.insufficient_card_balance)
-        }
-        else {
+        } else {
             null
         }
 
@@ -329,6 +331,14 @@ class SendMoneyViewModel(
                 contactPickerState = it.contactPickerState.copy(
                     contactSelectedErrorEvent = consumed()
                 )
+            )
+        }
+    }
+
+    fun consumeBackNavEvent() {
+        _state.update {
+            it.copy(
+                requiredBackNavEvent = consumed
             )
         }
     }
