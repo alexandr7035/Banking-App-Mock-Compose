@@ -79,17 +79,12 @@ fun TransactionHistoryScreen(
         ) {
             val state = viewModel.state.collectAsStateWithLifecycle().value
 
-
-
-            when {
-//                state.isLoading -> TransactionHistoryScreen_Skeleton()
-                else -> TransactionHistoryScreen_Ui(
-                    state = state,
-                    onIntent = {
-                        viewModel.emitIntent(it)
-                    }
-                )
-            }
+            TransactionHistoryScreen_Ui(
+                state = state,
+                onIntent = {
+                    viewModel.emitIntent(it)
+                }
+            )
         }
     }
 
@@ -138,9 +133,6 @@ private fun TransactionHistoryScreen_Ui(
                 }
 
                 txPagingState.apply {
-
-                    val loadState = loadState
-
                     when {
                         // Skeleton
                         loadState.refresh is LoadState.Loading -> {
