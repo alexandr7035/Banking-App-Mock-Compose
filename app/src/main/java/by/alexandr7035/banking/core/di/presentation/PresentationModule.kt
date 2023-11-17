@@ -1,6 +1,7 @@
 package by.alexandr7035.banking.core.di.presentation
 
 import by.alexandr7035.banking.ui.app_host.AppViewModel
+import by.alexandr7035.banking.ui.core.notifications.TransactionNotificationHelper
 import by.alexandr7035.banking.ui.feature_account.action_send.SendMoneyViewModel
 import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreenViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.lock_screen.LockScreenViewModel
@@ -24,6 +25,12 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val presentationModule = module {
+    single {
+        TransactionNotificationHelper(
+            applicationContext = get()
+        )
+    }
+
     viewModel {
         OnboardingViewModel(
             passOnboardingUseCase = get()
