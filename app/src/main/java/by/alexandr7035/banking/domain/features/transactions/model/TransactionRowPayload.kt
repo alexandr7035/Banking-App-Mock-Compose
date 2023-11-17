@@ -6,5 +6,5 @@ data class TransactionRowPayload(
     val type: TransactionType,
     val amount: MoneyAmount,
     val cardId: String,
-    val contactId: String? = null,
+    val contactId: Long? = null,
 )

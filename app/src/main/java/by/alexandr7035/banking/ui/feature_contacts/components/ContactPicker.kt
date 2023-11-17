@@ -104,7 +104,7 @@ private fun ContactPicker_Selected(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = selectedContact.cardNumber.splitStringWithDivider(),
+                text = selectedContact.cardNumber,
                 style = TextStyle(
                     fontSize = 12.sp,
                     fontFamily = primaryFontFamily,

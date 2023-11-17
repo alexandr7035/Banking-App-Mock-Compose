@@ -8,7 +8,7 @@ import by.alexandr7035.banking.domain.features.transactions.model.TransactionTyp
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
-    fun getTransactions(filterByType: TransactionType?): Flow<PagingData<Transaction>>
+    suspend fun getTransactions(filterByType: TransactionType?): Flow<PagingData<Transaction>>
     fun getTransactionStatusFlow(transactionId: Long): Flow<TransactionStatus>
     suspend fun submitTransaction(payload: TransactionRowPayload)
 }

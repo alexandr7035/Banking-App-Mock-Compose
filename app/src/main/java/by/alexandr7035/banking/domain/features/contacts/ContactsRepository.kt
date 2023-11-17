@@ -1,7 +1,7 @@
 package by.alexandr7035.banking.domain.features.contacts
 
 interface ContactsRepository {
-    fun getContacts(): List<Contact>
+    suspend fun getContacts(): List<Contact>
 
-    fun getContactById(contactId: Long): Contact
+    suspend fun getContactById(contactId: Long): Contact
 }

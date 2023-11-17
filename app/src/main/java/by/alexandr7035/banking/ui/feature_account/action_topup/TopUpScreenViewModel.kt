@@ -52,11 +52,6 @@ class TopUpScreenViewModel(
                 reduceLoadCard(intent.cardId)
             }
 
-            TopUpScreenIntent.RefreshCard -> {
-                _state.value.cardPickerState.selectedCard?.let {
-                    reduceLoadCard(it.id)
-                }
-            }
 
             is TopUpScreenIntent.ToggleCardPicker -> {
                 _state.update {
@@ -74,7 +69,10 @@ class TopUpScreenViewModel(
 
             is TopUpScreenIntent.DismissSuccessDialog -> {
                 _state.update {
-                    it.copy(showSuccessDialog = false)
+                    it.copy(
+                        showSuccessDialog = false,
+                        requiredBackNavEvent = triggered
+                    )
                 }
             }
         }
@@ -135,8 +133,7 @@ class TopUpScreenViewModel(
                 OperationResult.runWrapped {
                     getDefaultCardUseCase.execute()
                 }
-            }
-            else {
+            } else {
                 OperationResult.runWrapped {
                     getCardByIdUseCase.execute(selectedCardId)
                 }
@@ -236,6 +233,14 @@ class TopUpScreenViewModel(
                 cardPickerState = it.cardPickerState.copy(
                     cardSelectErrorEvent = consumed()
                 )
+            )
+        }
+    }
+
+    fun consumeBackNavEvent() {
+        _state.update {
+            it.copy(
+                requiredBackNavEvent = consumed
             )
         }
     }

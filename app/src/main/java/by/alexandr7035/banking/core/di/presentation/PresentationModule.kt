@@ -1,6 +1,8 @@
 package by.alexandr7035.banking.core.di.presentation
 
 import by.alexandr7035.banking.ui.app_host.AppViewModel
+import by.alexandr7035.banking.ui.core.notifications.TransactionNotificationHelper
+import by.alexandr7035.banking.ui.feature_account.action_send.SendMoneyViewModel
 import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreenViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.lock_screen.LockScreenViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.biometrics.EnableBiometricsViewModel
@@ -9,6 +11,7 @@ import by.alexandr7035.banking.ui.feature_cards.dialog_card_picker.CardPickerVie
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
+import by.alexandr7035.banking.ui.feature_contacts.dialog_contact_picker.ContactPickerDialogViewModel
 import by.alexandr7035.banking.ui.feature_home.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingViewModel
@@ -22,6 +25,12 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val presentationModule = module {
+    single {
+        TransactionNotificationHelper(
+            applicationContext = get()
+        )
+    }
+
     viewModel {
         OnboardingViewModel(
             passOnboardingUseCase = get()
@@ -158,6 +167,23 @@ val presentationModule = module {
         TransactionHistoryViewModel(
             getTransactionsUseCase = get(),
             observeTransactionStatusUseCase = get()
+        )
+    }
+
+    viewModel {
+        SendMoneyViewModel(
+            getSuggestedSendValuesForCardBalance = get(),
+            getCardByIdUseCase = get(),
+            getDefaultCardUseCase = get(),
+            getRecentContactUseCase = get(),
+            getContactByIdUseCase = get(),
+            sendMoneyUseCase = get(),
+        )
+    }
+
+    viewModel {
+        ContactPickerDialogViewModel(
+            getContactsUseCase = get()
         )
     }
 }

@@ -141,6 +141,7 @@ val dataModule = module {
     single<TransactionRepository> {
         TransactionRepositoryMock(
             workManager = get(),
+            contactsRepository = get(),
             transactionDao = get(),
             coroutineDispatcher = Dispatchers.IO
         )

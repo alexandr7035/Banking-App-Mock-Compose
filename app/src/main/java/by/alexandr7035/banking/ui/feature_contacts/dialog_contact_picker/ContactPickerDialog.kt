@@ -1,7 +1,5 @@
-package by.alexandr7035.banking.ui.feature_cards.dialog_card_picker
+package by.alexandr7035.banking.ui.feature_contacts.dialog_contact_picker
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -25,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -41,23 +36,23 @@ import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.core.EnterScreenEffect
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
-import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import by.alexandr7035.banking.ui.feature_contacts.components.ContactCard
+import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPickerDialog(
-    viewModel: CardPickerViewModel = koinViewModel(),
-    onDismissRequest: (selectedCardNumber: String?) -> Unit = {},
-    defaultSelectedCard: String? = null
+fun ContactPickerDialog(
+    viewModel: ContactPickerDialogViewModel = koinViewModel(),
+    onDismissRequest: (selectedContactId: Long?) -> Unit = {},
+    defaultSelectedContactId: Long? = null
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val dialogState = rememberModalBottomSheetState()
 
-    val selectedCardNumber = rememberSaveable<MutableState<String?>> {
+    val selectedContactId = rememberSaveable<MutableState<Long?>> {
         mutableStateOf(null)
     }
 
@@ -65,40 +60,37 @@ fun CardPickerDialog(
 
     ModalBottomSheet(
         onDismissRequest = {
-            onDismissRequest(selectedCardNumber.value)
+            onDismissRequest(selectedContactId.value)
         },
         sheetState = dialogState,
         containerColor = MaterialTheme.colorScheme.background
     ) {
-        CardPickerDialog_Ui(
+        ContactPickerDialog_Ui(
             state = state,
             onDismissRequest = {
                 scope.launch {
-                    selectedCardNumber.value = it
+                    selectedContactId.value = it
                     dialogState.hide()
-                    onDismissRequest(selectedCardNumber.value)
+                    onDismissRequest(selectedContactId.value)
                 }
             },
             onRequestExpand = {
                 scope.launch {
                     dialogState.expand()
                 }
-            },
-            onRequestLoad = {
-                viewModel.emitIntent(CardPickerIntent.LoadCards(defaultSelectedCard))
             }
         )
     }
 
     EnterScreenEffect {
-        viewModel.emitIntent(CardPickerIntent.LoadCards(defaultSelectedCard))
+        viewModel.emitIntent(ContactPickerDialogIntent.LoadContacts(defaultSelectedContactId))
     }
 }
 
 @Composable
-private fun CardPickerDialog_Ui(
-    state: CardPickerState,
-    onDismissRequest: (selectedCardNumber: String?) -> Unit = {},
+private fun ContactPickerDialog_Ui(
+    state: ContactPickerDialogState,
+    onDismissRequest: (selectedContactId: Long?) -> Unit = {},
     onRequestExpand: () -> Unit = {},
     onRequestLoad: () -> Unit = {}
 ) {
@@ -107,7 +99,7 @@ private fun CardPickerDialog_Ui(
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = stringResource(R.string.choose_card),
+            text = stringResource(R.string.choose_contact),
             style = TextStyle(
                 fontSize = 18.sp,
                 fontFamily = primaryFontFamily,
@@ -128,7 +120,7 @@ private fun CardPickerDialog_Ui(
                 }
             }
 
-            state.cards != null -> {
+            state.contacts != null -> {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(
@@ -137,21 +129,20 @@ private fun CardPickerDialog_Ui(
                         bottom = 48.dp
                     )
                 ) {
-                    if (state.cards.isNotEmpty()) {
-                        items(state.cards) { card ->
-                            PaymentCard(
-                                cardUi = card,
+                    if (state.contacts.isNotEmpty()) {
+                        items(state.contacts) { contact ->
+                            ContactCard(
+                                contact = contact,
+                                isSelected = contact.id == state.selectedContactId,
                                 onCLick = {
-                                    onDismissRequest(card.id)
-                                },
-                                modifier = Modifier,
-                                isSelected = card.id == state.selectedCardId
+                                    onDismissRequest(contact.id)
+                                }
                             )
                         }
                     } else {
                         item {
                             Text(
-                                text = "You have no added cards",
+                                text = stringResource(R.string.you_have_no_contacts),
                                 style = TextStyle(
                                     fontSize = 24.sp,
                                     fontFamily = primaryFontFamily,
@@ -190,23 +181,23 @@ private fun CardPickerDialog_Ui(
 
 @Preview
 @Composable
-fun CardPickerDialog_Preview() {
+fun ContactPickerDialog_Preview() {
     ScreenPreview {
-        CardPickerDialog_Ui(
-            state = CardPickerState(
-                cards = List(4) { CardUi.mock() }
+        ContactPickerDialog_Ui(
+            state = ContactPickerDialogState(
+                contacts = List(4) { ContactUi.mock() }
             ))
     }
 }
 
 @Preview
 @Composable
-fun CardPickerDialog_Loading_Preview() {
+fun ContactPickerDialog_Loading_Preview() {
     ScreenPreview {
-        CardPickerDialog_Ui(
-            state = CardPickerState(
+        ContactPickerDialog_Ui(
+            state = ContactPickerDialogState(
                 isLoading = true,
-                cards = emptyList()
+                contacts = emptyList()
             )
         )
     }
@@ -214,12 +205,12 @@ fun CardPickerDialog_Loading_Preview() {
 
 @Preview
 @Composable
-fun CardPickerDialog_Error_Preview() {
+fun ContactPickerDialog_Error_Preview() {
     ScreenPreview {
-        CardPickerDialog_Ui(
-            state = CardPickerState(
+        ContactPickerDialog_Ui(
+            state = ContactPickerDialogState(
                 isLoading = false,
-                error = UiText.DynamicString("Failed to load cards")
+                error = UiText.DynamicString("Failed to load contacts")
             )
         )
     }
@@ -227,12 +218,12 @@ fun CardPickerDialog_Error_Preview() {
 
 @Preview
 @Composable
-fun CardPickerDialog_NoCards_Preview() {
+fun ContactPickerDialog_NoContacts_Preview() {
     ScreenPreview {
-        CardPickerDialog_Ui(
-            state = CardPickerState(
+        ContactPickerDialog_Ui(
+            state = ContactPickerDialogState(
                 isLoading = false,
-                cards = emptyList()
+                contacts = emptyList()
             )
         )
     }

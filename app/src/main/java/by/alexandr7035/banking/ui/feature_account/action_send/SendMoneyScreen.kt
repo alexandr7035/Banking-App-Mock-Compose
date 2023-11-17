@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_account.action_topup
+package by.alexandr7035.banking.ui.feature_account.action_send
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -41,26 +41,30 @@ import by.alexandr7035.banking.ui.core.EnterScreenEffect
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.AmountPickersState
+import by.alexandr7035.banking.ui.feature_account.ContactPickerState
 import by.alexandr7035.banking.ui.feature_account.components.BalanceGridPicker
 import by.alexandr7035.banking.ui.feature_account.components.BalanceSliderPicker
 import by.alexandr7035.banking.ui.feature_cards.components.PanelCardPicker
 import by.alexandr7035.banking.ui.feature_cards.dialog_card_picker.CardPickerDialog
+import by.alexandr7035.banking.ui.feature_contacts.components.ContactPicker
+import by.alexandr7035.banking.ui.feature_contacts.dialog_contact_picker.ContactPickerDialog
+import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import de.palm.composestateevents.NavigationEventEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun TopUpScreen(
-    viewModel: TopUpScreenViewModel = koinViewModel(),
+fun SendMoneyScreen(
+    viewModel: SendMoneyViewModel = koinViewModel(),
     selectedCardId: String? = null,
     onBack: () -> Unit
 ) {
     val snackbarHostState = LocalScopedSnackbarState.current
     val context = LocalContext.current
-
     val state = viewModel.state.collectAsStateWithLifecycle().value
-    TopUpScreen_Ui(
+
+    SendMoneyScreen_Ui(
         state = state,
         onIntent = { viewModel.emitIntent(it) },
         onBack = onBack
@@ -73,6 +77,13 @@ fun TopUpScreen(
         snackbarHostState.show(it.asUiTextError().asString(context), SnackBarMode.Negative)
     }
 
+    EventEffect(
+        event = state.contactPickerState.contactSelectedErrorEvent,
+        onConsumed = viewModel::consumeLoadContactErrorEvent
+    ) {
+        snackbarHostState.show(it.asUiTextError().asString(context), SnackBarMode.Negative)
+    }
+
     NavigationEventEffect(
         event = state.requiredBackNavEvent,
         onConsumed = viewModel::consumeBackNavEvent
@@ -81,14 +92,15 @@ fun TopUpScreen(
     }
 
     EnterScreenEffect {
-        viewModel.emitIntent(TopUpScreenIntent.EnterScreen(selectedCardId = selectedCardId))
+        viewModel.emitIntent(SendMoneyScreenIntent.EnterScreen(selectedCardId = selectedCardId))
     }
 }
 
+
 @Composable
-private fun TopUpScreen_Ui(
-    state: TopUpScreenState,
-    onIntent: (TopUpScreenIntent) -> Unit = {},
+private fun SendMoneyScreen_Ui(
+    state: SendMoneyScreenState,
+    onIntent: (SendMoneyScreenIntent) -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -102,7 +114,7 @@ private fun TopUpScreen_Ui(
             ScreenHeader(toolbar = {
                 SecondaryToolBar(
                     onBack = { onBack() },
-                    title = UiText.StringResource(R.string.top_up),
+                    title = UiText.StringResource(R.string.send_money),
                     containerColor = Color.Transparent,
                     contentColor = Color.White,
                     modifier = Modifier
@@ -114,14 +126,42 @@ private fun TopUpScreen_Ui(
                     selectedCard = state.cardPickerState.selectedCard,
                     isLoading = state.cardPickerState.isLoading,
                     onCardPickerClick = {
-                        onIntent(TopUpScreenIntent.ToggleCardPicker(show = true))
+                        onIntent(SendMoneyScreenIntent.ToggleCardPicker(show = true))
                     })
             }
 
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = "Enter Nominal", style = TextStyle(
+                text = stringResource(R.string.send_to),
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontFamily = primaryFontFamily,
+                    fontWeight = FontWeight(500),
+                    color = MaterialTheme.colorScheme.primary,
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            ContactPicker(
+                selectedContact = state.contactPickerState.selectedContact,
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth(),
+                onChooseContactClick = {
+                    onIntent(SendMoneyScreenIntent.ToggleContactPicker(show = true))
+                },
+                isLoading = state.contactPickerState.isLoading
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.enter_nominal), style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
                     fontWeight = FontWeight.Medium,
@@ -137,24 +177,31 @@ private fun TopUpScreen_Ui(
                 modifier = Modifier.padding(horizontal = 24.dp),
                 selectedValue = state.amountState.selectedAmount,
                 onValueSelected = {
-                    onIntent(TopUpScreenIntent.UpdateSelectedValue(it))
-                })
-
-            Spacer(Modifier.height(24.dp))
-
-            BalanceGridPicker(
-                proposedValues = state.amountState.proposedValues, selectedValue = state.amountState.selectedAmount, onValueSelected = {
-                    onIntent(TopUpScreenIntent.UpdateSelectedValue(it))
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                    onIntent(SendMoneyScreenIntent.UpdateSelectedValue(it))
+                },
+                pickerEnabled = state.amountState.pickersEnabled,
+                maxValue = state.amountState.maxAmount,
+                error = state.amountState.error,
             )
+
+            if (state.amountState.proposedValues.isNotEmpty()) {
+                Spacer(Modifier.height(24.dp))
+                BalanceGridPicker(
+                    proposedValues = state.amountState.proposedValues, selectedValue = state.amountState.selectedAmount, onValueSelected = {
+                        onIntent(SendMoneyScreenIntent.UpdateSelectedValue(it))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    pickerEnabled = state.amountState.pickersEnabled
+                )
+            }
 
             Spacer(Modifier.weight(1f))
             Spacer(Modifier.height(36.dp))
 
             PrimaryButton(
-                onClick = { onIntent(TopUpScreenIntent.ProceedClick) },
+                onClick = { onIntent(SendMoneyScreenIntent.ProceedClick) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
@@ -178,21 +225,33 @@ private fun TopUpScreen_Ui(
     if (state.cardPickerState.showCardPicker) {
         CardPickerDialog(
             onDismissRequest = { selectedCardId ->
-                onIntent(TopUpScreenIntent.ToggleCardPicker(show = false))
+                onIntent(SendMoneyScreenIntent.ToggleCardPicker(show = false))
                 selectedCardId?.let {
-                    onIntent(TopUpScreenIntent.ChooseCard(selectedCardId))
+                    onIntent(SendMoneyScreenIntent.ChooseCard(selectedCardId))
                 }
             },
             defaultSelectedCard = state.cardPickerState.selectedCard?.id
         )
     }
 
+    if (state.contactPickerState.showContactPicker) {
+        ContactPickerDialog(
+            onDismissRequest = { selectedContactId ->
+                onIntent(SendMoneyScreenIntent.ToggleContactPicker(show = false))
+                selectedContactId?.let {
+                    onIntent(SendMoneyScreenIntent.ChooseContact(selectedContactId))
+                }
+            },
+            defaultSelectedContactId = state.contactPickerState.selectedContact?.id
+        )
+    }
+
     if (state.showSuccessDialog) {
         SuccessDialog(
-            title = UiText.StringResource(R.string.top_up_successfully),
-            message = UiText.StringResource(R.string.topup_exaplanation),
+            title = UiText.StringResource(R.string.transaction_submitted),
+            message = UiText.StringResource(R.string.transaction_explanation),
             onDismiss = {
-                onIntent(TopUpScreenIntent.DismissSuccessDialog)
+                onIntent(SendMoneyScreenIntent.DismissSuccessDialog)
             }
         )
     }
@@ -200,16 +259,20 @@ private fun TopUpScreen_Ui(
 
 @Composable
 @Preview
-fun TopUpScreen_Preview() {
+fun SendMoneyScreen_Preview() {
     ScreenPreview {
         val amounts = setOf(100, 200, 300, 400, 500, 600).map {
             MoneyAmount(it.toFloat())
         }.toSet()
 
-        TopUpScreen_Ui(
-            state = TopUpScreenState(
+        SendMoneyScreen_Ui(
+            SendMoneyScreenState(
                 amountState = AmountPickersState(
-                    selectedAmount = MoneyAmount(100f), proposedValues = amounts
+                    selectedAmount = MoneyAmount(100f),
+                    proposedValues = amounts
+                ),
+                contactPickerState = ContactPickerState(
+                    selectedContact = ContactUi.mock()
                 )
             )
         )

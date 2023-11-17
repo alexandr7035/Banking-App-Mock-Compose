@@ -3,6 +3,7 @@ package by.alexandr7035.banking.data.transactions
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.map
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.NetworkType
@@ -13,6 +14,8 @@ import by.alexandr7035.banking.data.transactions.db.TransactionDao
 import by.alexandr7035.banking.data.transactions.db.TransactionEntity
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
+import by.alexandr7035.banking.domain.features.contacts.Contact
+import by.alexandr7035.banking.domain.features.contacts.ContactsRepository
 import by.alexandr7035.banking.domain.features.transactions.TransactionRepository
 import by.alexandr7035.banking.domain.features.transactions.model.Transaction
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionRowPayload
@@ -23,14 +26,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 class TransactionRepositoryMock(
     private val workManager: WorkManager,
-//    private val transactionWorkerFactory: (WorkerParameters) -> TransactionWorker,
     private val transactionDao: TransactionDao,
-    private val coroutineDispatcher: CoroutineDispatcher
+    private val coroutineDispatcher: CoroutineDispatcher,
+    private val contactsRepository: ContactsRepository
 ) : TransactionRepository {
-    override fun getTransactions(filterByType: TransactionType?): Flow<PagingData<Transaction>> {
+    override suspend fun getTransactions(filterByType: TransactionType?): Flow<PagingData<Transaction>> {
+        val contacts = contactsRepository.getContacts()
+
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_MAX_SIZE,
@@ -42,7 +48,11 @@ class TransactionRepositoryMock(
                     transactionDao = transactionDao
                 )
             }
-        ).flow
+        ).flow.map {
+            it.map { cachedTx ->
+                mapTransactionFromCache(cachedTx, contacts)
+            }
+        }
     }
 
     override fun getTransactionStatusFlow(transactionId: Long): Flow<TransactionStatus> {
@@ -75,15 +85,35 @@ class TransactionRepositoryMock(
 
         val workRequest =
             OneTimeWorkRequestBuilder<TransactionWorker>()
-                .setConstraints(Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .setRequiresBatteryNotLow(false)
-                    .build())
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiresBatteryNotLow(false)
+                        .build()
+                )
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setInputData(data)
                 .build()
 
         workManager.enqueue(workRequest)
+    }
+
+    private fun mapTransactionFromCache(
+        entity: TransactionEntity,
+        contacts: List<Contact>
+    ): Transaction {
+        return Transaction(
+            id = entity.id,
+            type = entity.type,
+            value = entity.value,
+            recentStatus = entity.recentStatus,
+            linkedContact = when (entity.type) {
+                TransactionType.TOP_UP -> null
+                else -> entity.linkedContactId?.let { id -> contacts.find { contact -> contact.id == id } }
+            },
+            createdDate = entity.createdDate,
+            updatedStatusDate = entity.updatedStatusDate
+        )
     }
 
     companion object {

@@ -70,6 +70,7 @@ fun SuccessDialog(
                         fontFamily = primaryFontFamily,
                         fontWeight = FontWeight(600),
                         color = Color(0xFF333333),
+                        textAlign = TextAlign.Center
                     )
                 )
 

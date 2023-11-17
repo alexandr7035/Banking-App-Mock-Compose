@@ -46,19 +46,15 @@ class AccountRepositoryMock(
 
     override suspend fun topUpCard(cardId: String, amount: MoneyAmount) {
         val cardEntity = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
-        delay(MOCK_DELAY)
         val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance + amount.value)
         cardsDao.updateCard(updated)
-//        transactionsDao.addTransaction(
-//            TransactionEntity(
-//                type = TransactionType.TOP_UP,
-//                value = amount,
-//                recentStatus = TransactionStatus.COMPLETED,
-//                createdDate = System.currentTimeMillis(),
-//                updatedStatusDate = System.currentTimeMillis(),
-//                cardId = cardId
-//            )
-//        )
+    }
+
+    override suspend fun sendFromCard(cardId: String, amount: MoneyAmount, contactId: Long) {
+        val cardEntity = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+        if (cardEntity.recentBalance < amount.value) throw AppError(ErrorType.INSUFFICIENT_CARD_BALANCE)
+        val updated = cardEntity.copy(recentBalance = cardEntity.recentBalance - amount.value)
+        cardsDao.updateCard(updated)
     }
 
     private suspend fun calculateBalance(): MoneyAmount {

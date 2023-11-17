@@ -16,7 +16,8 @@ val workerModule = module {
             appContext = get(),
             workerParams = get(),
             transactionDao = get(),
-            accountRepository = get()
+            accountRepository = get(),
+            transactionNotificationHelper = get()
         )
     }
 }

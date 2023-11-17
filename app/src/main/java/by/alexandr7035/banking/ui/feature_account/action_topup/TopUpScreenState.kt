@@ -1,11 +1,10 @@
 package by.alexandr7035.banking.ui.feature_account.action_topup
 
-import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_cards.model.CardUi
+import by.alexandr7035.banking.ui.feature_account.AmountPickersState
+import by.alexandr7035.banking.ui.feature_account.CardPickerState
 import de.palm.composestateevents.StateEvent
-import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 
 data class TopUpScreenState(
@@ -14,22 +13,11 @@ data class TopUpScreenState(
     val isLoading: Boolean = false,
     val error: UiText? = null,
     val topUpSubmittedEvent: StateEvent = consumed,
-    val showSuccessDialog: Boolean = false
+    val showSuccessDialog: Boolean = false,
+    val requiredBackNavEvent: StateEvent = consumed
 ) {
-    data class CardPickerState(
-        val isLoading: Boolean = false,
-        val showCardPicker: Boolean = false,
-        val selectedCard: CardUi? = null,
-        val cardSelectErrorEvent: StateEventWithContent<ErrorType> = consumed()
-    )
-
-    data class AmountPickersState(
-        val selectedAmount: MoneyAmount = MoneyAmount(0F),
-        val proposedValues: Set<MoneyAmount> = emptySet(),
-    )
-
     val proceedButtonEnabled
-            get(): Boolean {
-                return amountState.selectedAmount != MoneyAmount(0f) && cardPickerState.selectedCard != null
-            }
+        get(): Boolean {
+            return amountState.selectedAmount != MoneyAmount(0f) && cardPickerState.selectedCard != null
+        }
 }
