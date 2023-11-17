@@ -44,12 +44,12 @@ class TransactionSource(
         val startPosition = (currentPage - 1) * params.loadSize
 
         return when (filterByType) {
-            null -> transactionDao.getTransactionFromCacheWithPagination(
+            null -> transactionDao.getTransactionList(
                 startPosition = startPosition,
                 loadSize = params.loadSize
             )
 
-            else -> transactionDao.getTransactionFromCacheByTypeWithPagination(
+            else -> transactionDao.getTransactionList(
                 filterType = filterByType,
                 startPosition = startPosition,
                 loadSize = params.loadSize
