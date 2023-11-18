@@ -20,6 +20,6 @@ class GetHomeCardsUseCase(
     }
 
     companion object {
-        private const val DISPLAYED_COUNT = 2
+        private const val DISPLAYED_COUNT = 3
     }
 }
