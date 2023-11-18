@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,9 +47,12 @@ import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
-import by.alexandr7035.banking.ui.feature_logout.LogoutState
+import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingEntry
+import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingList
+import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingListItem
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
@@ -127,137 +131,87 @@ private fun ProfileScreen_Ui(
 ) {
     Column(
         modifier = modifier.then(
-            Modifier.verticalScroll(rememberScrollState())
+            Modifier
+                .verticalScroll(rememberScrollState())
         )
     ) {
         ScreenHeader(toolbar = { ProfileToolBar() }) {
             ProfileCard(profile = state.profile, isLoading = state.isProfileLoading)
         }
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        Row(
             modifier = Modifier
-                .wrapContentHeight()
-                .padding(
-                    start = 24.dp, end = 24.dp, top = 24.dp, bottom = 32.dp
-                ),
+                .padding(24.dp)
+                .fillMaxWidth()
+                .height(intrinsicSize = IntrinsicSize.Max),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-            Row(
+            SettingButton(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(intrinsicSize = IntrinsicSize.Max),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .weight(1f)
+                    .fillMaxHeight(),
+                icon = painterResource(id = R.drawable.ic_scan_qr),
+                text = stringResource(R.string.scan_qr),
+                showArrow = false
             ) {
-                SettingButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    icon = painterResource(id = R.drawable.ic_scan_qr),
-                    text = stringResource(R.string.scan_qr),
-                    showArrow = false
-                ) {
-                    onSettingEntryClick.invoke(SettingEntry.ScanQR)
-                }
-
-                SettingButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    icon = painterResource(id = R.drawable.ic_my_qr),
-                    text = stringResource(R.string.my_qr),
-                    showArrow = false
-                ) {
-                    onSettingEntryClick.invoke(SettingEntry.MyQR)
-                }
-            }
-
-            Text(
-                text = stringResource(R.string.account), style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF333333),
-                ), modifier = Modifier.padding(top = 8.dp)
-            )
-
-            SettingButton(
-                modifier = Modifier.fillMaxWidth(),
-                icon = painterResource(id = R.drawable.ic_profile_filled),
-                text = stringResource(R.string.change_personal_profile)
-            ) {
-                onSettingEntryClick.invoke(SettingEntry.ChangeProfile)
+                onSettingEntryClick.invoke(SettingEntry.ScanQR)
             }
 
             SettingButton(
-                modifier = Modifier.fillMaxWidth(),
-                icon = painterResource(id = R.drawable.ic_email_filled),
-                text = stringResource(R.string.change_email_address)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                icon = painterResource(id = R.drawable.ic_my_qr),
+                text = stringResource(R.string.my_qr),
+                showArrow = false
             ) {
-                onSettingEntryClick.invoke(SettingEntry.ChangeEmail)
-            }
-
-            SettingButton(
-                modifier = Modifier.fillMaxWidth(),
-                icon = painterResource(id = R.drawable.ic_lock_filled),
-                text = stringResource(R.string.change_password)
-            ) {
-                onSettingEntryClick.invoke(SettingEntry.ChangePassword)
-            }
-
-            Text(
-                text = stringResource(R.string.more_settings), style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF333333),
-                ), modifier = Modifier.padding(top = 8.dp)
-            )
-
-            SettingButton(
-                modifier = Modifier.fillMaxWidth(),
-                icon = painterResource(id = R.drawable.ic_lock_filled_variant),
-                text = stringResource(R.string.account_security)
-            ) {
-                onSettingEntryClick.invoke(SettingEntry.AccountSecurity)
-            }
-
-            SettingButton(
-                modifier = Modifier.fillMaxWidth(),
-                icon = painterResource(id = R.drawable.ic_help),
-                text = stringResource(R.string.help_and_privacy)
-            ) {
-                onSettingEntryClick.invoke(SettingEntry.Help)
-            }
-
-            Box(
-                Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth(), Alignment.Center
-            ) {
-
-                TextButton(
-                    onClick = {
-                        onLogoutIntent(
-                            LogoutIntent.ToggleLogoutDialog(
-                                isShown = true
-                            )
-                        )
-                    },
-                ) {
-                    Text(
-                        text = stringResource(R.string.log_out), style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = primaryFontFamily,
-                            fontWeight = FontWeight(600),
-                            color = Color(0xFFFF552F),
-                            textAlign = TextAlign.Center,
-                            textDecoration = TextDecoration.Underline,
-                        )
-                    )
-                }
+                onSettingEntryClick.invoke(SettingEntry.MyQR)
             }
         }
+
+        SettingList(
+            items = listOf(
+                SettingListItem.Section(UiText.DynamicString("More")),
+                SettingListItem.Setting(SettingEntry.Help),
+            ),
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .fillMaxWidth()
+                .wrapContentHeight()
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Box(
+            Modifier
+                .wrapContentHeight()
+                .fillMaxWidth(), Alignment.Center
+        ) {
+
+            TextButton(
+                onClick = {
+                    onLogoutIntent(
+                        LogoutIntent.ToggleLogoutDialog(
+                            isShown = true
+                        )
+                    )
+                },
+            ) {
+                Text(
+                    text = stringResource(R.string.log_out), style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight(600),
+                        color = Color(0xFFFF552F),
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline,
+                    )
+                )
+            }
+
+        }
+
+        Spacer(Modifier.height(32.dp))
     }
 
 }
@@ -275,7 +229,9 @@ private fun ProfileToolBar() {
                     color = Color(0xFFFFFFFF),
                 )
             )
-        }, colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent), modifier = Modifier.wrapContentHeight()
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+        modifier = Modifier.wrapContentHeight().padding(top=16.dp)
     )
 }
 
@@ -287,22 +243,6 @@ fun ProfileScreen_Preview() {
             modifier = Modifier.fillMaxSize(),
             state = ProfileScreenState(
                 profile = ProfileUi.mock()
-            )
-        )
-    }
-}
-
-
-@Preview
-@Composable
-fun ProfileScreen_Logout_Preview() {
-    ScreenPreview {
-        ProfileScreen_Ui(
-            modifier = Modifier.fillMaxSize(),
-            state = ProfileScreenState(
-                logoutState = LogoutState(
-                    showLogoutDialog = true
-                )
             )
         )
     }
