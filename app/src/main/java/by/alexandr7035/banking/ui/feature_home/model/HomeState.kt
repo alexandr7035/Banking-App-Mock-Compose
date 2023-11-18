@@ -3,7 +3,7 @@ package by.alexandr7035.banking.ui.feature_home.model
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
-import by.alexandr7035.banking.ui.feature_profile.ProfileUi
+import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

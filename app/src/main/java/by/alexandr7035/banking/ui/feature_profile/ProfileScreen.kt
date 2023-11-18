@@ -50,6 +50,8 @@ import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
+import by.alexandr7035.banking.ui.feature_profile.components.ProfileCard
+import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingEntry
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingList
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingListItem

@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_profile
+package by.alexandr7035.banking.ui.feature_profile.model
 
 import by.alexandr7035.banking.domain.features.profile.model.CompactProfile
 import by.alexandr7035.banking.domain.features.profile.model.ProfileTier

@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_profile
+package by.alexandr7035.banking.ui.feature_profile.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
+import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
@@ -130,7 +131,6 @@ private fun ProfileCard_Content(profile: ProfileUi) {
             )
         }
 
-        // TODO fill max space
         Spacer(modifier = Modifier.width(16.dp))
 
         Box(
@@ -154,7 +154,7 @@ private fun ProfileCard_Content(profile: ProfileUi) {
 }
 
 @Composable
-fun ProfileCard_Skeleton() {
+private fun ProfileCard_Skeleton() {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
