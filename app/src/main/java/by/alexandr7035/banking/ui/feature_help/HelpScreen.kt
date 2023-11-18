@@ -6,33 +6,28 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +43,7 @@ fun HelpScreen(
     onBack: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -82,16 +78,24 @@ fun HelpScreen(
 
         val helpItems = listOf(
             HelpItem(
-                title = "How to1",
-                text = "How to Looong looong text",
+                title = UiText.StringResource(R.string.help_item_account_level),
+                text = UiText.StringResource(R.string.help_item_lorem)
             ),
             HelpItem(
-                title = "How to2",
-                text = "How to Looong looong text",
+                title = UiText.StringResource(R.string.help_item_service_fees),
+                text = UiText.StringResource(R.string.help_item_lorem)
             ),
             HelpItem(
-                title = "How to3",
-                text = "How to Looong looong text",
+                title = UiText.StringResource(R.string.help_item_invite_friends),
+                text = UiText.StringResource(R.string.help_item_lorem)
+            ),
+            HelpItem(
+                title = UiText.StringResource(R.string.help_item_family_account),
+                text = UiText.StringResource(R.string.help_item_lorem)
+            ),
+            HelpItem(
+                title = UiText.StringResource(R.string.help_item_notifications),
+                text = UiText.StringResource(R.string.help_item_lorem)
             )
         )
 
@@ -102,10 +106,11 @@ fun HelpScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {
+
             val filtered = if (searchQuery.value.isNotBlank()) {
                 helpItems.filter {
-                    val text = it.text.uppercase()
-                    val title = it.title.uppercase()
+                    val text = it.text.asString(context).uppercase()
+                    val title = it.title.asString(context).uppercase()
                     val query = searchQuery.value.uppercase()
                     text.contains(query) || title.contains(query)
                 }
@@ -156,7 +161,7 @@ private fun HelpItemCard(
             }
 
             Text(
-                text = item.title,
+                text = item.title.asString(),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = primaryFontFamily,
@@ -176,7 +181,7 @@ private fun HelpItemCard(
 
         if (expanded) {
             Text(
-                text = item.text,
+                text = item.text.asString(),
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 26.sp,
