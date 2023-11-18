@@ -31,7 +31,7 @@ fun AppBottomNav(navController: NavController) {
     val destinationsWithBottomNav = listOf(
         NavEntries.Home,
         NavEntries.History,
-        NavEntries.Statistics,
+//        NavEntries.Statistics,
         NavEntries.Profile,
     )
 

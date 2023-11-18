@@ -145,7 +145,7 @@ sealed class NavEntries(
         val primaryDestinations = listOf(
             Home.route,
             History.route,
-            Statistics.route,
+//            Statistics.route,
             Profile.route,
         )
     }
