@@ -126,12 +126,10 @@ fun SearchField(
                                     focusManager.clearFocus()
                                     keyboardController?.hide()
                                 },
-                                modifier = Modifier.size(24.dp)
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_close_variant),
                                     contentDescription = stringResource(R.string.clear_search),
-                                    modifier = Modifier.size(24.dp),
                                     tint = Color(0xFF999999)
                                 )
                             }
