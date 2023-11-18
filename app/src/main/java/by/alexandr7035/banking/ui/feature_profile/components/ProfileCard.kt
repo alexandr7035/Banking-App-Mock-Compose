@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.components.cards.PrimaryCard
 import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
 import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -46,22 +47,11 @@ fun ProfileCard(
     profile: ProfileUi?,
     isLoading: Boolean
 ) {
-    val shape = RoundedCornerShape(size = 10.dp)
-
-    Box(
+    PrimaryCard(
         modifier = Modifier
-            .shadow(
-                elevation = 32.dp,
-                spotColor = Color.Gray,
-                ambientColor = Color.Gray,
-                shape = shape,
-            )
-            .background(
-                color = Color(0xFFFFFFFF), shape = shape
-            )
-            .padding(16.dp)
-            .height(intrinsicSize = IntrinsicSize.Max)
             .fillMaxWidth()
+            .height(intrinsicSize = IntrinsicSize.Max),
+        paddingValues = PaddingValues(16.dp)
     ) {
         when {
             profile != null -> ProfileCard_Content(profile = profile)
