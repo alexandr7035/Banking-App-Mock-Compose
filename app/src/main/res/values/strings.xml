@@ -97,4 +97,7 @@
     <string name="home">Home</string>
     <string name="profile">Profile</string>
     <string name="history">History</string>
+    <string name="logout_now">Logout Now</string>
+    <string name="want_to_logout">Want to Logout ?</string>
+    <string name="logout_explanation">You will back to login screen if you click the logout button</string>
 </resources>
