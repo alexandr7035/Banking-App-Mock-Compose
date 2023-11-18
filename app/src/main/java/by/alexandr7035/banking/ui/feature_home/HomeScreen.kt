@@ -35,13 +35,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavDestinations
 import by.alexandr7035.banking.ui.components.DashedButton
-import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
-import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
-import by.alexandr7035.banking.ui.components.header.ScreenHeader
-import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.ScreenSectionDivider
+import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
+import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
+import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
@@ -62,7 +62,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    onGoToDestination: (navEntry: NavEntries) -> Unit = {},
+    onGoToDestination: (navEntry: NavDestinations) -> Unit = {},
     onAccountAction: (AccountAction) -> Unit = {},
     onCardDetails: (cardId: String) -> Unit = {},
     onSavingDetails: (id: Long) -> Unit = {}
@@ -95,7 +95,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreen_Ui(
     state: HomeState.Success,
-    onGoToDestination: (navEntry: NavEntries) -> Unit = {},
+    onGoToDestination: (navEntry: NavDestinations) -> Unit = {},
     onCardDetails: (cardId: String) -> Unit = {},
     onSavingDetails: (id: Long) -> Unit = {},
     onAccountAction: (AccountAction) -> Unit = {},
@@ -130,7 +130,7 @@ fun HomeScreen_Ui(
             modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
             title = UiText.StringResource(R.string.your_cards),
             onAction = {
-                onGoToDestination.invoke(NavEntries.CardList)
+                onGoToDestination.invoke(NavDestinations.RootGraph.CardList)
             }
         )
 
@@ -152,7 +152,7 @@ fun HomeScreen_Ui(
         } else {
             DashedButton(
                 onClick = {
-                    onGoToDestination.invoke(NavEntries.AddCard)
+                    onGoToDestination.invoke(NavDestinations.RootGraph.AddCard)
                 },
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
@@ -169,7 +169,7 @@ fun HomeScreen_Ui(
                 modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                 title = UiText.StringResource(R.string.your_saving),
                 onAction = {
-                    onGoToDestination.invoke(NavEntries.SavingsList)
+                    onGoToDestination.invoke(NavDestinations.RootGraph.SavingsList)
                 }
             )
 

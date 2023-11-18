@@ -35,15 +35,14 @@ import androidx.navigation.compose.rememberNavController
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.app_host.host_utils.ScopedSnackBarState
-import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
+import by.alexandr7035.banking.ui.app_host.navigation.AppBottomNav
+import by.alexandr7035.banking.ui.app_host.navigation.AppNavHost
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavDestinations
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.snackbar.ResultSnackBar
-import by.alexandr7035.banking.ui.app_host.navigation.AppBottomNav
-import by.alexandr7035.banking.ui.app_host.navigation.AppNavHost
 import by.alexandr7035.banking.ui.feature_app_lock.lock_screen.LockScreen
-import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.biometrics.EnableBiometricsScreen
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
 
@@ -52,7 +51,9 @@ fun AppContainerScreen(viewModel: AppViewModel = koinViewModel()) {
 
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val shouldShowBottomNav = NavEntries.primaryDestinations.contains(navBackStackEntry?.destination?.route)
+    val shouldShowBottomNav = NavDestinations
+        .primaryDestinationsRoutes()
+        .contains(navBackStackEntry?.destination?.route)
 
     val snackBarHostState = remember { SnackbarHostState() }
     val hostCoroutineScope = rememberCoroutineScope()

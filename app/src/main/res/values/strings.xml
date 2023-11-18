@@ -94,4 +94,7 @@
     <string name="send_to">Send to</string>
     <string name="you_have_no_contacts">You have no contacts</string>
     <string name="insufficient_card_balance">Insufficient card balance.</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="history">History</string>
 </resources>

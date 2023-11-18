@@ -21,19 +21,13 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavDestinations
 import by.alexandr7035.banking.ui.components.bottomnav.M2BottomNavigation
 import by.alexandr7035.banking.ui.components.bottomnav.M2BottomNavigationItem
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
 fun AppBottomNav(navController: NavController) {
-    val destinationsWithBottomNav = listOf(
-        NavEntries.Home,
-        NavEntries.History,
-//        NavEntries.Statistics,
-        NavEntries.Profile,
-    )
 
     M2BottomNavigation(
         modifier = Modifier
@@ -46,17 +40,17 @@ fun AppBottomNav(navController: NavController) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
-        destinationsWithBottomNav.forEach { navEntry ->
-            val isDestinationSelected = currentDestination?.hierarchy?.any { it.route == navEntry.route } == true
+        NavDestinations.primaryDestinations().forEach { destination ->
+            val isDestinationSelected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
 
             val icon = if (isDestinationSelected) {
-                painterResource(id = navEntry.navIcons!!.selected)
+                painterResource(id = destination.navIcons.selected)
             } else {
-                painterResource(id = navEntry.navIcons!!.unselected)
+                painterResource(id = destination.navIcons.unselected)
             }
 
             M2BottomNavigationItem(selected = isDestinationSelected, onClick = {
-                navController.navigate(navEntry.route) {
+                navController.navigate(destination.route) {
                     // Pop up to the start destination of the graph to
                     // avoid building up a large stack of destinations
                     // on the back stack as users select items
@@ -81,7 +75,7 @@ fun AppBottomNav(navController: NavController) {
                 )
             }, label = {
                 Text(
-                    text = navEntry.label, style = TextStyle(
+                    text = destination.label.asString(), style = TextStyle(
                         fontSize = 12.sp,
                         lineHeight = 14.sp,
                         fontFamily = primaryFontFamily,

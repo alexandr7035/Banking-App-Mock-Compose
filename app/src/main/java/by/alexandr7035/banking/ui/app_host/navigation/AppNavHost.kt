@@ -1,15 +1,10 @@
 package by.alexandr7035.banking.ui.app_host.navigation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,10 +13,9 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.app_host.navigation.graphs.createAppLockGraph
-import by.alexandr7035.banking.ui.app_host.navigation.graphs.loginGraph
 import by.alexandr7035.banking.ui.app_host.navigation.graphs.signUpGraph
 import by.alexandr7035.banking.ui.app_host.navigation.model.ConditionalNavigation
-import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavDestinations
 import by.alexandr7035.banking.ui.core.EnterScreenEffect
 import by.alexandr7035.banking.ui.feature_account.action_send.SendMoneyScreen
 import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreen
@@ -30,6 +24,7 @@ import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsS
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.HomeScreen
 import by.alexandr7035.banking.ui.feature_home.model.AccountAction
+import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
@@ -47,23 +42,23 @@ fun AppNavHost(
     // Conditional navigation
     EnterScreenEffect() {
         if (conditionalNavigation.requireLogin) {
-            navController.navigate(NavEntries.Login.route) {
-                popUpTo(NavEntries.Graphs.HomeGraph.route) {
+            navController.navigate(NavDestinations.Login.route) {
+                popUpTo(NavDestinations.RootGraph.route) {
                     inclusive = true
                 }
             }
 
             if (conditionalNavigation.requireOnboarding) {
-                navController.navigate(NavEntries.Wizard.route) {
-                    popUpTo(NavEntries.Login.route) {
+                navController.navigate(NavDestinations.Onboarding.route) {
+                    popUpTo(NavDestinations.Login.route) {
                         inclusive = true
                     }
                 }
             }
         } else {
             if (conditionalNavigation.requireCreateAppLock) {
-                navController.navigate(NavEntries.Graphs.CreateAppLock.route) {
-                    popUpTo(NavEntries.Graphs.HomeGraph.route) {
+                navController.navigate(NavDestinations.SetupAppLockGraph.route) {
+                    popUpTo(NavDestinations.RootGraph.route) {
                         inclusive = true
                     }
                 }
@@ -73,21 +68,25 @@ fun AppNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = NavEntries.Graphs.HomeGraph.route,
+        startDestination = NavDestinations.RootGraph.route,
         modifier = Modifier.padding(paddingValues)
     ) {
-        composable(NavEntries.Wizard.route) {
-            OnboardingScreen(
-                onGoToLogin = {
-                    navController.navigate(NavEntries.Login.route) {
-                        popUpTo(NavEntries.Wizard.route) {
+        signUpGraph(navController)
+        createAppLockGraph(navController)
+
+        composable(NavDestinations.Login.route) {
+            LoginScreen(
+                onLoginCompleted = {
+                    navController.navigate(route = NavDestinations.SetupAppLockGraph.route) {
+                        popUpTo(NavDestinations.Login.route) {
                             inclusive = true
                         }
                     }
                 },
-                onSignUp = {
-                    navController.navigate(NavEntries.Graphs.SignUpGraph.route) {
-                        popUpTo(NavEntries.Wizard.route) {
+                onGoToSignUp = {
+                    navController.navigate(NavDestinations.SignUpGraph.route) {
+                        // TODO check ux (onboarding)
+                        popUpTo(NavDestinations.Login.route) {
                             inclusive = true
                         }
                     }
@@ -95,82 +94,104 @@ fun AppNavHost(
             )
         }
 
-        signUpGraph(navController)
-        loginGraph(navController)
-        createAppLockGraph(navController)
+        composable(NavDestinations.Onboarding.route) {
+            OnboardingScreen(
+                onGoToLogin = {
+                    navController.navigate(NavDestinations.Login.route) {
+                        popUpTo(NavDestinations.Onboarding.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onSignUp = {
+                    navController.navigate(NavDestinations.SignUpGraph.route) {
+                        popUpTo(NavDestinations.Onboarding.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavDestinations.TermsAndConditions.route,
+        ) {
+            val title = stringResource(id = R.string.terms_and_conditions)
+            val url = "https://example.com"
+
+            WebViewScreen(
+                title = title,
+                url = url,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
 
         navigation(
-            startDestination = NavEntries.Home.route, route = NavEntries.Graphs.HomeGraph.route
+            startDestination = NavDestinations.RootGraph.Home.route,
+            route = NavDestinations.RootGraph.route
         ) {
-            composable(NavEntries.Home.route) {
+            composable(NavDestinations.RootGraph.Home.route) {
                 HomeScreen(
                     onGoToDestination = { navEntry ->
                         if (navEntry in listOf(
-                                NavEntries.CardList, NavEntries.AddCard, NavEntries.SavingsList
+                                NavDestinations.RootGraph.CardList,
+                                NavDestinations.RootGraph.AddCard,
+                                NavDestinations.RootGraph.SavingsList
                             )
                         ) {
                             navController.navigate(navEntry.route)
                         }
                     },
                     onCardDetails = { cardId ->
-                        navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                        val route = NavDestinations.RootGraph.CardDetails.route
+                        navController.navigate("${route}/${cardId}")
                     },
                     onSavingDetails = { id ->
-                        navController.navigate("${NavEntries.SavingDetails.route}/${id}")
+                        val route = NavDestinations.RootGraph.SavingDetails.route
+                        navController.navigate("${route}/${id}")
                     },
                     onAccountAction = {
                         when (it) {
                             AccountAction.TopUp -> {
-                                navController.navigate(NavEntries.AccountTopUp.route)
+                                navController.navigate(NavDestinations.RootGraph.AccountTopUp.route)
                             }
 
-                            AccountAction.Pay -> {
-
-                            }
-                            AccountAction.RequestMoney -> {
-
-                            }
                             AccountAction.SendMoney -> {
-                                navController.navigate(NavEntries.AccountSend.route)
+                                navController.navigate(NavDestinations.RootGraph.AccountSend.route)
                             }
+
+                            // TODO
+                            AccountAction.Pay -> {}
+                            AccountAction.RequestMoney -> {}
                         }
                     }
                 )
             }
 
-            composable(NavEntries.History.route) {
+            composable(NavDestinations.RootGraph.TransactionHistory.route) {
                 TransactionHistoryScreen()
             }
 
-            composable(NavEntries.Statistics.route) {
-                Box(
-                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = NavEntries.Statistics.label,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-            composable(NavEntries.Profile.route) { navBackResult ->
+            composable(NavDestinations.RootGraph.Profile.route) { navBackResult ->
                 ProfileScreen(
                     onLogoutCompleted = {
-                        navController.navigate(NavEntries.Login.route) {
-                            popUpTo(NavEntries.Graphs.HomeGraph.route) {
+                        navController.navigate(NavDestinations.Login.route) {
+                            popUpTo(NavDestinations.RootGraph.route) {
                                 inclusive = true
                             }
                         }
                     })
             }
 
-            composable(NavEntries.CardList.route) {
+            composable(NavDestinations.RootGraph.CardList.route) {
                 CardListScreen(
                     onAddCard = {
-                        navController.navigate(NavEntries.AddCard.route)
+                        navController.navigate(NavDestinations.RootGraph.AddCard.route)
                     },
                     onCardDetails = { cardId ->
-                        navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                        navController.navigate("${NavDestinations.RootGraph.CardDetails.route}/${cardId}")
                     },
                     onBack = {
                         navController.popBackStack()
@@ -178,14 +199,14 @@ fun AppNavHost(
                 )
             }
 
-            composable(NavEntries.AddCard.route) {
+            composable(NavDestinations.RootGraph.AddCard.route) {
                 AddCardScreen(onBack = {
                     navController.popBackStack()
                 })
             }
 
             composable(
-                route = "${NavEntries.CardDetails.route}/{cardId}", arguments = listOf(navArgument("cardId") { type = NavType.StringType })
+                route = "${NavDestinations.RootGraph.CardDetails.route}/{cardId}", arguments = listOf(navArgument("cardId") { type = NavType.StringType })
             ) { it ->
                 val cardId = it.arguments?.getString("cardId")!!
 
@@ -205,12 +226,12 @@ fun AppNavHost(
                             }
 
                             AccountAction.SendMoney -> {
-                                val route = "${NavEntries.AccountSend.route}?selectedCard=${cardId}"
+                                val route = "${NavDestinations.RootGraph.AccountSend.route}?selectedCard=${cardId}"
                                 navController.navigate(route)
                             }
 
                             AccountAction.TopUp -> {
-                                val route = "${NavEntries.AccountTopUp.route}?selectedCard=${cardId}"
+                                val route = "${NavDestinations.RootGraph.AccountTopUp.route}?selectedCard=${cardId}"
                                 navController.navigate(route)
                             }
                         }
@@ -219,20 +240,20 @@ fun AppNavHost(
             }
 
             composable(
-                route = NavEntries.SavingsList.route
+                route = NavDestinations.RootGraph.SavingsList.route
             ) {
                 SavingsScreen(
                     onBack = {
                         navController.popBackStack()
                     },
                     onSavingDetails = { id ->
-                        navController.navigate("${NavEntries.SavingDetails.route}/${id}")
+                        navController.navigate("${NavDestinations.RootGraph.SavingDetails.route}/${id}")
                     }
                 )
             }
 
             composable(
-                route = "${NavEntries.SavingDetails.route}/{id}",
+                route = "${NavDestinations.RootGraph.SavingDetails.route}/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.LongType })
             ) {
                 SavingDetailsScreen(
@@ -241,28 +262,13 @@ fun AppNavHost(
                         navController.popBackStack()
                     },
                     onLinkedCardDetails = { cardId ->
-                        navController.navigate("${NavEntries.CardDetails.route}/${cardId}")
+                        navController.navigate("${NavDestinations.RootGraph.CardDetails.route}/${cardId}")
                     }
                 )
             }
 
             composable(
-                route = NavEntries.TermsAndConditions.route,
-            ) {
-                val title = stringResource(id = R.string.terms_and_conditions)
-                val url = "https://example.com"
-
-                WebViewScreen(
-                    title = title,
-                    url = url,
-                    onBack = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable(
-                route = "${NavEntries.AccountTopUp.route}?selectedCard={selectedCard}",
+                route = "${NavDestinations.RootGraph.AccountTopUp.route}?selectedCard={selectedCard}",
                 arguments = listOf(
                     navArgument("selectedCard") {
                         nullable = true
@@ -282,7 +288,7 @@ fun AppNavHost(
             }
 
             composable(
-                route = "${NavEntries.AccountSend.route}?selectedCard={selectedCard}",
+                route = "${NavDestinations.RootGraph.AccountSend.route}?selectedCard={selectedCard}",
                 arguments = listOf(
                     navArgument("selectedCard") {
                         nullable = true
