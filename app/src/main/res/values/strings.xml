@@ -101,4 +101,6 @@
     <string name="want_to_logout">Want to Logout ?</string>
     <string name="logout_explanation">You will back to login screen if you click the logout button</string>
     <string name="help_center">Help Center</string>
+    <string name="search_tint">Search anything here</string>
+    <string name="clear_search">Clear search</string>
 </resources>
