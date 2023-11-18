@@ -1,5 +1,6 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_add_card
 
+import by.alexandr7035.banking.data.cards.MockCardConstants
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
 import de.palm.composestateevents.StateEventWithContent
@@ -17,11 +18,12 @@ data class AddCardState(
             showDatePicker: Boolean = false
         ): AddCardState {
             // + 365 days
+            val randomMockCard = MockCardConstants.randomCard()
             val mockExpiration = System.currentTimeMillis() + 31556926000L
 
             return  AddCardState(
                 formFields = AddCardFormFields(
-                    cardNumber = UiField("2298126833989874"),
+                    cardNumber = UiField(randomMockCard.first),
                     cardHolder = UiField("Alexander Michael"),
                     addressFirstLine = UiField("2890 Pangandaran Street"),
                     addressSecondLine = UiField(""),
