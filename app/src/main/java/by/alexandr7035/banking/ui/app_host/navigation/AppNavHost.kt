@@ -23,7 +23,7 @@ import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.HomeScreen
-import by.alexandr7035.banking.ui.feature_home.model.AccountAction
+import by.alexandr7035.banking.ui.feature_account.components.account_actions.AccountAction
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen

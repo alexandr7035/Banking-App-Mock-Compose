@@ -44,8 +44,8 @@ import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
-import by.alexandr7035.banking.ui.feature_home.components.AccountActionRow
-import by.alexandr7035.banking.ui.feature_home.model.AccountAction
+import by.alexandr7035.banking.ui.feature_account.components.account_actions.AccountAction
+import by.alexandr7035.banking.ui.feature_account.components.account_actions.AccountActionRow
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel

@@ -49,7 +49,7 @@ import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.components.AccountActionPanel
 import by.alexandr7035.banking.ui.feature_home.components.AccountActionPanel_Skeleton
-import by.alexandr7035.banking.ui.feature_home.model.AccountAction
+import by.alexandr7035.banking.ui.feature_account.components.account_actions.AccountAction
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
 import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
