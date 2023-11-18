@@ -55,7 +55,7 @@ class SavingDetailsViewModel(
 
                 viewModelScope.launch {
                     // A little longer delay for demo purpose
-                    delay(2000L)
+                    delay(300L)
 
                     val cardRes = OperationResult.runWrapped {
                         getCardByIdUseCase.execute(intent.cardId)
