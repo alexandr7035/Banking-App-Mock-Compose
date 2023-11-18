@@ -24,9 +24,11 @@ import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsS
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListScreen
 import by.alexandr7035.banking.ui.feature_home.HomeScreen
 import by.alexandr7035.banking.ui.feature_account.components.account_actions.AccountAction
+import by.alexandr7035.banking.ui.feature_help.HelpScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
+import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingEntry
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsScreen
 import by.alexandr7035.banking.ui.feature_transactions.TransactionHistoryScreen
@@ -182,7 +184,16 @@ fun AppNavHost(
                                 inclusive = true
                             }
                         }
-                    })
+                    },
+                    onSettingEntry = {
+                        val route = when (it) {
+                            SettingEntry.Help -> NavDestinations.RootGraph.Help.route
+                            else -> error("No route specified for setting $it")
+                        }
+
+                        navController.navigate(route)
+                    }
+                )
             }
 
             composable(NavDestinations.RootGraph.CardList.route) {
@@ -206,7 +217,8 @@ fun AppNavHost(
             }
 
             composable(
-                route = "${NavDestinations.RootGraph.CardDetails.route}/{cardId}", arguments = listOf(navArgument("cardId") { type = NavType.StringType })
+                route = "${NavDestinations.RootGraph.CardDetails.route}/{cardId}",
+                arguments = listOf(navArgument("cardId") { type = NavType.StringType })
             ) { it ->
                 val cardId = it.arguments?.getString("cardId")!!
 
@@ -304,6 +316,14 @@ fun AppNavHost(
                         navController.popBackStack()
                     },
                     selectedCardId = selectedCard
+                )
+            }
+
+            composable(NavDestinations.RootGraph.Help.route) {
+                HelpScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
                 )
             }
         }

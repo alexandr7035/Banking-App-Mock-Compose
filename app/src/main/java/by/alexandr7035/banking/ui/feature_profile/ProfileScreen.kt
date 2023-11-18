@@ -46,7 +46,6 @@ import by.alexandr7035.banking.ui.components.SettingButton
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
-import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
@@ -79,7 +78,6 @@ fun ProfileScreen(
                 .width(maxWidth)
                 .height(maxHeight),
             onSettingEntryClick = {
-                context.showToast("TODO")
                 onSettingEntry.invoke(it)
             },
             onLogoutIntent = {
@@ -179,7 +177,8 @@ private fun ProfileScreen_Ui(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .wrapContentHeight(),
+            onSettingEntryClick = onSettingEntryClick
         )
 
         Spacer(modifier = Modifier.weight(1f))
