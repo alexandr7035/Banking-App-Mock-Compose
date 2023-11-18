@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
-import com.example.votekt.ui.components.snackbar.ResultSnackBarVisuals
 
 @OptIn(ExperimentalMaterial3Api::class)
 suspend fun SnackbarHostState.showResultSnackBar(
