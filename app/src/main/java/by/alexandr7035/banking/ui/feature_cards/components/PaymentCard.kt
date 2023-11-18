@@ -86,7 +86,7 @@ fun PaymentCard(
                     modifier = Modifier.size(24.dp),
                     painter = painterResource(id = R.drawable.ic_bookmark_filled),
                     contentDescription = "Default card",
-                    tint = Color(0xCCFF0000),
+                    tint = Color(0x99FFFFFF),
                 )
             }
 
