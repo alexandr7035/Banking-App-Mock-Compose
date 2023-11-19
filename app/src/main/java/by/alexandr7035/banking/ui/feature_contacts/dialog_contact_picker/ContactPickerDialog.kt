@@ -34,7 +34,7 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
-import by.alexandr7035.banking.ui.core.EnterScreenEffect
+import by.alexandr7035.banking.ui.core.effects.EnterScreenEffect
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_contacts.components.ContactCard
 import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi

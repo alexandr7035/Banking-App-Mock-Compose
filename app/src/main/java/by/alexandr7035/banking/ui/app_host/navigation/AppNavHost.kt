@@ -16,7 +16,7 @@ import by.alexandr7035.banking.ui.app_host.navigation.graphs.createAppLockGraph
 import by.alexandr7035.banking.ui.app_host.navigation.graphs.signUpGraph
 import by.alexandr7035.banking.ui.app_host.navigation.model.ConditionalNavigation
 import by.alexandr7035.banking.ui.app_host.navigation.model.NavDestinations
-import by.alexandr7035.banking.ui.core.EnterScreenEffect
+import by.alexandr7035.banking.ui.core.effects.EnterScreenEffect
 import by.alexandr7035.banking.ui.feature_account.action_send.SendMoneyScreen
 import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreen
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardScreen

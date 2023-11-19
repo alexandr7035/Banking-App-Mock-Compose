@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.core
+package by.alexandr7035.banking.ui.core.effects
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
