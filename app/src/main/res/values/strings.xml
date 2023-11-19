@@ -105,4 +105,6 @@
     <string name="help_center">Help Center</string>
     <string name="search_tint">Search anything here</string>
     <string name="clear_search">Clear search</string>
+    <string name="permission_granted">Permission granted</string>
+    <string name="permission_rejected">Permission denied</string>
 </resources>
