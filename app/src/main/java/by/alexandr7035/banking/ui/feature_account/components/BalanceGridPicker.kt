@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -81,10 +80,9 @@ private fun GridButton(
             }
             .padding(
                 vertical = 14.dp,
-                horizontal = 16.dp
+                horizontal = 4.dp
             )
             .fillMaxWidth()
-            .wrapContentSize()
     ) {
         Text(
             text = MoneyAmountUi.mapFromDomain(value).amountStr,
