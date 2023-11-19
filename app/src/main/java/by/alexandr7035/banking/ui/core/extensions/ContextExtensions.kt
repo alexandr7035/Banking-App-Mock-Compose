@@ -6,10 +6,15 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
 
 fun Context.showToast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
+
+fun Context.showToast(@StringRes stringRes: Int) {
+    Toast.makeText(this, getString(stringRes), Toast.LENGTH_SHORT).show()
 }
 
 fun Context.findActivity(): FragmentActivity? = when (this) {

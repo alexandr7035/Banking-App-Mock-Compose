@@ -1,5 +1,6 @@
 package by.alexandr7035.banking.ui.feature_account.action_send
 
+import android.os.Build
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +40,10 @@ import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.effects.EnterScreenEffect
 import by.alexandr7035.banking.ui.core.error.asUiTextError
+import by.alexandr7035.banking.ui.core.extensions.showToast
+import by.alexandr7035.banking.ui.core.permissions.AskPermissionResult
+import by.alexandr7035.banking.ui.core.permissions.CheckPermissionResult
+import by.alexandr7035.banking.ui.core.permissions.LocalPermissionHelper
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.AmountPickersState
 import by.alexandr7035.banking.ui.feature_account.ContactPickerState
@@ -62,6 +67,7 @@ fun SendMoneyScreen(
 ) {
     val snackbarHostState = LocalScopedSnackbarState.current
     val context = LocalContext.current
+    val permissionHelper = LocalPermissionHelper.current
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
     SendMoneyScreen_Ui(
@@ -93,6 +99,32 @@ fun SendMoneyScreen(
 
     EnterScreenEffect {
         viewModel.emitIntent(SendMoneyScreenIntent.EnterScreen(selectedCardId = selectedCardId))
+    }
+
+    EnterScreenEffect {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val notificationPermission = android.Manifest.permission.POST_NOTIFICATIONS
+            val res =permissionHelper.checkIfPermissionGranted(context, notificationPermission)
+            when (res) {
+                CheckPermissionResult.SHOULD_ASK_PERMISSION -> {
+                    permissionHelper.askForPermission(context, notificationPermission) { res ->
+                        when (res) {
+                            AskPermissionResult.GRANTED -> {
+                                context.showToast(R.string.permission_granted)
+                            }
+
+                            AskPermissionResult.REJECTED -> {
+                                context.showToast(R.string.permission_rejected)
+                            }
+                        }
+                    }
+                }
+
+                // DO nothing as permission is not mandatory for user flow
+                CheckPermissionResult.SHOULD_REDIRECT_TO_SETTINGS -> {}
+                CheckPermissionResult.PERMISSION_ALREADY_GRANTED -> {}
+            }
+        }
     }
 }
 
