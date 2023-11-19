@@ -73,12 +73,14 @@ fun CardDetailsScreen(
             onBack = onBack,
             title = UiText.StringResource(R.string.card_details),
             actions = {
-                if (state is CardDetailsState.Success) {
+                val card = state.card
+                card?.let {
                     IconButton(
                         onClick = {
                             viewModel.emitIntent(
                                 CardDetailsIntent.SetCardAsPrimary(
-                                    makePrimary = !state.card.isPrimary
+                                    cardId = card.id,
+                                    makePrimary = !card.isPrimary
                                 )
                             )
                         },
@@ -86,7 +88,7 @@ fun CardDetailsScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_bookmark_filled),
                             contentDescription = stringResource(R.string.set_card_as_default),
-                            tint = if (state.card.isPrimary) MaterialTheme.colorScheme.primary else Color.LightGray,
+                            tint = if (card.isPrimary) MaterialTheme.colorScheme.primary else Color.LightGray,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -96,14 +98,23 @@ fun CardDetailsScreen(
     }) { pv ->
         BoxWithConstraints(
             Modifier.padding(
-                top = pv.calculateTopPadding(), bottom = pv.calculateBottomPadding()
+                top = pv.calculateTopPadding(),
+                bottom = pv.calculateBottomPadding()
             )
         ) {
-            when (state) {
-                is CardDetailsState.Success -> {
+            when {
+                state.showCardSkeleton -> CardDetailsScreen_Skeleton()
+
+                state.card != null -> {
                     CardDetailsScreen_Ui(
-                        cardUi = state.card, onIntent = { viewModel.emitIntent(it) }, onAccountAction = onAccountAction
+                        cardUi = state.card,
+                        onIntent = { viewModel.emitIntent(it) },
+                        onAccountAction = onAccountAction
                     )
+
+                    if (state.showLoading) {
+                        FullscreenProgressBar()
+                    }
 
                     if (state.showDeleteCardDialog) {
                         ConfirmDeleteCardDialog(onDismiss = {
@@ -116,60 +127,58 @@ fun CardDetailsScreen(
                             viewModel.emitIntent(CardDetailsIntent.ConfirmDeleteCard)
                         })
                     }
+                }
 
-                    if (state.showLoading) {
-                        FullscreenProgressBar()
+                state.error != null -> {
+                    ErrorFullScreen(
+                        error = state.error,
+                        onRetry = { viewModel.emitIntent(CardDetailsIntent.EnterScreen(cardId)) }
+                    )
+                }
+            }
+
+            EventEffect(
+                event = state.cardDeletedResultEvent,
+                onConsumed = viewModel::consumeDeleteResultEvent,
+            ) { result ->
+                when (result) {
+                    is OperationResult.Success -> {
+                        snackbarState.show(
+                            message = "Card deleted", snackBarMode = SnackBarMode.Positive
+                        )
+
+                        onBack.invoke()
                     }
 
-                    EventEffect(
-                        event = state.cardDeletedResultEvent,
-                        onConsumed = viewModel::consumeDeleteResultEvent,
-                    ) { result ->
-                        when (result) {
-                            is OperationResult.Success -> {
-                                snackbarState.show(
-                                    message = "Card deleted", snackBarMode = SnackBarMode.Positive
-                                )
-
-                                onBack.invoke()
-                            }
-
-                            is OperationResult.Failure -> {
-                                snackbarState.show(
-                                    message = result.error.errorType.asUiTextError().asString(ctx), snackBarMode = SnackBarMode.Negative
-                                )
-                            }
-                        }
-
-                    }
-
-                    EventEffect(
-                        event = state.setCardAsPrimaryEvent,
-                        onConsumed = viewModel::consumeSetCardAsDefaultEvent,
-                    ) { result ->
-                        when (result) {
-                            is OperationResult.Success -> {}
-
-                            is OperationResult.Failure -> {
-                                snackbarState.show(
-                                    message = result.error.errorType.asUiTextError().asString(ctx), snackBarMode = SnackBarMode.Negative
-                                )
-                            }
-                        }
-
+                    is OperationResult.Failure -> {
+                        snackbarState.show(
+                            message = result.error.errorType.asUiTextError().asString(ctx), snackBarMode = SnackBarMode.Negative
+                        )
                     }
                 }
 
-                is CardDetailsState.Loading -> CardDetailsScreen_Skeleton()
+            }
 
-                is CardDetailsState.Error -> ErrorFullScreen(error = state.error,
-                    onRetry = { viewModel.emitIntent(CardDetailsIntent.EnterScreen(cardId)) })
+            EventEffect(
+                event = state.setCardAsPrimaryEvent,
+                onConsumed = viewModel::consumeSetCardAsDefaultEvent,
+            ) { result ->
+                when (result) {
+                    is OperationResult.Success -> {}
+
+                    is OperationResult.Failure -> {
+                        snackbarState.show(
+                            message = result.error.errorType.asUiTextError().asString(ctx), snackBarMode = SnackBarMode.Negative
+                        )
+                    }
+                }
+
+            }
+
+            LaunchedEffect(Unit) {
+                viewModel.emitIntent(CardDetailsIntent.EnterScreen(cardId))
             }
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.emitIntent(CardDetailsIntent.EnterScreen(cardId))
     }
 }
 
