@@ -1,7 +1,9 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_card_details
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -42,10 +45,11 @@ import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
-import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_account.components.account_actions.AccountAction
 import by.alexandr7035.banking.ui.feature_account.components.account_actions.AccountActionRow
+import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
+import by.alexandr7035.banking.ui.feature_cards.components.PaymentCardSkeleton
+import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
@@ -64,61 +68,53 @@ fun CardDetailsScreen(
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
-    Scaffold(
-        topBar = {
-            SecondaryToolBar(
-                onBack = onBack,
-                title = UiText.StringResource(R.string.card_details),
-                actions = {
-                    if (state is CardDetailsState.Success) {
-                        IconButton(
-                            onClick = {
-                                viewModel.emitIntent(
-                                    CardDetailsIntent.SetCardAsPrimary(
-                                        makePrimary = !state.card.isPrimary
-                                    )
+    Scaffold(topBar = {
+        SecondaryToolBar(
+            onBack = onBack,
+            title = UiText.StringResource(R.string.card_details),
+            actions = {
+                if (state is CardDetailsState.Success) {
+                    IconButton(
+                        onClick = {
+                            viewModel.emitIntent(
+                                CardDetailsIntent.SetCardAsPrimary(
+                                    makePrimary = !state.card.isPrimary
                                 )
-                            },
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_bookmark_filled),
-                                contentDescription = stringResource(R.string.set_card_as_default),
-                                tint = if (state.card.isPrimary) MaterialTheme.colorScheme.primary else Color.LightGray,
-                                modifier = Modifier.size(24.dp)
                             )
-                        }
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_bookmark_filled),
+                            contentDescription = stringResource(R.string.set_card_as_default),
+                            tint = if (state.card.isPrimary) MaterialTheme.colorScheme.primary else Color.LightGray,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
-                },
-            )
-        }
-    ) { pv ->
+                }
+            },
+        )
+    }) { pv ->
         BoxWithConstraints(
             Modifier.padding(
-                top = pv.calculateTopPadding(),
-                bottom = pv.calculateBottomPadding()
+                top = pv.calculateTopPadding(), bottom = pv.calculateBottomPadding()
             )
         ) {
             when (state) {
                 is CardDetailsState.Success -> {
                     CardDetailsScreen_Ui(
-                        cardUi = state.card,
-                        onIntent = { viewModel.emitIntent(it) },
-                        onAccountAction = onAccountAction
+                        cardUi = state.card, onIntent = { viewModel.emitIntent(it) }, onAccountAction = onAccountAction
                     )
 
                     if (state.showDeleteCardDialog) {
-                        ConfirmDeleteCardDialog(
-                            onDismiss = {
-                                viewModel.emitIntent(
-                                    CardDetailsIntent.ToggleDeleteCardDialog(
-                                        isDialogShown = false
-                                    )
+                        ConfirmDeleteCardDialog(onDismiss = {
+                            viewModel.emitIntent(
+                                CardDetailsIntent.ToggleDeleteCardDialog(
+                                    isDialogShown = false
                                 )
-                            },
-                            onConfirmDelete = {
-                                viewModel.emitIntent(CardDetailsIntent.ConfirmDeleteCard)
-                            }
-                        )
+                            )
+                        }, onConfirmDelete = {
+                            viewModel.emitIntent(CardDetailsIntent.ConfirmDeleteCard)
+                        })
                     }
 
                     if (state.showLoading) {
@@ -132,8 +128,7 @@ fun CardDetailsScreen(
                         when (result) {
                             is OperationResult.Success -> {
                                 snackbarState.show(
-                                    message = "Card deleted",
-                                    snackBarMode = SnackBarMode.Positive
+                                    message = "Card deleted", snackBarMode = SnackBarMode.Positive
                                 )
 
                                 onBack.invoke()
@@ -141,8 +136,7 @@ fun CardDetailsScreen(
 
                             is OperationResult.Failure -> {
                                 snackbarState.show(
-                                    message = result.error.errorType.asUiTextError().asString(ctx),
-                                    snackBarMode = SnackBarMode.Negative
+                                    message = result.error.errorType.asUiTextError().asString(ctx), snackBarMode = SnackBarMode.Negative
                                 )
                             }
                         }
@@ -158,8 +152,7 @@ fun CardDetailsScreen(
 
                             is OperationResult.Failure -> {
                                 snackbarState.show(
-                                    message = result.error.errorType.asUiTextError().asString(ctx),
-                                    snackBarMode = SnackBarMode.Negative
+                                    message = result.error.errorType.asUiTextError().asString(ctx), snackBarMode = SnackBarMode.Negative
                                 )
                             }
                         }
@@ -169,10 +162,8 @@ fun CardDetailsScreen(
 
                 is CardDetailsState.Loading -> CardDetailsScreen_Skeleton()
 
-                is CardDetailsState.Error -> ErrorFullScreen(
-                    error = state.error,
-                    onRetry = { viewModel.emitIntent(CardDetailsIntent.EnterScreen(cardId)) }
-                )
+                is CardDetailsState.Error -> ErrorFullScreen(error = state.error,
+                    onRetry = { viewModel.emitIntent(CardDetailsIntent.EnterScreen(cardId)) })
             }
         }
     }
@@ -194,13 +185,23 @@ private fun CardDetailsScreen_Ui(
             Modifier
                 .verticalScroll(rememberScrollState())
                 .padding(
-                    vertical = 16.dp,
-                    horizontal = 24.dp
+                    vertical = 16.dp, horizontal = 24.dp
                 ),
-        ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        ), verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        PaymentCard(cardUi = cardUi)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            PaymentCard(cardUi = cardUi)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        AccountActionRow(
+            modifier = Modifier.fillMaxWidth(), onActionClick = onAccountAction
+        )
 
         Text(
             text = stringResource(R.string.billing_address), style = TextStyle(
@@ -249,19 +250,12 @@ private fun CardDetailsScreen_Ui(
             )
         )
 
-        AccountActionRow(
-            modifier = Modifier.fillMaxWidth(),
-            onActionClick = onAccountAction
-        )
-
         Spacer(Modifier.weight(1f))
 
         SecondaryButton(
             onClick = {
                 onIntent.invoke(CardDetailsIntent.ToggleDeleteCardDialog(isDialogShown = true))
-            },
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.remove_card)
+            }, modifier = Modifier.fillMaxWidth(), text = stringResource(id = R.string.remove_card)
         )
     }
 }
@@ -272,14 +266,15 @@ private fun CardDetailsScreen_Skeleton() {
         modifier = Modifier.padding(
             vertical = 16.dp,
             horizontal = 24.dp,
-        ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        ), verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SkeletonShape(
-            modifier = Modifier
-                .height(160.dp)
-                .fillMaxWidth(),
-        )
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            PaymentCardSkeleton()
+        }
 
         repeat(2) {
             SkeletonShape(
@@ -300,6 +295,14 @@ private fun CardDetailsScreen_Skeleton() {
 @Composable
 @Preview
 fun CardDetailsScreen_Preview() {
+    ScreenPreview {
+        CardDetailsScreen_Ui(cardUi = CardUi.mock())
+    }
+}
+
+@Composable
+@Preview(widthDp = 280, heightDp = 400)
+fun CardDetailsScreen_Preview_Small() {
     ScreenPreview {
         CardDetailsScreen_Ui(cardUi = CardUi.mock())
     }
