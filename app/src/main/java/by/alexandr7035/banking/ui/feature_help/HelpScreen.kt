@@ -4,13 +4,14 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -114,8 +115,7 @@ fun HelpScreen(
                     val query = searchQuery.value.uppercase()
                     text.contains(query) || title.contains(query)
                 }
-            }
-            else {
+            } else {
                 helpItems
             }
 
@@ -139,7 +139,7 @@ private fun HelpItemCard(
 ) {
     Column(
         modifier = Modifier
-            .animateContentSize()
+//            .animateContentSize()
             .clickable {
                 onClick()
             }
@@ -148,7 +148,6 @@ private fun HelpItemCard(
                 start = 24.dp,
                 end = 24.dp
             ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
             modifier = Modifier
@@ -179,18 +178,29 @@ private fun HelpItemCard(
             )
         }
 
-        if (expanded) {
-            Text(
-                text = item.text.asString(),
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 26.sp,
-                    fontFamily = primaryFontFamily,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF999999),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .animateContentSize()
+        ) {
+            if (expanded) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = item.text.asString(),
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 26.sp,
+                        fontFamily = primaryFontFamily,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xFF999999),
+                    )
                 )
-            )
+            }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         HorizontalDivider(
             thickness = 1.dp,
