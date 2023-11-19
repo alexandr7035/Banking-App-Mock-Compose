@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Banking App</string>
 
+    <string name="TRANSACTIONS_NOTIFICATION_CHANNEL_ID">BANKING_WORKER_CHANNEL</string>
+    <string name="TRANSACTIONS_NOTIFICATION_CHANNEL_NAME">Transaction notifications</string>
+
     <string name="wizard_title_1">Send Money</string>
     <string name="wizard_title_2">Request Money</string>
     <string name="wizard_title_3">Easy To Use</string>
@@ -88,7 +91,6 @@
     <string name="unknown_user">Unknown user</string>
     <string name="all">All</string>
     <string name="transaction_not_found">Transaction not found</string>
-    <string name="NOTIFICATION_CHANNEL_ID">BANKING_WORKER_CHANNEL</string>
     <string name="enter_nominal">Enter Nominal</string>
     <string name="choose_contact">Choose Contact</string>
     <string name="send_to">Send to</string>

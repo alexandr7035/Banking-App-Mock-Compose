@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.os.Build
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.core.di.appModule
+import by.alexandr7035.banking.data.transactions.TransactionWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -29,9 +30,11 @@ class BankingApp: Application() {
         // Create notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create the NotificationChannel
-            val name = getString(R.string.NOTIFICATION_CHANNEL_ID)
+            val name = getString(R.string.TRANSACTIONS_NOTIFICATION_CHANNEL_NAME)
+            val id = getString(R.string.TRANSACTIONS_NOTIFICATION_CHANNEL_ID)
+
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(getString(R.string.NOTIFICATION_CHANNEL_ID), name, importance)
+            val channel = NotificationChannel(id, name, importance)
             channel.setSound(null, null)
 
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager

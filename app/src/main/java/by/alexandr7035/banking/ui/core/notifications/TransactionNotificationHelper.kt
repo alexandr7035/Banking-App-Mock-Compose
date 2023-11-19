@@ -76,7 +76,7 @@ class TransactionNotificationHelper(
 
         return NotificationCompat.Builder(
             applicationContext,
-            applicationContext.getString(R.string.NOTIFICATION_CHANNEL_ID)
+            applicationContext.getString(R.string.TRANSACTIONS_NOTIFICATION_CHANNEL_ID)
         )
             .setContentTitle(notificationUi.title)
             .setContentText(notificationUi.message)
