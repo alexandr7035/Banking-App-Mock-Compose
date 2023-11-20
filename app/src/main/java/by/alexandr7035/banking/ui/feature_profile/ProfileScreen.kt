@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.core.OperationResult
+import by.alexandr7035.banking.domain.features.qr_codes.model.QrPurpose
 import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.ScreenPreview
@@ -51,6 +52,7 @@ import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
 import by.alexandr7035.banking.ui.feature_profile.components.ProfileCard
 import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
+import by.alexandr7035.banking.ui.feature_profile.my_qr.ShowQrDialog
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingEntry
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingList
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingListItem
@@ -83,6 +85,9 @@ fun ProfileScreen(
             onLogoutIntent = {
                 viewModel.emitLogoutIntent(it)
             },
+            onShowQrDialog = {
+                viewModel.emitIntent(ProfileScreenIntent.ToggleMyQrDialog(isShown = true))
+            },
             state = state
         )
 
@@ -99,6 +104,19 @@ fun ProfileScreen(
 
         if (state.logoutState.isLoading) {
             FullscreenProgressBar()
+        }
+
+        if (state.showMyQrDialog) {
+            ShowQrDialog(
+                onDismiss = {
+                    viewModel.emitIntent(
+                        ProfileScreenIntent.ToggleMyQrDialog(
+                            isShown = false
+                        )
+                    )
+                },
+                qrPurpose = QrPurpose.PROFILE_CONNECTION
+            )
         }
 
         EventEffect(
@@ -128,6 +146,7 @@ private fun ProfileScreen_Ui(
     state: ProfileScreenState,
     onLogoutIntent: (intent: LogoutIntent) -> Unit = {},
     onSettingEntryClick: (entry: SettingEntry) -> Unit = {},
+    onShowQrDialog: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.then(
@@ -165,7 +184,7 @@ private fun ProfileScreen_Ui(
                 text = stringResource(R.string.my_qr),
                 showArrow = false
             ) {
-                onSettingEntryClick.invoke(SettingEntry.MyQR)
+                onShowQrDialog()
             }
         }
 
@@ -232,7 +251,9 @@ private fun ProfileToolBar() {
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-        modifier = Modifier.wrapContentHeight().padding(top=16.dp)
+        modifier = Modifier
+            .wrapContentHeight()
+            .padding(top = 16.dp)
     )
 }
 

@@ -41,6 +41,14 @@ class ProfileViewModel(
                     reduceData(profile)
                 }
             }
+
+            is ProfileScreenIntent.ToggleMyQrDialog -> {
+                _state.update {
+                    it.copy(
+                        showMyQrDialog = intent.isShown
+                    )
+                }
+            }
         }
     }
 
