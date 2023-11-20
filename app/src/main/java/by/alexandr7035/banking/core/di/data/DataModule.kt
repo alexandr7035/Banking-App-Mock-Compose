@@ -134,7 +134,6 @@ val dataModule = module {
         AccountRepositoryMock(
             coroutineDispatcher = Dispatchers.IO,
             cardsDao = get(),
-            transactionsDao = get()
         )
     }
 

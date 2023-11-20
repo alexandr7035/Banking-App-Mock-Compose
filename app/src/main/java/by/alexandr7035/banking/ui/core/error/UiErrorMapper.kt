@@ -17,6 +17,7 @@ fun ErrorType.asUiTextError(): UiText {
         ErrorType.INVALID_CVV ->  UiText.StringResource(R.string.invalid_cvv)
         ErrorType.DATE_UNSPECIFIED -> UiText.StringResource(R.string.date_not_specified)
         ErrorType.CARD_NOT_FOUND ->  UiText.StringResource(R.string.card_not_found)
+        ErrorType.CARD_HAS_BEEN_DELETED -> UiText.DynamicString("Card has been deleted")
         ErrorType.CARD_ALREADY_ADDED ->  UiText.StringResource(R.string.card_already_added)
         ErrorType.INSUFFICIENT_CARD_BALANCE -> UiText.StringResource(R.string.insufficient_card_balance)
 

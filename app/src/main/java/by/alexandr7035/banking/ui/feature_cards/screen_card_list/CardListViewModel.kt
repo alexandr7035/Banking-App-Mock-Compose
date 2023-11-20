@@ -53,7 +53,10 @@ class CardListViewModel(
                     balanceFlow = getCardBalanceObservableUseCase.execute(card.cardId).map {
                         MoneyAmountUi.mapFromDomain(it).amountStr
                     }.catch { err ->
-                        reduceError(ErrorType.fromThrowable(err))
+                        val error = ErrorType.fromThrowable(err)
+                        if (error != ErrorType.CARD_HAS_BEEN_DELETED) {
+                            reduceError(error)
+                        }
                     }
                 )
             }

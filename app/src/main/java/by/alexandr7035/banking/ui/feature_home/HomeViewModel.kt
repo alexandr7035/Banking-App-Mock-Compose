@@ -131,7 +131,10 @@ class HomeViewModel(
                 MoneyAmountUi.mapFromDomain(it).amountStr
             }
             .catch {
-                reduceError(ErrorType.fromThrowable(it))
+                val error = ErrorType.fromThrowable(it)
+                if (error != ErrorType.CARD_HAS_BEEN_DELETED) {
+                    reduceError(ErrorType.fromThrowable(it))
+                }
             }
     }
 }

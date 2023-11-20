@@ -2,7 +2,6 @@ package by.alexandr7035.banking.data.account
 
 import by.alexandr7035.banking.core.extensions.sumFloat
 import by.alexandr7035.banking.data.cards.cache.CardsDao
-import by.alexandr7035.banking.data.transactions.db.TransactionDao
 import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.account.AccountRepository
@@ -17,7 +16,6 @@ class AccountRepositoryMock(
     private val coroutineDispatcher: CoroutineDispatcher,
     // For mock app simply use last cached card balances
     private val cardsDao: CardsDao,
-    private val transactionsDao: TransactionDao
 ) : AccountRepository {
 
     override fun getBalanceFlow(): Flow<MoneyAmount> {
@@ -33,10 +31,13 @@ class AccountRepositoryMock(
     }
 
     override suspend fun getCardBalanceFlow(cardId: String): Flow<MoneyAmount> {
+        // Check card exists
+        cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+
         return flow {
             while (true) {
                 // For mock app emit last card balance saved in db
-                val card = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.UNKNOWN_ERROR)
+                val card = cardsDao.getCardByNumber(cardId) ?: throw AppError(ErrorType.CARD_HAS_BEEN_DELETED)
                 emit(MoneyAmount(card.recentBalance))
 
                 delay(MOCK_OBSERVING_DELAY)
@@ -67,6 +68,5 @@ class AccountRepositoryMock(
 
     companion object {
         private const val MOCK_OBSERVING_DELAY = 5000L
-        private const val MOCK_DELAY = 300L
     }
 }
