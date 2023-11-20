@@ -49,6 +49,14 @@ class ProfileViewModel(
                     )
                 }
             }
+
+            is ProfileScreenIntent.ToggleScanQrDialog -> {
+                _state.update {
+                    it.copy(
+                        showScanQrDialog = intent.isShown
+                    )
+                }
+            }
         }
     }
 

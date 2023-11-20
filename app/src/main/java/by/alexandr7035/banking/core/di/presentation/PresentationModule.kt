@@ -13,6 +13,7 @@ import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
 import by.alexandr7035.banking.ui.feature_contacts.dialog_contact_picker.ContactPickerDialogViewModel
+import by.alexandr7035.banking.ui.feature_contacts.scanned_contact.ScannedContactViewModel
 import by.alexandr7035.banking.ui.feature_home.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingViewModel
@@ -198,6 +199,12 @@ val presentationModule = module {
     viewModel {
         DisplayQrViewModel(
             generateQrCodeUseCase = get()
+        )
+    }
+
+    viewModel {
+        ScannedContactViewModel(
+            loadUserFromQrCodeUseCase = get()
         )
     }
 }

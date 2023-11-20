@@ -108,4 +108,9 @@
     <string name="permission_granted">Permission granted</string>
     <string name="permission_rejected">Permission denied</string>
     <string name="default_card">Default card</string>
+    <string name="add_a_contact">Add a Contact</string>
+    <string name="scan_again">Scan again</string>
+    <string name="add_contact_explanation">If you add this user to Contacts, you will be able to exchange money fast and have other bonuses</string>
+    <string name="scan_contact_qr_explanation">Scan a QR code to add a Contact</string>
+    <string name="contact_added">Contact added</string>
 </resources>

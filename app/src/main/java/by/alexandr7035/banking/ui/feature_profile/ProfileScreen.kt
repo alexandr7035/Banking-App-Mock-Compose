@@ -48,6 +48,7 @@ import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.resources.UiText
+import by.alexandr7035.banking.ui.feature_contacts.scanned_contact.ScannedContactScreen
 import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
 import by.alexandr7035.banking.ui.feature_profile.components.ProfileCard
@@ -56,6 +57,7 @@ import by.alexandr7035.banking.ui.feature_qr_codes.ShowQrDialog
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingEntry
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingList
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingListItem
+import by.alexandr7035.banking.ui.feature_qr_codes.scan_qr.ScanQrDialog
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
 import org.koin.androidx.compose.koinViewModel
@@ -85,8 +87,11 @@ fun ProfileScreen(
             onLogoutIntent = {
                 viewModel.emitLogoutIntent(it)
             },
-            onShowQrDialog = {
+            onShowMyQrDialog = {
                 viewModel.emitIntent(ProfileScreenIntent.ToggleMyQrDialog(isShown = true))
+            },
+            onShowScanQrDialog = {
+                viewModel.emitIntent(ProfileScreenIntent.ToggleScanQrDialog(isShown = true))
             },
             state = state
         )
@@ -122,6 +127,32 @@ fun ProfileScreen(
             )
         }
 
+        if (state.showScanQrDialog) {
+            ScanQrDialog(
+                onDismiss = {
+                    viewModel.emitIntent(
+                        ProfileScreenIntent.ToggleScanQrDialog(
+                            isShown = false
+                        )
+                    )
+                },
+                onScanResultContent = { qr, onRetryScan ->
+                    ScannedContactScreen(
+                        onRetryScan = onRetryScan,
+                        qrCode = qr,
+                        onBack = {
+                            viewModel.emitIntent(
+                                ProfileScreenIntent.ToggleScanQrDialog(
+                                    isShown = false
+                                )
+                            )
+                        }
+                    )
+                },
+                qrExplanation = UiText.StringResource(R.string.scan_contact_qr_explanation)
+            )
+        }
+
         EventEffect(
             event = state.logoutState.logoutEvent,
             onConsumed = viewModel::consumeLogoutEvent,
@@ -149,7 +180,8 @@ private fun ProfileScreen_Ui(
     state: ProfileScreenState,
     onLogoutIntent: (intent: LogoutIntent) -> Unit = {},
     onSettingEntryClick: (entry: SettingEntry) -> Unit = {},
-    onShowQrDialog: () -> Unit = {}
+    onShowMyQrDialog: () -> Unit = {},
+    onShowScanQrDialog: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.then(
@@ -176,7 +208,7 @@ private fun ProfileScreen_Ui(
                 text = stringResource(R.string.scan_qr),
                 showArrow = false
             ) {
-                onSettingEntryClick.invoke(SettingEntry.ScanQR)
+                onShowScanQrDialog()
             }
 
             SettingButton(
@@ -187,7 +219,7 @@ private fun ProfileScreen_Ui(
                 text = stringResource(R.string.my_qr),
                 showArrow = false
             ) {
-                onShowQrDialog()
+                onShowMyQrDialog()
             }
         }
 
@@ -236,7 +268,6 @@ private fun ProfileScreen_Ui(
 
         Spacer(Modifier.height(32.dp))
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
