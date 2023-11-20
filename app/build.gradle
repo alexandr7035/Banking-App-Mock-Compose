@@ -109,5 +109,6 @@ dependencies {
     implementation 'com.guolindev.permissionx:permissionx:1.7.1'
 
     // QR lib
-    implementation "com.google.zxing:core:3.5.1"
+    implementation('com.journeyapps:zxing-android-embedded:4.3.0') { transitive = false }
+    implementation("com.google.zxing:core:3.3.0")
 }
