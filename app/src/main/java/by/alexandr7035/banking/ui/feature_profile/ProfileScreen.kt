@@ -52,7 +52,7 @@ import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
 import by.alexandr7035.banking.ui.feature_profile.components.ProfileCard
 import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
-import by.alexandr7035.banking.ui.feature_profile.my_qr.ShowQrDialog
+import by.alexandr7035.banking.ui.feature_qr_codes.ShowQrDialog
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingEntry
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingList
 import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingListItem
@@ -115,7 +115,10 @@ fun ProfileScreen(
                         )
                     )
                 },
-                qrPurpose = QrPurpose.PROFILE_CONNECTION
+                qrPurpose = QrPurpose.PROFILE_CONNECTION,
+                qrLabel = state.profile?.nickName?.let {
+                    UiText.DynamicString(it)
+                }
             )
         }
 

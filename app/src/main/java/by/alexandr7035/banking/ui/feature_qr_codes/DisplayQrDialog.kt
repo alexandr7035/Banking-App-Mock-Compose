@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_profile.my_qr
+package by.alexandr7035.banking.ui.feature_qr_codes
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +11,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,13 +24,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.qr_codes.model.QrPurpose
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
+import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.qr.QrCodeCard
 import by.alexandr7035.banking.ui.core.effects.EnterScreenEffect
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_qr_codes.DisplayQrIntent
-import by.alexandr7035.banking.ui.feature_qr_codes.DisplayQrViewModel
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import org.koin.androidx.compose.koinViewModel
+
+private val QR_SIZE_FIXED = 240.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +39,7 @@ fun ShowQrDialog(
     viewModel: DisplayQrViewModel = koinViewModel(),
     qrPurpose: QrPurpose,
     onDismiss: () -> Unit = {},
+    qrLabel: UiText? = null
 ) {
     val dialogState = rememberModalBottomSheetState()
 
@@ -83,14 +86,24 @@ fun ShowQrDialog(
                 state.qrString != null -> {
                     QrCodeCard(
                         qr = state.qrString,
-                        // FIXME
-                        label = UiText.DynamicString("@nickname"),
-                        modifier = Modifier.width(240.dp)
+                        label = qrLabel,
+                        modifier = Modifier.width(QR_SIZE_FIXED)
                     )
                 }
 
                 state.error != null -> {
-                    // TODO
+                    ErrorFullScreen(
+                        error = state.error,
+                        onRetry = {
+                            viewModel.emitIntent(DisplayQrIntent.GenerateQr(qrPurpose))
+                        },
+                        modifier = Modifier
+                            .padding(bottom = 32.dp)
+                    )
+
+                    LaunchedEffect(Unit) {
+                        dialogState.expand()
+                    }
                 }
             }
         }

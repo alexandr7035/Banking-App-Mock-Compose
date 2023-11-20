@@ -112,7 +112,7 @@ fun HomeScreen_Ui(
         ScreenHeader(
             toolbar = {
                 HomeToolbar(
-                    state.profile.name
+                    state.profile.fullName
                 )
             }, panelVerticalOffset = 24.dp
         ) {

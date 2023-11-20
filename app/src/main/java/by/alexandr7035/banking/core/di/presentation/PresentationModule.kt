@@ -196,6 +196,8 @@ val presentationModule = module {
     }
 
     viewModel {
-        DisplayQrViewModel()
+        DisplayQrViewModel(
+            generateQrCodeUseCase = get()
+        )
     }
 }
