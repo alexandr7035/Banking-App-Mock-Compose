@@ -107,4 +107,8 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
     implementation 'com.guolindev.permissionx:permissionx:1.7.1'
+
+    // QR lib
+    implementation('com.journeyapps:zxing-android-embedded:4.3.0') { transitive = false }
+    implementation("com.google.zxing:core:3.3.0")
 }

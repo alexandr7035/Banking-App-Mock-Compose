@@ -13,7 +13,7 @@ data class ContactUi(
         fun mock() = ContactUi(
             name = "Vina Andini",
             id = 0,
-            cardNumber = "0000111122223333",
+            cardNumber = "0000111122223333".splitStringWithDivider(),
             profilePictureUrl = ""
         )
 

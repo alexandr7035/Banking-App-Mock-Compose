@@ -5,6 +5,7 @@ import by.alexandr7035.banking.core.di.data.workerModule
 import by.alexandr7035.banking.core.di.domain.accountUseCasesModule
 import by.alexandr7035.banking.core.di.domain.appLockUseCasesModule
 import by.alexandr7035.banking.core.di.domain.cardUseCasesModule
+import by.alexandr7035.banking.core.di.domain.connectionsModule
 import by.alexandr7035.banking.core.di.domain.contactsModule
 import by.alexandr7035.banking.core.di.domain.loginUseCasesModule
 import by.alexandr7035.banking.core.di.domain.onboardingModule
@@ -32,6 +33,7 @@ val appModule = module {
     includes(accountUseCasesModule)
     includes(transactionsModule)
     includes(contactsModule)
+    includes(connectionsModule)
 
     includes(dataModule)
     includes(presentationModule)

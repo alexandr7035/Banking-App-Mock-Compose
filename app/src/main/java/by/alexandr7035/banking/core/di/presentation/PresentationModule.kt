@@ -13,10 +13,12 @@ import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_list.CardListViewModel
 import by.alexandr7035.banking.ui.feature_contacts.dialog_contact_picker.ContactPickerDialogViewModel
+import by.alexandr7035.banking.ui.feature_contacts.scanned_contact.ScannedContactViewModel
 import by.alexandr7035.banking.ui.feature_home.HomeViewModel
 import by.alexandr7035.banking.ui.feature_login.LoginViewModel
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingViewModel
 import by.alexandr7035.banking.ui.feature_profile.ProfileViewModel
+import by.alexandr7035.banking.ui.feature_qr_codes.DisplayQrViewModel
 import by.alexandr7035.banking.ui.feature_savings.SavingsViewModel
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsViewModel
 import by.alexandr7035.banking.ui.feature_signup.InitSignUpViewModel
@@ -191,6 +193,18 @@ val presentationModule = module {
     viewModel {
         ContactPickerDialogViewModel(
             getContactsUseCase = get()
+        )
+    }
+
+    viewModel {
+        DisplayQrViewModel(
+            generateQrCodeUseCase = get()
+        )
+    }
+
+    viewModel {
+        ScannedContactViewModel(
+            loadUserFromQrCodeUseCase = get()
         )
     }
 }
