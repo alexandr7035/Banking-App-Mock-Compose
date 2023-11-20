@@ -96,7 +96,7 @@ private fun ProfileCard_Content(profile: ProfileUi) {
                 .weight(1f, fill = true)
         ) {
             Text(
-                text = profile.name,
+                text = profile.fullName,
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 20.sp,
