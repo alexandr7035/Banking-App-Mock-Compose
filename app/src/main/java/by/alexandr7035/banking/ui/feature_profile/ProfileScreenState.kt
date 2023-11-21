@@ -10,6 +10,7 @@ data class ProfileScreenState(
     val error: UiText? = null,
     val logoutState: LogoutState = LogoutState(),
     val showMyQrDialog: Boolean = false,
-    val showScanQrDialog: Boolean = false
+    val showScanQrDialog: Boolean = false,
+    val showPermissionDialog: Boolean = false
 )
 

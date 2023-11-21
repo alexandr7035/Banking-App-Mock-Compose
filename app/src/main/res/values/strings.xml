@@ -105,8 +105,16 @@
     <string name="help_center">Help Center</string>
     <string name="search_tint">Search anything here</string>
     <string name="clear_search">Clear search</string>
+
+    <string name="grant_permission">Grant permission</string>
     <string name="permission_granted">Permission granted</string>
     <string name="permission_rejected">Permission denied</string>
+    <string name="provide_permission_template">Provide %s permission</string>
+    <string name="permissions_settings_explanation">You should provide the permission in app Settings</string>
+
+    <string name="camera">Camera</string>
+    <string name="camera_permission_explanation">The app needs permission to use Camera in order to scan QR codes</string>
+
     <string name="default_card">Default card</string>
     <string name="add_a_contact">Add a Contact</string>
     <string name="scan_again">Scan again</string>

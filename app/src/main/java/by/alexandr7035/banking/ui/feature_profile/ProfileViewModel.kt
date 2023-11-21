@@ -57,6 +57,14 @@ class ProfileViewModel(
                     )
                 }
             }
+
+            is ProfileScreenIntent.TogglePermissionDialog -> {
+                _state.update {
+                    it.copy(
+                        showPermissionDialog = intent.isShown
+                    )
+                }
+            }
         }
     }
 

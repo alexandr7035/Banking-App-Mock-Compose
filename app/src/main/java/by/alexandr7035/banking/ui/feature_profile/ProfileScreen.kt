@@ -45,8 +45,11 @@ import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SettingButton
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
+import by.alexandr7035.banking.ui.components.permissions.PermissionExplanationDialog
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.error.asUiTextError
+import by.alexandr7035.banking.ui.core.permissions.CheckPermissionResult
+import by.alexandr7035.banking.ui.core.permissions.LocalPermissionHelper
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_contacts.scanned_contact.ScannedContactScreen
 import by.alexandr7035.banking.ui.feature_logout.LogoutDialog
@@ -71,6 +74,7 @@ fun ProfileScreen(
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val context = LocalContext.current
     val snackBarState = LocalScopedSnackbarState.current
+    val permissionHelper = LocalPermissionHelper.current
 
     LaunchedEffect(Unit) {
         viewModel.emitIntent(ProfileScreenIntent.EnterScreen)
@@ -91,7 +95,12 @@ fun ProfileScreen(
                 viewModel.emitIntent(ProfileScreenIntent.ToggleMyQrDialog(isShown = true))
             },
             onShowScanQrDialog = {
-                viewModel.emitIntent(ProfileScreenIntent.ToggleScanQrDialog(isShown = true))
+                val checkPermission = permissionHelper.checkIfPermissionGranted(context, android.Manifest.permission.CAMERA)
+                if (checkPermission == CheckPermissionResult.PERMISSION_ALREADY_GRANTED) {
+                    viewModel.emitIntent(ProfileScreenIntent.ToggleScanQrDialog(isShown = true))
+                } else {
+                    viewModel.emitIntent(ProfileScreenIntent.TogglePermissionDialog(isShown = true))
+                }
             },
             state = state
         )
@@ -150,6 +159,22 @@ fun ProfileScreen(
                     )
                 },
                 qrExplanation = UiText.StringResource(R.string.scan_contact_qr_explanation)
+            )
+        }
+
+        if (state.showPermissionDialog) {
+            PermissionExplanationDialog(
+                permission = android.Manifest.permission.CAMERA,
+                onDismiss = { isGranted ->
+                    viewModel.emitIntent(ProfileScreenIntent.TogglePermissionDialog(isShown = false))
+
+                    if (isGranted) {
+                        viewModel.emitIntent(ProfileScreenIntent.ToggleScanQrDialog(isShown = true))
+                    }
+                    else {
+                        snackBarState.show(context, R.string.permission_rejected, SnackBarMode.Negative)
+                    }
+                }
             )
         }
 
