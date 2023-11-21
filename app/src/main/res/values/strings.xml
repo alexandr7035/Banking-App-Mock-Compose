@@ -115,6 +115,9 @@
     <string name="camera">Camera</string>
     <string name="camera_permission_explanation">The app needs permission to use Camera in order to scan QR codes</string>
 
+    <string name="notifications">Notifications</string>
+    <string name="notifications_permission_explanation">The app uses permission to send notifications in order to notify you on transaction progresss</string>
+
     <string name="default_card">Default card</string>
     <string name="add_a_contact">Add a Contact</string>
     <string name="scan_again">Scan again</string>
