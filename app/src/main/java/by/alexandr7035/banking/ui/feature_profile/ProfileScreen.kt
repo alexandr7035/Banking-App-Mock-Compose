@@ -14,12 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,8 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +41,8 @@ import by.alexandr7035.banking.domain.features.qr_codes.model.QrPurpose
 import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.ScreenPreview
-import by.alexandr7035.banking.ui.components.SettingButton
+import by.alexandr7035.banking.ui.components.MenuButton
+import by.alexandr7035.banking.ui.components.TextBtn
 import by.alexandr7035.banking.ui.components.header.ScreenHeader
 import by.alexandr7035.banking.ui.components.permissions.PermissionExplanationDialog
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
@@ -57,9 +56,9 @@ import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
 import by.alexandr7035.banking.ui.feature_profile.components.ProfileCard
 import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
 import by.alexandr7035.banking.ui.feature_qr_codes.ShowQrDialog
-import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingEntry
-import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingList
-import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingListItem
+import by.alexandr7035.banking.ui.feature_profile.menu.MenuEntry
+import by.alexandr7035.banking.ui.feature_profile.menu.MenuItemsList
+import by.alexandr7035.banking.ui.feature_profile.menu.MenuItem
 import by.alexandr7035.banking.ui.feature_qr_codes.scan_qr.ScanQrDialog
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import de.palm.composestateevents.EventEffect
@@ -68,7 +67,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = koinViewModel(),
-    onSettingEntry: (entry: SettingEntry) -> Unit = {},
+    onMenuEntry: (entry: MenuEntry) -> Unit = {},
     onLogoutCompleted: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -85,8 +84,8 @@ fun ProfileScreen(
             modifier = Modifier
                 .width(maxWidth)
                 .height(maxHeight),
-            onSettingEntryClick = {
-                onSettingEntry.invoke(it)
+            onMenyEntry = {
+                onMenuEntry.invoke(it)
             },
             onLogoutIntent = {
                 viewModel.emitLogoutIntent(it)
@@ -170,8 +169,7 @@ fun ProfileScreen(
 
                     if (isGranted) {
                         viewModel.emitIntent(ProfileScreenIntent.ToggleScanQrDialog(isShown = true))
-                    }
-                    else {
+                    } else {
                         snackBarState.show(context, R.string.permission_rejected, SnackBarMode.Negative)
                     }
                 }
@@ -204,7 +202,7 @@ private fun ProfileScreen_Ui(
     modifier: Modifier,
     state: ProfileScreenState,
     onLogoutIntent: (intent: LogoutIntent) -> Unit = {},
-    onSettingEntryClick: (entry: SettingEntry) -> Unit = {},
+    onMenyEntry: (entry: MenuEntry) -> Unit = {},
     onShowMyQrDialog: () -> Unit = {},
     onShowScanQrDialog: () -> Unit = {}
 ) {
@@ -225,7 +223,7 @@ private fun ProfileScreen_Ui(
                 .height(intrinsicSize = IntrinsicSize.Max),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            SettingButton(
+            MenuButton(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
@@ -236,7 +234,7 @@ private fun ProfileScreen_Ui(
                 onShowScanQrDialog()
             }
 
-            SettingButton(
+            MenuButton(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
@@ -248,16 +246,17 @@ private fun ProfileScreen_Ui(
             }
         }
 
-        SettingList(
+        MenuItemsList(
             items = listOf(
-                SettingListItem.Section(UiText.DynamicString("More")),
-                SettingListItem.Setting(SettingEntry.Help),
+                MenuItem.Section(UiText.DynamicString("More")),
+                MenuItem.Item(MenuEntry.Help),
+                MenuItem.Item(MenuEntry.AppSettings),
             ),
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            onSettingEntryClick = onSettingEntryClick
+            onMenuEntyClick = onMenyEntry
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -268,7 +267,7 @@ private fun ProfileScreen_Ui(
                 .fillMaxWidth(), Alignment.Center
         ) {
 
-            TextButton(
+            TextBtn(
                 onClick = {
                     onLogoutIntent(
                         LogoutIntent.ToggleLogoutDialog(
@@ -276,19 +275,10 @@ private fun ProfileScreen_Ui(
                         )
                     )
                 },
-            ) {
-                Text(
-                    text = stringResource(R.string.log_out), style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = primaryFontFamily,
-                        fontWeight = FontWeight(600),
-                        color = Color(0xFFFF552F),
-                        textAlign = TextAlign.Center,
-                        textDecoration = TextDecoration.Underline,
-                    )
-                )
-            }
-
+                text = stringResource(R.string.log_out),
+                modifier = Modifier.wrapContentSize(),
+                color = Color(0xFFFF552F),
+            )
         }
 
         Spacer(Modifier.height(32.dp))

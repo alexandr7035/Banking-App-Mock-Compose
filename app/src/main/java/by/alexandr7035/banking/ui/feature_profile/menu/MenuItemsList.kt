@@ -1,6 +1,5 @@
-package by.alexandr7035.banking.ui.feature_profile.settings_list
+package by.alexandr7035.banking.ui.feature_profile.menu
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,17 +18,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.components.SettingButton
+import by.alexandr7035.banking.ui.components.MenuButton
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
-fun SettingList(
+fun MenuItemsList(
     modifier: Modifier,
-    items: List<SettingListItem>,
-    onSettingEntryClick: (SettingEntry) -> Unit = {}
+    items: List<MenuItem>,
+    onMenuEntyClick: (MenuEntry) -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.Start,
@@ -38,7 +36,7 @@ fun SettingList(
     ) {
         items.forEach {
             when (it) {
-                is SettingListItem.Section -> {
+                is MenuItem.Section -> {
                     Text(
                         text = it.title.asString(),
                         style = TextStyle(
@@ -50,13 +48,13 @@ fun SettingList(
                     )
                 }
 
-                is SettingListItem.Setting -> {
-                    SettingButton(
+                is MenuItem.Item -> {
+                    MenuButton(
                         modifier = Modifier.fillMaxWidth(),
-                        icon = painterResource(id = R.drawable.ic_profile_filled),
+                        icon = painterResource(id = it.entry.iconRes),
                         text = it.entry.uiTitle.asString()
                     ) {
-                        onSettingEntryClick(it.entry)
+                        onMenuEntyClick(it.entry)
                     }
                 }
             }
@@ -66,17 +64,16 @@ fun SettingList(
 
 @Composable
 @Preview
-fun SettingList_Preview() {
+fun MenuItemsList_Preview() {
     BankingAppTheme() {
         Surface(color = MaterialTheme.colorScheme.background) {
-            SettingList(
+            MenuItemsList(
                 modifier = Modifier.fillMaxSize(),
                 items = listOf(
-                    SettingListItem.Section(UiText.DynamicString("Account")),
-                    SettingListItem.Setting(entry = SettingEntry.AccountSecurity),
-                    SettingListItem.Setting(entry = SettingEntry.ChangePassword),
-                    SettingListItem.Section(UiText.DynamicString("Account")),
-                    SettingListItem.Setting(entry = SettingEntry.ChangePassword),
+                    MenuItem.Section(UiText.DynamicString("Account")),
+                    MenuItem.Item(entry = MenuEntry.Help),
+                    MenuItem.Item(entry = MenuEntry.AppSettings),
+                    MenuItem.Section(UiText.DynamicString("Account")),
                 )
             )
         }

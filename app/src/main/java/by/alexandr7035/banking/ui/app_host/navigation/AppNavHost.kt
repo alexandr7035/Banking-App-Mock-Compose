@@ -28,7 +28,7 @@ import by.alexandr7035.banking.ui.feature_help.HelpScreen
 import by.alexandr7035.banking.ui.feature_login.LoginScreen
 import by.alexandr7035.banking.ui.feature_onboarding.OnboardingScreen
 import by.alexandr7035.banking.ui.feature_profile.ProfileScreen
-import by.alexandr7035.banking.ui.feature_profile.settings_list.SettingEntry
+import by.alexandr7035.banking.ui.feature_profile.menu.MenuEntry
 import by.alexandr7035.banking.ui.feature_savings.SavingsScreen
 import by.alexandr7035.banking.ui.feature_savings.screen_saving_details.SavingDetailsScreen
 import by.alexandr7035.banking.ui.feature_transactions.TransactionHistoryScreen
@@ -185,9 +185,9 @@ fun AppNavHost(
                             }
                         }
                     },
-                    onSettingEntry = {
+                    onMenuEntry = {
                         val route = when (it) {
-                            SettingEntry.Help -> NavDestinations.RootGraph.Help.route
+                            MenuEntry.Help -> NavDestinations.RootGraph.Help.route
                             else -> error("No route specified for setting $it")
                         }
 

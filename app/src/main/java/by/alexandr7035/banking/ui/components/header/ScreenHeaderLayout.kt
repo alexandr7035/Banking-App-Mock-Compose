@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.components.SettingButton
+import by.alexandr7035.banking.ui.components.MenuButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
@@ -124,7 +124,7 @@ fun ScreenHeader_Preview() {
                 },
                 panelVerticalOffset = null
             ) {
-                SettingButton(
+                MenuButton(
                     modifier = Modifier.wrapContentSize(),
                     icon = painterResource(id = R.drawable.ic_lock_filled),
                     text = "Test test test"

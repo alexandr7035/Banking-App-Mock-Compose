@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -97,6 +98,7 @@ fun TextBtn(
     onClick: () -> Unit,
     modifier: Modifier,
     text: String,
+    color: Color = MaterialTheme.colorScheme.primary
 ) {
     TextButton(
         onClick = onClick,
@@ -107,18 +109,20 @@ fun TextBtn(
             text = text,
             style = MaterialTheme.typography.titleSmall,
             textDecoration = TextDecoration.Underline,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            color = color,
         )
     }
 }
 
 @Composable
-fun SettingButton(
+fun MenuButton(
     modifier: Modifier,
     icon: Painter,
     text: String,
     showArrow: Boolean = true,
-    onClick: () -> Unit
+    iconTint: Color? = MaterialTheme.colorScheme.primary,
+    onClick: () -> Unit,
 ) {
     PrimaryCard(
         modifier = modifier,
@@ -141,7 +145,8 @@ fun SettingButton(
             ) {
                 Image(
                     painter = icon,
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = iconTint?.let {  ColorFilter.tint(it) }
                 )
             }
 
@@ -195,7 +200,6 @@ fun DashedButton(
         ),
         shape = RoundedCornerShape(10.dp),
         contentPadding = PaddingValues(16.dp),
-//        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary)
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -272,7 +276,7 @@ fun Buttons_Preview() {
                         .padding(vertical = 56.dp)
                 )
                 {
-                    SettingButton(
+                    MenuButton(
                         modifier = Modifier.fillMaxWidth(),
                         icon = painterResource(id = R.drawable.ic_profile_filled),
                         text = "Change Personal Profile",
