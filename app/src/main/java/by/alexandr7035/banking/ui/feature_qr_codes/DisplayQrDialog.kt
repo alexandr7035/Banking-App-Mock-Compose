@@ -2,9 +2,12 @@ package by.alexandr7035.banking.ui.feature_qr_codes
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -41,7 +44,9 @@ fun ShowQrDialog(
     onDismiss: () -> Unit = {},
     qrLabel: UiText? = null
 ) {
-    val dialogState = rememberModalBottomSheetState()
+    val dialogState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     val title = when (qrPurpose) {
         QrPurpose.PROFILE_CONNECTION -> UiText.StringResource(R.string.my_qr)
@@ -58,9 +63,8 @@ fun ShowQrDialog(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.wrapContentHeight().fillMaxWidth()
         ) {
-
             Text(
                 text = title.asString(),
                 style = TextStyle(
@@ -97,8 +101,6 @@ fun ShowQrDialog(
                         onRetry = {
                             viewModel.emitIntent(DisplayQrIntent.GenerateQr(qrPurpose))
                         },
-                        modifier = Modifier
-                            .padding(bottom = 32.dp)
                     )
 
                     LaunchedEffect(Unit) {
@@ -106,6 +108,8 @@ fun ShowQrDialog(
                     }
                 }
             }
+
+            Spacer(Modifier.height(16.dp))
         }
     }
 

@@ -4,8 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,7 +51,9 @@ fun CardPickerDialog(
     defaultSelectedCard: String? = null
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
-    val dialogState = rememberModalBottomSheetState()
+    val dialogState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     val selectedCardNumber = rememberSaveable<MutableState<String?>> {
         mutableStateOf(null)
@@ -99,7 +102,9 @@ private fun CardPickerDialog_Ui(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
     ) {
         Text(
             text = stringResource(R.string.choose_card),
@@ -129,7 +134,7 @@ private fun CardPickerDialog_Ui(
                     contentPadding = PaddingValues(
                         start = 24.dp,
                         end = 24.dp,
-                        bottom = 48.dp
+                        bottom = 24.dp
                     )
                 ) {
                     if (state.cards.isNotEmpty()) {
@@ -170,8 +175,6 @@ private fun CardPickerDialog_Ui(
                     onRetry = {
                         onRequestLoad()
                     },
-                    modifier = Modifier
-                        .padding(bottom = 32.dp)
                 )
 
                 LaunchedEffect(Unit) {

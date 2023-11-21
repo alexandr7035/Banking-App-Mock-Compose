@@ -4,8 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,7 +51,9 @@ fun ContactPickerDialog(
     defaultSelectedContactId: Long? = null
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
-    val dialogState = rememberModalBottomSheetState()
+    val dialogState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     val selectedContactId = rememberSaveable<MutableState<Long?>> {
         mutableStateOf(null)
@@ -96,7 +99,8 @@ private fun ContactPickerDialog_Ui(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.wrapContentHeight().fillMaxWidth()
+
     ) {
         Text(
             text = stringResource(R.string.choose_contact),
@@ -126,7 +130,7 @@ private fun ContactPickerDialog_Ui(
                     contentPadding = PaddingValues(
                         start = 24.dp,
                         end = 24.dp,
-                        bottom = 48.dp
+                        bottom = 24.dp
                     )
                 ) {
                     if (state.contacts.isNotEmpty()) {
@@ -166,8 +170,6 @@ private fun ContactPickerDialog_Ui(
                     onRetry = {
                         onRequestLoad()
                     },
-                    modifier = Modifier
-                        .padding(bottom = 32.dp)
                 )
 
                 LaunchedEffect(Unit) {

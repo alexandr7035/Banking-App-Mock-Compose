@@ -93,8 +93,10 @@ fun ScannedContactScreen_Ui(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = 16.dp, bottom = 56.dp, start = 24.dp, end = 24.dp
-                ), horizontalAlignment = Alignment.CenterHorizontally
+                    horizontal = 24.dp,
+                    vertical = 16.dp
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(R.string.add_a_contact), style = TextStyle(
@@ -178,11 +180,13 @@ fun ScannedContactScreen_Ui(
                             onClick = onAddContact, modifier = Modifier.fillMaxWidth(), text = stringResource(id = R.string.add_a_contact)
                         )
 
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(8.dp))
 
                         TextBtn(
                             onClick = onRetryScan, modifier = Modifier.wrapContentSize(), text = stringResource(R.string.scan_again)
                         )
+
+                        Spacer(Modifier.weight(1f))
                     }
                 }
 
