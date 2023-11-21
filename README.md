@@ -42,6 +42,7 @@ For example, for banking profile the app uses local mock Repositories with stati
     - [X] App lock (PIN)
     - [X] App lock (biometrics)
     - [ ] Data enrcryption
+    - [ ] Permissions management
 - [X] Onboarding slider
 - [X] Sign up with email
 - [ ] Sign up with phone number
@@ -79,3 +80,4 @@ For example, for banking profile the app uses local mock Repositories with stati
 - [ ] Notifications 
 - [X] Logout
 - [X] Terms and Conditions (WebView)
+- [ ] App Settings
