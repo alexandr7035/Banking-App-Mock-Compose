@@ -3,6 +3,7 @@ package by.alexandr7035.banking.ui.core.extensions
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -32,6 +33,12 @@ fun Context.openBiometricsSettings() {
         else -> Intent(Settings.ACTION_SECURITY_SETTINGS)
     }
     startActivity(intent)
+}
+fun Context.openAppSystemSettings() {
+    startActivity(Intent().apply {
+        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        data = Uri.fromParts("package", packageName, null)
+    })
 }
 
 fun Context.vibrate(vibrationMode: VibrationMode = VibrationMode.SHORT) {
