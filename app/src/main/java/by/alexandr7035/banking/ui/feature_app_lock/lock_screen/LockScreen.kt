@@ -108,14 +108,14 @@ fun LockScreen(
                 prompt = state.biometricsPromptState,
                 onError = {
                     viewModel.emitBiometricsIntent(
-                        BiometricsIntent.AuthenticationResult(
+                        BiometricsIntent.ConsumeAuthResult(
                             BiometricAuthResult.Failure(it)
                         )
                     )
                 },
                 onSuccess = {
                     viewModel.emitBiometricsIntent(
-                        BiometricsIntent.AuthenticationResult(
+                        BiometricsIntent.ConsumeAuthResult(
                             BiometricAuthResult.Success
                         )
                     )

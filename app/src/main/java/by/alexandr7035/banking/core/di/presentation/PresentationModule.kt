@@ -8,6 +8,7 @@ import by.alexandr7035.banking.ui.feature_account.action_topup.TopUpScreenViewMo
 import by.alexandr7035.banking.ui.feature_app_lock.lock_screen.LockScreenViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.biometrics.EnableBiometricsViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.setup_applock.pin.CreatePinViewModel
+import by.alexandr7035.banking.ui.feature_app_settings.AppSettingsViewModel
 import by.alexandr7035.banking.ui.feature_cards.dialog_card_picker.CardPickerViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardViewModel
 import by.alexandr7035.banking.ui.feature_cards.screen_card_details.CardDetailsViewModel
@@ -205,6 +206,14 @@ val presentationModule = module {
     viewModel {
         ScannedContactViewModel(
             loadUserFromQrCodeUseCase = get()
+        )
+    }
+
+    viewModel {
+        AppSettingsViewModel(
+            checkIfBiometricsAvailableUseCase = get(),
+            checkAppLockedWithBiometricsUseCase = get(),
+            lockAppLockedWithBiometricsUseCase = get(),
         )
     }
 }

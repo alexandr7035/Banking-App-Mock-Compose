@@ -76,7 +76,7 @@
     <string name="setup_biometrics">Setup Biometrics</string>
     <string name="cancel">Cancel</string>
     <string name="go_to_settings">Go to Settings</string>
-    <string name="biometrics_enable_explanation">You should enable Biometrics in Settings</string>
+    <string name="biometrics_enable_explanation">You should enable Biometrics in System Settings</string>
     <string name="my_balance">My Balance</string>
     <string name="proceed">Proceed</string>
     <string name="set_the_nominal">Set the nominal</string>
@@ -128,4 +128,8 @@
     <string name="permissions_settings">Permissions Settings</string>
     <string name="permissions">Permissions</string>
     <string name="app_system_settings">App System Settings</string>
+    <string name="enable">Enable</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="biometric_lock">Biometric Lock</string>
+    <string name="app_lock">App Lock</string>
 </resources>

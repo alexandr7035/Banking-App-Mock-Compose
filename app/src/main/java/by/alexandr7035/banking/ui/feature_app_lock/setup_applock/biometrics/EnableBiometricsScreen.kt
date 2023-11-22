@@ -59,7 +59,6 @@ fun EnableBiometricsScreen(
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val snackBarState = LocalScopedSnackbarState.current
-    val context = LocalContext.current
 
     EnableBiometricsScreen_Ui(
         onIntent = {
@@ -166,14 +165,14 @@ fun EnableBiometricsScreen_Ui(
                                     activity,
                                     onSuccess = {
                                         onIntent(
-                                            BiometricsIntent.AuthenticationResult(
+                                            BiometricsIntent.ConsumeAuthResult(
                                                 BiometricAuthResult.Success
                                             )
                                         )
                                     },
                                     onError = {
                                         onIntent(
-                                            BiometricsIntent.AuthenticationResult(
+                                            BiometricsIntent.ConsumeAuthResult(
                                                 BiometricAuthResult.Failure(it)
                                             )
                                         )
