@@ -6,11 +6,26 @@
 
 The primary purpose of the app is to develop a medium-size (~20K LoC) app using Compose instead of Android Views and enjoy all Compose pitfalls :)
 
-The app is build with a typical data <- domain <- ui architecture with only ....
-that there is no remote datasource and all the banking data is mocked.
-However, some data like Cards and Transactions is cached for persistance.
+The app is built with a **data <- domain <- ui** architecture typical for real applications with only difference that there is no remote data source. Thus, all the banking info is mocked on `data` layer. However, some data like Cards and Transactions is cached for persistence.
 
 **Design reference**: https://www.figma.com/community/file/1106055934725589367/Finance-Mobile-App-UI-KIT
+
+1. Onboarding, Sign in and user profile
+<p align="left">
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/f6436798-c655-45fd-940f-909108f0cd8f" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/9af32fed-6bdd-421a-bbad-b0a6b30c9384" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/5b60ccfd-c1a5-4716-a18b-d70c434f6ea1" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/498d3dcc-a79f-4575-8bf5-bf678777683a" width="20%"/>
+</p>
+
+2. Cards and Savings
+<p align="left">
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/aacaeac3-24f7-491d-a69f-604d06d8de5a" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/bbb1c8ad-e1cd-4958-9da1-b4c32c88f67a" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/edee3a09-940a-4c18-b8c6-8ceec1c017fb" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/7b25851e-68ef-416e-bbdc-d37e67156f43" width="20%"/>
+</p>
+
 
 // 3-4 IMAGES
 // APP DEMO VIDEO
@@ -29,24 +44,8 @@ However, some data like Cards and Transactions is cached for persistance.
 - [Zxing (QR codes)](https://github.com/journeyapps/zxing-android-embedded)
 - [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
 
-## Gallery
-1. Onboarding, Sign in and user profile
-<p align="left">
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/f6436798-c655-45fd-940f-909108f0cd8f" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/9af32fed-6bdd-421a-bbad-b0a6b30c9384" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/5b60ccfd-c1a5-4716-a18b-d70c434f6ea1" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/498d3dcc-a79f-4575-8bf5-bf678777683a" width="20%"/>
-</p>
 
-2. Cards and Savings
-<p align="left">
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/aacaeac3-24f7-491d-a69f-604d06d8de5a" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/bbb1c8ad-e1cd-4958-9da1-b4c32c88f67a" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/edee3a09-940a-4c18-b8c6-8ceec1c017fb" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/7b25851e-68ef-416e-bbdc-d37e67156f43" width="20%"/>
-</p>
-
-## App usage
+### App usage
 Login - `example@mail.com`  
 Password - `1234567Ab`  
 OTP - `1111`  
@@ -55,7 +54,7 @@ Scan QR - any qr code
   
 Info about mocked fields  
 
-## Implemented features
+### Implemented features
 - [ ] App core:
     - [X] Splash screen
     - [X] Navigation
@@ -104,6 +103,9 @@ Info about mocked fields
 - [X] Terms and Conditions (WebView)
 
 ## Implementation details
+
+<details>
+<summary><strong>UI layer</strong></summary>
 
 ### UI layer
 The app contains single Root screen.
@@ -270,12 +272,12 @@ class ScreenViewModel: ViewModel(
     private val _state = MutableStateFlow(ScreenState())
     val state = _state.asStateFlow()
 
-    fun emitIntent(intent: SomeIntent) {
+    fun emitIntent(intent: ScreenIntent) {
         when (intent) {
             is ScreenIntent.Load {
                 viewModelScope.launch {
                     // This extension wraps data returned by use case into
-                    // OperationResult class also handling errors
+                    // OperationResult class which encapsulates errors
                     val res = OperationResult.runWrapped { 
                         someUsecase.execute()
                     }
@@ -307,6 +309,11 @@ class ScreenViewModel: ViewModel(
 }
 
 ```
+</details>
+
+  
+<details>
+<summary><strong>Domain layer</strong></summary>
 
 ### Domain layer
 use case
@@ -317,6 +324,12 @@ asuitexterror
 
 for money - MoneyAmount
 
+</details>
+  
+
+<details>
+  <summary><strong>Data layer</strong></summary>
+
 ### Data layer 
 data
 mock repos with delays
@@ -324,14 +337,27 @@ mock repos with delays
 Transaction handling
 TransactionWorkManager
 
+</details>  
+  
+
+<details>
+  <summary><strong>App lock</strong></summary>
+
 ### App lock
 PIN
 Biometrics
 When it asked to create applock
 
+</details>  
+  
+
+<details>
+  <summary><strong>Permissions</strong></summary>
+
 ### Permissions
 Pemission helper composition local
 
+</details>  
 
 # USED MATERIALS
 
