@@ -1,36 +1,46 @@
-# Banking-App-Mock-Compose
+![GitHub top language](https://img.shields.io/github/languages/top/alexandr7035/Banking-App-Mock-Compose?color=%237f52ff&style=for-the-badge)
 
-## Overview
 
+
+<br>
+<p align="center"> 
+   <img height="150" src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/eb81869d-818c-4039-8861-6513b0b62dbb"/> 
+</p>
+
+<h1 align="center"> 
+   Banking-App-Mock-Compose
+</h1>
+
+* [About the app](#about-the-app)
+    * [Stack](#stack)
+    * [App usage](#app-usage)
+    * [Implemented features](#implemented-features)
+* [Technical details](#technical-details)
+    * [UI layer](#ui-layer)
+    * [Domain layer](#domain-layer)
+    * [Data layer](#data-layer)
+    * [App lock](#app-lock)
+    * [Permissions](#permissions)
+
+
+# About the app
 **Banking-App-Mock-Compose** is a mock android app written with **Jetpack Compose**
 
 The primary purpose of the app is to develop a medium-size (~20K LoC) app using Compose instead of Android Views and enjoy all Compose pitfalls :)
 
-The app is built with a **data <- domain <- ui** architecture typical for real applications with only difference that there is no remote data source. Thus, all the banking info is mocked on `data` layer. However, some data like Cards and Transactions is cached for persistence.
+The app is built with a **data <- domain <- ui** architecture typical for real applications with only difference that there is no remote data source. Thus, all the banking info is mocked on `data` layer. However, some data like Cards and Transactions is cached locally for persistence.
 
-**Design reference**: https://www.figma.com/community/file/1106055934725589367/Finance-Mobile-App-UI-KIT
-
-1. Onboarding, Sign in and user profile
 <p align="left">
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/f6436798-c655-45fd-940f-909108f0cd8f" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/9af32fed-6bdd-421a-bbad-b0a6b30c9384" width="20%"/>
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/5b60ccfd-c1a5-4716-a18b-d70c434f6ea1" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/498d3dcc-a79f-4575-8bf5-bf678777683a" width="20%"/>
-</p>
-
-2. Cards and Savings
-<p align="left">
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/aacaeac3-24f7-491d-a69f-604d06d8de5a" width="20%"/>
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/bbb1c8ad-e1cd-4958-9da1-b4c32c88f67a" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/edee3a09-940a-4c18-b8c6-8ceec1c017fb" width="20%"/>
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/7b25851e-68ef-416e-bbdc-d37e67156f43" width="20%"/>
 </p>
 
+**Design reference**: https://www.figma.com/community/file/1106055934725589367/Finance-Mobile-App-UI-KIT
 
-// 3-4 IMAGES
 // APP DEMO VIDEO
 
-**Stack**
+## Stack
 - [Jetpack Compose](https://developer.android.com/jetpack/compose)
 - [compose-state-events](https://github.com/leonard-palm/compose-state-events) by Leonard Palm
 - [Koin](https://insert-koin.io/docs/quickstart/android) DI
@@ -45,16 +55,19 @@ The app is built with a **data <- domain <- ui** architecture typical for real a
 - [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
 
 
-### App usage
-Login - `example@mail.com`  
-Password - `1234567Ab`  
-OTP - `1111`  
+## App usage
+Working credentials for the app:
+> Login - `example@mail.com`  
+> Password - `1234567Ab`  
+> OTP - `1111`
+
+use other credentials if you want to trigger an error
   
 Scan QR - any qr code  
   
 Info about mocked fields  
 
-### Implemented features
+## Implemented features
 - [ ] App core:
     - [X] Splash screen
     - [X] Navigation
@@ -102,17 +115,22 @@ Info about mocked fields
 - [X] Logout
 - [X] Terms and Conditions (WebView)
 
-## Implementation details
+# Technical details
+
+The app uses MVI for presentation layer and Clean Architecture.
+
+
+IMG MVI diagram.
 
 <details>
 <summary><strong>UI layer</strong></summary>
 
-### UI layer
+## UI layer
 The app contains single Root screen.
-The screen servers for seveal purpose:
-- Show loading screen when app state prepared
-- Prepare and pass conditional navigation to NavHost
-- Setup CompositionLocal's for NavHost
+The screen servers for several purposeы:
+- Show loading screen when app state prepared on start.
+- Prepare and pass conditional navigation to NavHost.
+- Setup [CompositionLocal](https://developer.android.com/jetpack/compose/compositionlocal) for NavHost.
 
 ```kotlin
 
@@ -216,10 +234,10 @@ sealed class ScreenIntent {
     ...
 }
 
-// Then in ViewModel:
+// Then in ViewModel
 when (intent) {
-    is Load -> { ... }
-    is SomeClick -> { ...}
+    is Load -> { loadDataFromServer() }
+    is SomeClick -> { handleSomeClick() }
 }
 
 ```
@@ -251,10 +269,11 @@ fun Screen(
         viewModel.emitIntent(ScreenIntent.Load)
     }
 
-    // Consume events if any
+    // The EventEffect is a LaunchedEffect that will be executed, when the event is in its triggered state. 
+    // When the event action was executed the effect calls the onConsumed callback to force ViewMode to set the event field to be consumed.
     EventEffect(
         event = state.someEvent,
-        ...
+        onConsumed = viewModel::onconsumeSomeEvent
     ) {
         // Do action, e.g. show a snackbar notification
     }
@@ -304,6 +323,12 @@ class ScreenViewModel: ViewModel(
             // Here screen state is updated
             fun reduceError(...) {}
             fun reduceSuccess(...) {}
+
+            fun onConsumeSomeEvent() {
+                _state.update {
+                    it.copy(someEvent = consumed)
+                }
+            }
         }
     }
 }
@@ -315,10 +340,106 @@ class ScreenViewModel: ViewModel(
 <details>
 <summary><strong>Domain layer</strong></summary>
 
-### Domain layer
-use case
+## Domain layer
+
+A use case
+```kotlin
+class GetHomeCardsUseCase(private val cardsRepository: CardsRepository) {
+    // A use case contains only one public execute() method with a single responsibility
+    suspend fun execute(): List<PaymentCard> {
+        val allCards = cardsRepository.getCards()
+
+        val (primary, other) = allCards.partition { it.isPrimary }
+
+        val sortedPrimary = primary.sortedByDescending { it.addedDate }
+        val sortedOther = other.sortedByDescending { it.addedDate }
+
+        return (sortedPrimary + sortedOther).take(DISPLAYED_COUNT)
+    }
+
+    companion object {
+        private const val DISPLAYED_COUNT = 3
+    }
+}
+```
+
 OperationResult
+```kotlin
+sealed class OperationResult<out T> {
+    data class Success<out T>(val data: T) : OperationResult<T>()
+
+    data class Failure(val error: AppError) : OperationResult<Nothing>()
+
+    fun isSuccess(): Boolean {
+        return when (this) {
+            is Success -> true
+            is Failure -> false
+        }
+    }
+
+    companion object {
+        inline fun <R> runWrapped(block: () -> R): OperationResult<R> {
+            return try {
+                val res = block()
+                Success(res)
+            } catch (e: Exception) {
+                when (e) {
+                    is AppError -> Failure(e)
+                    else -> Failure(AppError(ErrorType.fromThrowable(e)))
+                }
+            }
+        }
+    }
+}
+
+enum class ErrorType {
+    USER_NOT_FOUND,
+    WRONG_PASSWORD,
+    CARD_NOT_FOUND,
+    INSUFFICIENT_CARD_BALANCE,
+    UNKNOWN_ERROR,;
+
+    companion object {
+        fun fromThrowable(e: Throwable): ErrorType {
+            // Here may be additional mapping depending on exception type
+            return when (e) {
+                is AppError -> e.errorType
+                else -> UNKNOWN_ERROR
+            }
+        }
+    }
+}
+
+```
+
+// Then we can use AppError in repositories:
+```kotlin
+// Throw AppError in repository 
+// It will be later handled in business logic or ui
+override suspend fun getCardById(id: String): PaymentCard = withContext(coroutineDispatcher) {
+    // Load card from DB or throw error
+    val card = cardsDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
+    return@withContext mapCachedCardToDomain(card)
+}
+```
+
+// Or detect AppError directly from exception
+```kotlin
+// Example of usage in ViewModel's CoroutineExceptionHandler
+private val errorHandler = CoroutineExceptionHandler { _, throwable ->
+    reduceError(ErrorType.fromThrowable(throwable))
+}
+
+viewModelScope.launch(errorHandler) {
+    // Can safely call usecases here without wrapping in OperationResult
+}
+
+```
+
 AppError (throw in repo or ErrorInterceptor)
+then errors can be thrown directly in repos
+or mapped from exception depenin on type
+
 ErrorType
 asuitexterror
 
@@ -330,7 +451,7 @@ for money - MoneyAmount
 <details>
   <summary><strong>Data layer</strong></summary>
 
-### Data layer 
+## Data layer 
 data
 mock repos with delays
 
@@ -343,7 +464,7 @@ TransactionWorkManager
 <details>
   <summary><strong>App lock</strong></summary>
 
-### App lock
+## App lock
 PIN
 Biometrics
 When it asked to create applock
