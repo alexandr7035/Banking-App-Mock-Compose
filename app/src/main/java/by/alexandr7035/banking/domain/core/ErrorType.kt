@@ -25,6 +25,7 @@ enum class ErrorType {
 
     companion object {
         fun fromThrowable(e: Throwable): ErrorType {
+            // Here may be additional mapping depending on exception type
             return when (e) {
                 is AppError -> e.errorType
                 else -> UNKNOWN_ERROR
