@@ -128,14 +128,12 @@ The app uses Clean Architecture layers and MVI for presentation layer.
 <summary><strong>UI layer</strong></summary>
 
 ### UI layer
-The app contains single Root screen.
-The screen servers for several purposeы:
+The app contains a root `AppContainerScreen` screen which servers for several purposes:
 - Show loading screen when app state prepared on start.
 - Prepare and pass conditional navigation to NavHost.
 - Setup [CompositionLocal](https://developer.android.com/jetpack/compose/compositionlocal) for NavHost.
 
 ```kotlin
-
 // Root State
 sealed class AppState {
     object Loading: AppState()
@@ -205,14 +203,13 @@ fun AppContainerScreen(viewModel: AppViewModel = koinViewModel()) {
         }
     }
 }
-
 ```
 
 A typical screen is handled with 4 components:
 - **State** - an object with screen data and user input
 - **Intent** - an action triggered from screen (e.g. data load request or button click)
-- **Screen Composable** - screen's UI
-- **ViewModel** - to make it all work together
+- **Screen @Composable** - screen's UI
+- **ViewModel** - to manage UI's data in a lifecycle-aware way
 
 Screen state is represented with data or sealed class:
 ```kotlin
@@ -226,9 +223,8 @@ data class ScreenState(
 )
 ```
 
-An intent is typically a sealed class to easilly handle it with exhaustive `when` condition:
+An `Intent` is typically a sealed class to easilly handle it with exhaustive `when` condition:
 ```kotlin
-
 // Intent
 sealed class ScreenIntent {
     object Load: ScreenIntent()
@@ -241,7 +237,6 @@ when (intent) {
     is Load -> { loadDataFromServer() }
     is SomeClick -> { handleSomeClick() }
 }
-
 ```
 
 A screen composable typically contains a nested ScreenUi composable to make it work with `@Preview`:
@@ -280,13 +275,11 @@ fun Screen(
         // Do action, e.g. show a snackbar notification
     }
 }
-
 ```
 
 ViewModel gets data from one or several usecases and reduces it to state for ui.
 More complex cases may require **Flows** for multiple values and **Deferred** async/await for parallel requess.
 ```kotlin
-
 class ScreenViewModel: ViewModel(
     private val someUseCase: SomeUseCase
 ) {
@@ -334,7 +327,6 @@ class ScreenViewModel: ViewModel(
         }
     }
 }
-
 ```
 </details>
 
@@ -349,7 +341,7 @@ Building blocks:
 - Domain error handling
 - Repository interfaces
 
-A use case
+A use case is a class for specific app feature. By using use cases the presentation layer remains unaware of the data source details. 
 ```kotlin
 class GetHomeCardsUseCase(private val cardsRepository: CardsRepository) {
     // A use case contains only one public execute() method with a single responsibility
@@ -370,7 +362,7 @@ class GetHomeCardsUseCase(private val cardsRepository: CardsRepository) {
 }
 ```
 
-OperationResult
+A domain `OperationResult` model is used to represent result of a operation that may either succeed or finish with business logic error.
 ```kotlin
 sealed class OperationResult<out T> {
     data class Success<out T>(val data: T) : OperationResult<T>()
@@ -399,6 +391,7 @@ sealed class OperationResult<out T> {
     }
 }
 
+// Domain error types
 enum class ErrorType {
     USER_NOT_FOUND,
     WRONG_PASSWORD,
@@ -416,22 +409,21 @@ enum class ErrorType {
         }
     }
 }
-
 ```
 
-// Then we can use AppError in repositories:
+`AppError` is an exception that can be used on all layers of the application:
 ```kotlin
-// Throw AppError in repository 
+data class AppError(val errorType: ErrorType): Exception()
+
+// We can throw AppError in repositories
 // It will be later handled in business logic or ui
 override suspend fun getCardById(id: String): PaymentCard = withContext(coroutineDispatcher) {
     // Load card from DB or throw error
     val card = cardsDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
     return@withContext mapCachedCardToDomain(card)
 }
-```
 
 // Or detect AppError directly from exception
-```kotlin
 // Example of usage in ViewModel's CoroutineExceptionHandler
 private val errorHandler = CoroutineExceptionHandler { _, throwable ->
     reduceError(ErrorType.fromThrowable(throwable))
@@ -440,10 +432,10 @@ private val errorHandler = CoroutineExceptionHandler { _, throwable ->
 viewModelScope.launch(errorHandler) {
     // Can safely call usecases here without wrapping in OperationResult
 }
-
 ```
 
-On domain layer, the app aso provides a specific model for money representation
+Domain layer also includes models for core app entities like Cards, Savings and balances.
+This is an example of domain model for money representation
 ```kotlin
 // Wrapper class for money representation
 // Used to encapsulation of chosen base types (Double, BigDecimal and so on)
@@ -464,9 +456,7 @@ data class MoneyAmount(
         return this.value.compareTo(other.value)
     }
 }
-```
-
-for money - MoneyAmount
+```  
 
 </details>
   
@@ -594,34 +584,34 @@ PIN lock:
 So that PIN not stored in raw way.
 
 ```kotlin
-    private fun savePin(pin: String) {
-        val salt = CryptoUtils.generateSalt()
+private fun savePin(pin: String) {
+    val salt = CryptoUtils.generateSalt()
 
-        val secretKey = CryptoUtils.generatePbkdf2Key(
-            passphraseOrPin = pin.toCharArray(),
-            salt = salt
-        )
+    val secretKey = CryptoUtils.generatePbkdf2Key(
+        passphraseOrPin = pin.toCharArray(),
+        salt = salt
+    )
 
-        val encodedPinData = Base64.encodeToString(secretKey.encoded, Base64.DEFAULT)
-        val encodedSalt = Base64.encodeToString(salt, Base64.DEFAULT)
+    val encodedPinData = Base64.encodeToString(secretKey.encoded, Base64.DEFAULT)
+    val encodedSalt = Base64.encodeToString(salt, Base64.DEFAULT)
 
-        securedPreferences.edit()
-            .putString(PIN_KEY, encodedPinData)
-            .putString(PIN_SALT_KEY, encodedSalt)
-            .apply()
-    }
+    securedPreferences.edit()
+        .putString(PIN_KEY, encodedPinData)
+        .putString(PIN_SALT_KEY, encodedSalt)
+        .apply()
+}
 
-    private fun isPinValid(pin: String): Boolean {
-        val storedSalt = securedPreferences.getString(PIN_SALT_KEY, null)
-        val decodedSalt = Base64.decode(storedSalt, Base64.DEFAULT)
+private fun isPinValid(pin: String): Boolean {
+    val storedSalt = securedPreferences.getString(PIN_SALT_KEY, null)
+    val decodedSalt = Base64.decode(storedSalt, Base64.DEFAULT)
 
-        val storedPinData = securedPreferences.getString(PIN_KEY, null)
-        val decodedPinData = Base64.decode(storedPinData, Base64.DEFAULT)
+    val storedPinData = securedPreferences.getString(PIN_KEY, null)
+    val decodedPinData = Base64.decode(storedPinData, Base64.DEFAULT)
 
-        val enteredPinData = CryptoUtils.generatePbkdf2Key(pin.toCharArray(), decodedSalt)
+    val enteredPinData = CryptoUtils.generatePbkdf2Key(pin.toCharArray(), decodedSalt)
 
-        return decodedPinData contentEquals enteredPinData.encoded
-    }
+    return decodedPinData contentEquals enteredPinData.encoded
+}
 ```
 
 Biometrics:
