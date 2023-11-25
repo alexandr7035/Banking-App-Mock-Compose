@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
@@ -38,6 +39,7 @@ import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
 import by.alexandr7035.banking.ui.core.effects.EnterScreenEffect
+import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_contacts.model.ContactUi
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import coil.compose.AsyncImage
@@ -73,10 +75,17 @@ fun ScannedContactScreen(
     }
 
     NavigationEventEffect(
-        event = state.addContactResultEvent,
+        event = state.addContactResEvent,
         onConsumed = viewModel::consumeContactAddedEvent
     ) {
-        snackBarState.show(context, R.string.contact_added, SnackBarMode.Positive)
+        when (it) {
+            is OperationResult.Failure -> {
+                snackBarState.show(it.error.errorType.asUiTextError().asString(context), SnackBarMode.Negative)
+            }
+            is OperationResult.Success -> {
+                snackBarState.show(context, R.string.contact_added, SnackBarMode.Positive)
+            }
+        }
         onBack()
     }
 }

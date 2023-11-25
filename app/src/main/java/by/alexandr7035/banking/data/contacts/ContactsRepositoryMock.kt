@@ -38,7 +38,15 @@ class ContactsRepositoryMock: ContactsRepository {
         } ?: throw AppError(ErrorType.GENERIC_NOT_FOUND_ERROR)
     }
 
+    override suspend fun getContactFromQr(qrCode: String): Contact {
+        return when (qrCode) {
+            MOCK_CONTACT_QR -> getContacts().random()
+            else -> throw AppError(ErrorType.USER_NOT_FOUND)
+        }
+    }
+
     companion object {
         private const val MOCK_DELAY = 200L
+        private const val MOCK_CONTACT_QR = "by.alexandr7035.banking:addcontact"
     }
 }

@@ -7,6 +7,6 @@ class LoadUserFromQrCodeUseCase(
     private val contactsRepository: ContactsRepository
 ) {
     suspend fun execute(qrCode: String): Contact {
-        return contactsRepository.getContacts().random()
+        return contactsRepository.getContactFromQr(qrCode)
     }
 }

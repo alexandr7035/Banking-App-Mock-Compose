@@ -53,18 +53,20 @@ The app is built with a **data <- domain <- ui** architecture typical for real a
 
 
 ## App usage
-Working credentials for the app:
-> Login - `example@mail.com`  
-> Password - `1234567Ab`  
-> OTP - `1111`
+**Working credentials for the app**:
 
-use other credentials if you want to trigger an error
-  
-Scan QR - any qr code  
-  
-Info about mocked fields  
+> Login: `example@mail.com`  
+> Password: `1234567Ab`  
+> OTP: `1111`  
 
-## Implemented features
+Use other credentials if you want to trigger an error.
+  
+**If app asks to scan QR**:
+<p>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/c35d4e0e-4092-4e84-9b90-e0ea843aad7d" width="200"/>
+</p>
+
+## Implementation plan
 - [ ] App core:
     - [X] Splash screen
     - [X] Navigation
@@ -604,22 +606,21 @@ Pemission helper composition local
 <br>
 
 # Used materials
-1. [How to Validate Fields Using Jetpack Compose in Android](https://medium.com/@rzmeneghelo/how-to-validate-fields-using-jetpack-compose-in-android-43be70597e82)
-2. [Clickable SpannableText in Jetpack Compose](https://medium.com/@shmehdi01/clickable-spannabletext-in-jetpack-compose-c24514c34f27)
-3. [Field Validations using Jetpack Compose and MVVM](https://medium.com/@karthik.dusk/field-validations-using-jetpack-compose-and-mvvm-8c4ea947b35d)
-4. [Android: Simple MVI implementation with Jetpack Compose](https://medium.com/@VolodymyrSch/android-simple-mvi-implementation-with-jetpack-compose-5ee5d6fc4908)
-5. [Navigate back with result with Jetpack Compose](https://medium.com/@desilio/navigate-back-with-result-with-jetpack-compose-e91e6a6847c9)
-6. [Kotlin Coroutines patterns & anti-patterns](https://proandroiddev.com/kotlin-coroutines-patterns-anti-patterns-f9d12984c68e#69e0)
-7. [Exception handling in Kotlin Coroutines](https://ganeshajdivekar.medium.com/exception-handling-in-kotlin-coroutines-b08c095ddea0)
-8. [Formatting credit card number input in Jetpack compose Android](https://dev.to/benyam7/formatting-credit-card-number-input-in-jetpack-compose-android-2nal)
-9. [Input Validation With Clean Architecture In Jetpack Compose](https://medium.com/@mohammadjoumani/input-validation-with-clean-architecture-in-jetpack-compose-4225e2e86397)
-10. [Animations in Jetpack Compose with examples](https://blog.canopas.com/animations-in-jetpack-compose-with-examples-48307ba9dff1)
-11. [Firebase Analytics + Jetpack Compose](https://medium.com/mobilepeople/firebase-analytics-jetpack-compose-6bd5ee30fc6f)
-12. [ ](https://github.com/stevdza-san/Custom-Component-Jetpack-Compose/blob/main/CustomComponent.kt)
+1. [Authenticate me. If you can…](https://habr.com/ru/companies/redmadrobot/articles/475112/)
+2. [Android: Simple MVI implementation with Jetpack Compose](https://medium.com/@VolodymyrSch/android-simple-mvi-implementation-with-jetpack-compose-5ee5d6fc4908)
+3. [Animations in Jetpack Compose with examples](https://blog.canopas.com/animations-in-jetpack-compose-with-examples-48307ba9dff1)
+4. [Clickable SpannableText in Jetpack Compose](https://medium.com/@shmehdi01/clickable-spannabletext-in-jetpack-compose-c24514c34f27)
+5. [Custom UI Component - Canvas and Jetpack Compose](https://youtu.be/XuZvHKwD_iM)
+6. [Exception handling in Kotlin Coroutines](https://ganeshajdivekar.medium.com/exception-handling-in-kotlin-coroutines-b08c095ddea0)
+7. [Field Validations using Jetpack Compose and MVVM](https://medium.com/@karthik.dusk/field-validations-using-jetpack-compose-and-mvvm-8c4ea947b35d)
+8. [Firebase Analytics + Jetpack Compose](https://medium.com/mobilepeople/firebase-analytics-jetpack-compose-6bd5ee30fc6f)
+9. [Formatting credit card number input in Jetpack compose Android](https://dev.to/benyam7/formatting-credit-card-number-input-in-jetpack-compose-android-2nal)
+10. [How to Render Text as a QR code in Jetpack Compose](https://dev.to/devniiaddy/qr-code-with-jetpack-compose-47e)
+11. [How to Validate Fields Using Jetpack Compose in Android](https://medium.com/@rzmeneghelo/how-to-validate-fields-using-jetpack-compose-in-android-43be70597e82)
+12. [Input Validation With Clean Architecture In Jetpack Compose](https://medium.com/@mohammadjoumani/input-validation-with-clean-architecture-in-jetpack-compose-4225e2e86397)
 13. [Jetpack Compose OTP input field](https://proandroiddev.com/jetpack-compose-otp-input-field-bcfa22c85e5f)
-14. [Authenticate me. If you can…](https://habr.com/ru/companies/redmadrobot/articles/475112/)
-15. [Paging With Clean Architecture In Jetpack Compose](https://medium.com/@mohammadjoumani/paging-with-clean-architecture-in-jetpack-compose-775fbf589256)
-16. [How to Render Text as a QR code in Jetpack Compose](https://dev.to/devniiaddy/qr-code-with-jetpack-compose-47e)
+14. [Kotlin Coroutines patterns & anti-patterns](https://proandroiddev.com/kotlin-coroutines-patterns-anti-patterns-f9d12984c68e#69e0)
+15. [Navigate back with result with Jetpack Compose](https://medium.com/@desilio/navigate-back-with-result-with-jetpack-compose-e91e6a6847c9)
+16. [Paging With Clean Architecture In Jetpack Compose](https://medium.com/@mohammadjoumani/paging-with-clean-architecture-in-jetpack-compose-775fbf589256)
 17. [Parallel API calls using Coroutines, having different return types](https://kashif-mehmood-km.medium.com/parallel-api-calls-using-coroutines-having-different-return-types-4d269a1b88d4)
-
 

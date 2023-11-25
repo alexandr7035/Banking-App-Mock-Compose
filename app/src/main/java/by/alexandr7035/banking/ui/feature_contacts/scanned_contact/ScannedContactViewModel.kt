@@ -2,6 +2,7 @@ package by.alexandr7035.banking.ui.feature_contacts.scanned_contact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.connections.LoadUserFromQrCodeUseCase
 import by.alexandr7035.banking.ui.core.error.asUiTextError
@@ -26,6 +27,7 @@ class ScannedContactViewModel(
                 _state.update {
                     it.copy(
                         isContactLoading = true,
+                        isLoading = false,
                         error = null
                     )
                 }
@@ -46,11 +48,22 @@ class ScannedContactViewModel(
                         }
 
                         is OperationResult.Failure -> {
-                            _state.update {
-                                it.copy(
-                                    isContactLoading = false,
-                                    error = res.error.errorType.asUiTextError()
-                                )
+                            if (res.error.errorType == ErrorType.USER_NOT_FOUND) {
+                                _state.update {
+                                    it.copy(
+                                        isContactLoading = false,
+                                        error = null,
+                                        addContactResEvent = triggered(res)
+                                    )
+                                }
+                            }
+                            else {
+                                _state.update {
+                                    it.copy(
+                                        isContactLoading = false,
+                                        error = res.error.errorType.asUiTextError()
+                                    )
+                                }
                             }
                         }
                     }
@@ -69,8 +82,8 @@ class ScannedContactViewModel(
 
                     _state.update {
                         it.copy(
-                            isLoading = true,
-                            addContactResultEvent = triggered
+                            isLoading = false,
+                            addContactResEvent = triggered(OperationResult.Success(Unit))
                         )
                     }
                 }
@@ -81,7 +94,7 @@ class ScannedContactViewModel(
     fun consumeContactAddedEvent() {
         _state.update {
             it.copy(
-                addContactResultEvent = consumed
+                addContactResEvent = consumed()
             )
         }
     }
