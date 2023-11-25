@@ -12,15 +12,17 @@
 </h1>
 
 * [About the app](#about-the-app)
-    * [Stack](#stack)
-    * [App usage](#app-usage)
-    * [Implemented features](#implemented-features)
+   * [Stack](#stack)
+   * [App usage](#app-usage)
+   * [Implemented features](#implemented-features)
 * [Technical details](#technical-details)
-    * [UI layer](#ui-layer)
-    * [Domain layer](#domain-layer)
-    * [Data layer](#data-layer)
-    * [App lock](#app-lock)
-    * [Permissions](#permissions)
+   * [App layers](#app-layers)
+      * [UI layer](#ui-layer)
+      * [Domain layer](#domain-layer)
+      * [Data layer](#data-layer)
+   * [Feature details](#feature-details)
+      * [App lock](#app-lock)
+      * [Permissions](#permissions)
 
 
 # About the app
@@ -117,15 +119,17 @@ Info about mocked fields
 
 # Technical details
 
-The app uses MVI for presentation layer and Clean Architecture.
+The app uses Clean Architecture layers and MVI for presentation layer.
+<p>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/e7af2b8f-bd9c-421a-95b6-eae73ccb355d" width="75%"/>
+</p>
 
-
-IMG MVI diagram.
+## App layers
 
 <details>
 <summary><strong>UI layer</strong></summary>
 
-## UI layer
+### UI layer
 The app contains single Root screen.
 The screen servers for several purposeы:
 - Show loading screen when app state prepared on start.
@@ -340,7 +344,7 @@ class ScreenViewModel: ViewModel(
 <details>
 <summary><strong>Domain layer</strong></summary>
 
-## Domain layer
+### Domain layer
 
 A use case
 ```kotlin
@@ -447,11 +451,10 @@ for money - MoneyAmount
 
 </details>
   
-
 <details>
   <summary><strong>Data layer</strong></summary>
 
-## Data layer 
+### Data layer 
 data
 mock repos with delays
 
@@ -460,11 +463,12 @@ TransactionWorkManager
 
 </details>  
   
+## Feature details
 
 <details>
   <summary><strong>App lock</strong></summary>
 
-## App lock
+### App lock
 PIN
 Biometrics
 When it asked to create applock
@@ -479,6 +483,8 @@ When it asked to create applock
 Pemission helper composition local
 
 </details>  
+  
+<br>
 
 # USED MATERIALS
 
