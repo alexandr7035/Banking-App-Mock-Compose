@@ -17,13 +17,8 @@
    * [Implemented features](#implemented-features)
 * [Technical details](#technical-details)
    * [App layers](#app-layers)
-      * [UI layer](#ui-layer)
-      * [Domain layer](#domain-layer)
-      * [Data layer](#data-layer)
    * [Feature details](#feature-details)
-      * [App lock](#app-lock)
-      * [Permissions](#permissions)
-
+* [Used materials](#used-materials)
 
 # About the app
 **Banking-App-Mock-Compose** is a mock android app written with **Jetpack Compose**
@@ -345,6 +340,11 @@ class ScreenViewModel: ViewModel(
 <summary><strong>Domain layer</strong></summary>
 
 ### Domain layer
+Building blocks:
+- Use cases
+- Domain models
+- Domain error handling
+- Repository interfaces
 
 A use case
 ```kotlin
@@ -440,12 +440,28 @@ viewModelScope.launch(errorHandler) {
 
 ```
 
-AppError (throw in repo or ErrorInterceptor)
-then errors can be thrown directly in repos
-or mapped from exception depenin on type
+On domain layer, the app aso provides a specific model for money representation
+```kotlin
+// Wrapper class for money representation
+// Used to encapsulation of chosen base types (Double, BigDecimal and so on)
+// And to handle additional properties like currencies
+data class MoneyAmount(
+    val value: Float,
+    val currency: BalanceCurrency = BalanceCurrency.USD,
+) {
+    operator fun plus(other: MoneyAmount): MoneyAmount {
+        return this.copy(value = this.value + other.value)
+    }
 
-ErrorType
-asuitexterror
+    operator fun minus(other: MoneyAmount): MoneyAmount {
+        return this.copy(value = this.value - other.value)
+    }
+
+    operator fun compareTo(other: MoneyAmount): Int {
+        return this.value.compareTo(other.value)
+    }
+}
+```
 
 for money - MoneyAmount
 
@@ -454,12 +470,110 @@ for money - MoneyAmount
 <details>
   <summary><strong>Data layer</strong></summary>
 
-### Data layer 
-data
-mock repos with delays
+### Data layer
+Building blocks:
+- Repository implemetations
+- Cache models and DAOs
+- Workers
 
-Transaction handling
-TransactionWorkManager
+This is an example of a mock repository implementation for transaction caching and execution:
+```kotlin
+class TransactionRepositoryMock(
+    private val workManager: WorkManager,
+    private val transactionDao: TransactionDao,
+    private val coroutineDispatcher: CoroutineDispatcher,
+    private val contactsRepository: ContactsRepository
+) : TransactionRepository {
+
+    // Cache new transaction and start a Worker for it
+    override suspend fun submitTransaction(payload: TransactionRowPayload) {
+        val raw = TransactionEntity(
+            type = payload.type,
+            value = payload.amount,
+            linkedContactId = payload.contactId,
+            createdDate = System.currentTimeMillis(),
+            recentStatus = TransactionStatus.PENDING,
+            updatedStatusDate = System.currentTimeMillis(),
+            cardId = payload.cardId
+        )
+        val savedId = transactionDao.addTransaction(raw)
+
+        val data = Data.Builder()
+            .putLong(TransactionWorker.TRANSACTION_ID_KEY, savedId)
+            .build()
+
+        val workRequest =
+            OneTimeWorkRequestBuilder<TransactionWorker>()
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiresBatteryNotLow(false)
+                        .build()
+                )
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setInputData(data)
+                .build()
+
+        workManager.enqueue(workRequest)
+    }
+
+    // Load transactions from cache with paging
+    override suspend fun getTransactions(filterByType: TransactionType?): Flow<PagingData<Transaction>> {
+        val contacts = contactsRepository.getContacts()
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_MAX_SIZE,
+                prefetchDistance = PREFETCH_DISTANCE
+            ),
+            pagingSourceFactory = {
+                TransactionSource(
+                    filterByType = filterByType,
+                    transactionDao = transactionDao
+                )
+            }
+        ).flow.map {
+            it.map { cachedTx ->
+                mapTransactionFromCache(cachedTx, contacts)
+            }
+        }
+    }
+
+    // Get transaction status observer
+    override fun getTransactionStatusFlow(transactionId: Long): Flow<TransactionStatus> {
+        return flow {
+            // Emit last cached status
+            while (true) {
+                val tx = transactionDao.getTransaction(transactionId) ?: throw AppError(ErrorType.TRANSACTION_NOT_FOUND)
+                emit(tx.recentStatus)
+
+                delay(MOCK_TRANSACTION_STATUS_CHECK_DELAY)
+            }
+        }.flowOn(coroutineDispatcher)
+    }
+
+    private fun mapTransactionFromCache(entity: TransactionEntity, contacts: List<Contact>) : Transaction {
+        return Transaction(
+            id = entity.id,
+            type = entity.type,
+            value = entity.value,
+            recentStatus = entity.recentStatus,
+            linkedContact = when (entity.type) {
+                TransactionType.TOP_UP -> null
+                else -> entity.linkedContactId?.let { id -> contacts.find { contact -> contact.id == id } }
+            },
+            createdDate = entity.createdDate,
+            updatedStatusDate = entity.updatedStatusDate
+        )
+    }
+
+    companion object {
+        private const val PAGE_MAX_SIZE = 5
+        private const val PREFETCH_DISTANCE = 1
+        private const val MOCK_TRANSACTION_STATUS_CHECK_DELAY = 5000L
+    }
+}
+```
 
 </details>  
   
@@ -469,9 +583,12 @@ TransactionWorkManager
   <summary><strong>App lock</strong></summary>
 
 ### App lock
-PIN
-Biometrics
-When it asked to create applock
+Used material: https://habr.com/ru/companies/redmadrobot/articles/475112/
+- Hashed PIN witb key derivation function
+- EncryptedSharedPrefs
+
+⚠️ Drawbacks:
+- Biometrics key not used in PIN generation and storage
 
 </details>  
   
@@ -486,7 +603,23 @@ Pemission helper composition local
   
 <br>
 
-# USED MATERIALS
-
+# Used materials
+1. [How to Validate Fields Using Jetpack Compose in Android](https://medium.com/@rzmeneghelo/how-to-validate-fields-using-jetpack-compose-in-android-43be70597e82)
+2. [Clickable SpannableText in Jetpack Compose](https://medium.com/@shmehdi01/clickable-spannabletext-in-jetpack-compose-c24514c34f27)
+3. [Field Validations using Jetpack Compose and MVVM](https://medium.com/@karthik.dusk/field-validations-using-jetpack-compose-and-mvvm-8c4ea947b35d)
+4. [Android: Simple MVI implementation with Jetpack Compose](https://medium.com/@VolodymyrSch/android-simple-mvi-implementation-with-jetpack-compose-5ee5d6fc4908)
+5. [Navigate back with result with Jetpack Compose](https://medium.com/@desilio/navigate-back-with-result-with-jetpack-compose-e91e6a6847c9)
+6. [Kotlin Coroutines patterns & anti-patterns](https://proandroiddev.com/kotlin-coroutines-patterns-anti-patterns-f9d12984c68e#69e0)
+7. [Exception handling in Kotlin Coroutines](https://ganeshajdivekar.medium.com/exception-handling-in-kotlin-coroutines-b08c095ddea0)
+8. [Formatting credit card number input in Jetpack compose Android](https://dev.to/benyam7/formatting-credit-card-number-input-in-jetpack-compose-android-2nal)
+9. [Input Validation With Clean Architecture In Jetpack Compose](https://medium.com/@mohammadjoumani/input-validation-with-clean-architecture-in-jetpack-compose-4225e2e86397)
+10. [Animations in Jetpack Compose with examples](https://blog.canopas.com/animations-in-jetpack-compose-with-examples-48307ba9dff1)
+11. [Firebase Analytics + Jetpack Compose](https://medium.com/mobilepeople/firebase-analytics-jetpack-compose-6bd5ee30fc6f)
+12. [ ](https://github.com/stevdza-san/Custom-Component-Jetpack-Compose/blob/main/CustomComponent.kt)
+13. [Jetpack Compose OTP input field](https://proandroiddev.com/jetpack-compose-otp-input-field-bcfa22c85e5f)
+14. [Authenticate me. If you can…](https://habr.com/ru/companies/redmadrobot/articles/475112/)
+15. [Paging With Clean Architecture In Jetpack Compose](https://medium.com/@mohammadjoumani/paging-with-clean-architecture-in-jetpack-compose-775fbf589256)
+16. [How to Render Text as a QR code in Jetpack Compose](https://dev.to/devniiaddy/qr-code-with-jetpack-compose-47e)
+17. [Parallel API calls using Coroutines, having different return types](https://kashif-mehmood-km.medium.com/parallel-api-calls-using-coroutines-having-different-return-types-4d269a1b88d4)
 
 
