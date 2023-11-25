@@ -1,7 +1,6 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/alexandr7035/Banking-App-Mock-Compose?color=%237f52ff&style=for-the-badge)
 
 
-
 <br>
 <p align="center"> 
    <img height="150" src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/eb81869d-818c-4039-8861-6513b0b62dbb"/> 
@@ -65,6 +64,8 @@ Use other credentials if you want to trigger an error.
 <p>
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/c35d4e0e-4092-4e84-9b90-e0ea843aad7d" width="200"/>
 </p>
+(or use QR generated in Profile)
+
 
 ## Implementation plan
 - [ ] App core:
@@ -585,12 +586,53 @@ class TransactionRepositoryMock(
   <summary><strong>App lock</strong></summary>
 
 ### App lock
-Used material: https://habr.com/ru/companies/redmadrobot/articles/475112/
-- Hashed PIN witb key derivation function
-- EncryptedSharedPrefs
+**Used material**: https://habr.com/ru/companies/redmadrobot/articles/475112/
 
-⚠️ Drawbacks:
-- Biometrics key not used in PIN generation and storage
+PIN lock:
+- use Password-Based Key Derivation Function to generate `serect` from PIN and `salt`
+- use `EncryptedSharedPreferences` to store secrect.
+So that PIN not stored in raw way.
+
+```kotlin
+    private fun savePin(pin: String) {
+        val salt = CryptoUtils.generateSalt()
+
+        val secretKey = CryptoUtils.generatePbkdf2Key(
+            passphraseOrPin = pin.toCharArray(),
+            salt = salt
+        )
+
+        val encodedPinData = Base64.encodeToString(secretKey.encoded, Base64.DEFAULT)
+        val encodedSalt = Base64.encodeToString(salt, Base64.DEFAULT)
+
+        securedPreferences.edit()
+            .putString(PIN_KEY, encodedPinData)
+            .putString(PIN_SALT_KEY, encodedSalt)
+            .apply()
+    }
+
+    private fun isPinValid(pin: String): Boolean {
+        val storedSalt = securedPreferences.getString(PIN_SALT_KEY, null)
+        val decodedSalt = Base64.decode(storedSalt, Base64.DEFAULT)
+
+        val storedPinData = securedPreferences.getString(PIN_KEY, null)
+        val decodedPinData = Base64.decode(storedPinData, Base64.DEFAULT)
+
+        val enteredPinData = CryptoUtils.generatePbkdf2Key(pin.toCharArray(), decodedSalt)
+
+        return decodedPinData contentEquals enteredPinData.encoded
+    }
+```
+
+Biometrics:
+- use `androidx.biometric` to authenticate
+
+⚠️ Drawbacks of current implemetation:
+- `CryptoObject` from biometrics auth result is not used for PIN generation or data encryption. Biometric auth relies solely on `onAuthenticationSucceeded(...)` callback.  
+- No data encryption provied (except EncryptedSharedPreferences).  
+
+This implementation is very basic and not appropriate for a real banking app.
+In this app it just used to showcase lock screen feature.
 
 </details>  
   
@@ -598,8 +640,30 @@ Used material: https://habr.com/ru/companies/redmadrobot/articles/475112/
 <details>
   <summary><strong>Permissions</strong></summary>
 
-### Permissions
-Pemission helper composition local
+### Runtime permissions
+App uses `PermissionHelper` class with `PermissionX` library and some custom logic under the hood.
+
+```kotlin
+val LocalPermissionHelper = compositionLocalOf<PermissionHelper> { error("No PermissionHelper provided") }
+
+// use in Composable
+val permissionHelper = LocalPermissionHelper.current
+val permission = android.Manifest.permission.CAMERA
+
+when (permissionHelper.checkIfPermissionGranted(context, permission)) {
+    CheckPermissionResult.SHOULD_ASK_PERMISSION -> {
+        permissionHelper.askForPermission(context, permission) { res ->
+            when (res) {
+                AskPermissionResult.GRANTED -> { ... }
+                AskPermissionResult.REJECTED -> { ... }
+            }
+        }
+    }
+
+    CheckPermissionResult.SHOULD_REDIRECT_TO_SETTINGS -> { ... }
+    CheckPermissionResult.PERMISSION_ALREADY_GRANTED -> { ... }
+}
+```
 
 </details>  
   
