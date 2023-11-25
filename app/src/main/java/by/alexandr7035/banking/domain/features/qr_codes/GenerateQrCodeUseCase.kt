@@ -8,7 +8,7 @@ class GenerateQrCodeUseCase {
         delay(300L)
         return when (qrPurpose) {
             // Handle in repositories later
-            QrPurpose.PROFILE_CONNECTION -> "bankingapp:connect:userId"
+            QrPurpose.PROFILE_CONNECTION -> "by.alexandr7035.banking:addcontact"
         }
     }
 }

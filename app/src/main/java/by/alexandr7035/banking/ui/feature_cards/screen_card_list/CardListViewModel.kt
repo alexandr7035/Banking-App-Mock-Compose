@@ -20,7 +20,7 @@ class CardListViewModel(
     private val getAllCardsUseCase: GetAllCardsUseCase, private val getCardBalanceObservableUseCase: GetCardBalanceObservableUseCase
 ) : ViewModel() {
     private val _state: MutableStateFlow<CardListState> = MutableStateFlow(
-        CardListState.Loading
+        CardListState(isLoading = true)
     )
 
     val state = _state.asStateFlow()
@@ -33,9 +33,8 @@ class CardListViewModel(
         when (intent) {
             is CardListIntent.EnterScreen -> load()
             is CardListIntent.ToggleFloatingAddCardButton -> {
-                val currState = _state.value
-                if (currState is CardListState.Success) {
-                    _state.value = currState.copy(floatingAddCardShown = intent.isShown)
+                _state.update {
+                    it.copy(floatingAddCardShown = intent.isShown)
                 }
             }
         }
@@ -43,11 +42,9 @@ class CardListViewModel(
 
     private fun load() {
         viewModelScope.launch(errorHandler) {
-            // TODO fix array crash without loading
             reduceLoading()
-
             val cards = getAllCardsUseCase.execute()
-            val cardsUi = cards.map {card ->
+            val cardsUi = cards.map { card ->
                 CardUi.mapFromDomain(
                     card = card,
                     balanceFlow = getCardBalanceObservableUseCase.execute(card.cardId).map {
@@ -67,19 +64,25 @@ class CardListViewModel(
 
     private fun reduceLoading() {
         _state.update {
-            CardListState.Loading
+            it.copy(isLoading = true)
         }
     }
 
     private fun reduceError(errorType: ErrorType) {
         _state.update {
-            CardListState.Error(errorType.asUiTextError())
+            it.copy(
+                isLoading = false,
+                error = errorType.asUiTextError()
+            )
         }
     }
 
     private fun reduceData(cards: List<CardUi>) {
         _state.update {
-            CardListState.Success(cards)
+            it.copy(
+                isLoading = false,
+                cards = cards
+            )
         }
     }
 }

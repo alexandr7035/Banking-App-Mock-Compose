@@ -1,5 +1,6 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_card_list
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,7 +57,7 @@ fun CardListScreen(
             )
         },
         floatingActionButton = {
-            if (state is CardListState.Success && state.floatingAddCardShown) {
+            AnimatedVisibility(state.floatingAddCardShown) {
                 FloatingActionButton(
                     onClick = {
                         onAddCard.invoke()
@@ -79,25 +80,25 @@ fun CardListScreen(
                 bottom = pv.calculateBottomPadding()
             )
         ) {
-            when (state) {
-                is CardListState.Loading -> CardListScreen_Skeleton()
+            when {
+                state.isLoading -> CardListScreen_Skeleton()
 
-                is CardListState.Success -> {
+                state.error != null -> {
+                    ErrorFullScreen(
+                        error = state.error,
+                        onRetry = {
+                            viewModel.emitIntent(CardListIntent.EnterScreen)
+                        }
+                    )
+                }
+
+                else -> {
                     CardListScreen_Ui(
                         cards = state.cards,
                         onAddCard = { onAddCard.invoke() },
                         onCardDetails = { onCardDetails.invoke(it) },
                         onToggleFab = {
                             viewModel.emitIntent(CardListIntent.ToggleFloatingAddCardButton(it))
-                        }
-                    )
-                }
-
-                is CardListState.Error -> {
-                    ErrorFullScreen(
-                        error = state.error,
-                        onRetry = {
-                            viewModel.emitIntent(CardListIntent.EnterScreen)
                         }
                     )
                 }
