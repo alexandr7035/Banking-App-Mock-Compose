@@ -76,7 +76,8 @@ Use other credentials if you want to trigger an error.
     - [X] Error UI
     - [X] App lock (PIN)
     - [X] App lock (biometrics)
-    - [ ] Data enrcryption
+    - [ ] Data encryption
+    - [X] Permissions management
 - [X] Onboarding slider
 - [X] Sign up with email
 - [ ] Sign up with phone number
@@ -90,7 +91,7 @@ Use other credentials if you want to trigger an error.
 - [ ] Cards
     - [X] Card list
     - [X] Create card
-    - [X] Delete carrd
+    - [X] Delete card
     - [X] Default card
     - [ ] Card Statistics
 - [X] Savings
@@ -112,6 +113,7 @@ Use other credentials if you want to trigger an error.
 - [ ] Account and security section
 - [X] Help section
 - [ ] Notifications
+- [X] App Settings
 - [X] Logout
 - [X] Terms and Conditions (WebView)
 
@@ -244,7 +246,7 @@ A screen composable typically contains a nested ScreenUi composable to make it w
 // Screen
 @Composable
 fun Screen(
-    // Inect ViewModel
+    // Inject ViewModel
     viewModel: CardListViewModel = koinViewModel(),
     // Navigation callbacks
     onBack: () -> Unit,
