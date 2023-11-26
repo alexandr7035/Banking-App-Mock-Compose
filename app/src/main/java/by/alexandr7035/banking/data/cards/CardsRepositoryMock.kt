@@ -87,15 +87,6 @@ class CardsRepositoryMock(
         }
     }
 
-    override suspend fun getPrimaryCard(): PaymentCard? {
-        val card = cardsDao.getPrimaryCard()
-        return if (card != null) {
-            mapCachedCardToDomain(card)
-        } else {
-            null
-        }
-    }
-
     companion object {
         private const val MOCK_DELAY = 500L
         private const val MOCK_CARD_INITIAL_BALANCE = 0f
