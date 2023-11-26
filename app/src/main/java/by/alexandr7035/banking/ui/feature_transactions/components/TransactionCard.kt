@@ -250,7 +250,7 @@ private fun TransactionStatusMark(
         modifier = Modifier
             .then(modifier)
             .size(16.dp)
-            .offset(0.dp, -4.dp),
+            .offset(0.dp, (-4).dp),
         painter = getTxStatusMark(status),
         contentDescription = "${transactionUi.recentStatus}"
     )

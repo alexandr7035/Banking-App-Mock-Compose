@@ -9,7 +9,7 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 
 data class AppSettingsState(
-    val prompt: BiometricsPromptUi = BiometricsPromptUi(
+    val biometricPrompt: BiometricsPromptUi = BiometricsPromptUi(
         title = UiText.StringResource(R.string.unlock_app_biometrics),
         cancelBtnText = UiText.StringResource(R.string.cancel)
     ),

@@ -43,7 +43,7 @@ fun AppNavHost(
 ) {
 
     // Conditional navigation
-    EnterScreenEffect() {
+    EnterScreenEffect {
         if (conditionalNavigation.requireLogin) {
             navController.navigate(NavDestinations.Login.route) {
                 popUpTo(NavDestinations.RootGraph.route) {
@@ -221,7 +221,7 @@ fun AppNavHost(
             composable(
                 route = "${NavDestinations.RootGraph.CardDetails.route}/{cardId}",
                 arguments = listOf(navArgument("cardId") { type = NavType.StringType })
-            ) { it ->
+            ) {
                 val cardId = it.arguments?.getString("cardId")!!
 
                 CardDetailsScreen(

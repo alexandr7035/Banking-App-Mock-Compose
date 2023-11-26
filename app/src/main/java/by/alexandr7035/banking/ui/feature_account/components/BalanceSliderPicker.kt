@@ -64,7 +64,7 @@ fun BalanceSliderPicker(
         paddingValues = PaddingValues(vertical = 16.dp),
         corners = 16.dp
     ) {
-        Column() {
+        Column {
             Text(
                 text = stringResource(R.string.set_the_nominal), style = TextStyle(
                     fontSize = 14.sp,
@@ -174,7 +174,7 @@ fun BalanceSliderPicker(
 @Composable
 @Preview
 fun BalanceSliderPicker_Preview() {
-    BankingAppTheme() {
+    BankingAppTheme {
         Box(
             Modifier
                 .background(MaterialTheme.colorScheme.background)

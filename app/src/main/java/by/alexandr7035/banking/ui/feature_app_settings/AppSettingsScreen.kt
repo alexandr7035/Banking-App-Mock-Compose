@@ -122,7 +122,7 @@ fun AppSettingsScreen(
         )
     }
 
-    OnLifecycleEventEffect() { _, event ->
+    OnLifecycleEventEffect { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
             permissionsState.keys.forEach { permission ->
                 permissionsState[permission] = null
@@ -183,7 +183,8 @@ fun AppSettingsScreen_Ui(
         BiometricsItem(
             biometricsAvailability = state.biometricsAvailability,
             isAppLocked = state.isAppLockedWithBiometrics,
-            onIntent = onBiometricsIntent
+            onIntent = onBiometricsIntent,
+            promptUi = state.biometricPrompt
         )
 
         Spacer(Modifier.weight(1f))
@@ -256,6 +257,7 @@ private fun PermissionItem(
 @Composable
 private fun BiometricsItem(
     biometricsAvailability: BiometricsAvailability,
+    promptUi: BiometricsPromptUi,
     isAppLocked: Boolean,
     onIntent: (BiometricsIntent) -> Unit = {}
 ) {
@@ -285,14 +287,11 @@ private fun BiometricsItem(
                             activity?.let {
                                 BiometricsHelper.showPrompt(
                                     activity = it,
-                                    prompt = BiometricsPromptUi(
-                                        cancelBtnText = UiText.StringResource(R.string.cancel),
-                                        title = UiText.StringResource(R.string.unlock_app_biometrics)
-                                    ),
-                                    onError = {
+                                    prompt = promptUi,
+                                    onError = { error ->
                                         onIntent(
                                             BiometricsIntent.ConsumeAuthResult(
-                                                BiometricAuthResult.Failure(it)
+                                                BiometricAuthResult.Failure(error)
                                             )
                                         )
                                     },
@@ -385,6 +384,11 @@ fun AppSettingsScreen_Preview() {
 @Preview
 fun AppSettingsScreen_BiometricButton_Preview() {
     ScreenPreview {
+        val prompt = BiometricsPromptUi(
+            cancelBtnText = UiText.StringResource(R.string.cancel),
+            title = UiText.StringResource(R.string.unlock_app_biometrics)
+        )
+
         Column(
             modifier = Modifier
                 .padding(24.dp)
@@ -392,27 +396,32 @@ fun AppSettingsScreen_BiometricButton_Preview() {
         ) {
             BiometricsItem(
                 biometricsAvailability = BiometricsAvailability.NotEnabled,
-                isAppLocked = false
+                isAppLocked = false,
+                promptUi = prompt
             )
 
             BiometricsItem(
                 biometricsAvailability = BiometricsAvailability.Available,
-                isAppLocked = true
+                isAppLocked = true,
+                promptUi = prompt
             )
 
             BiometricsItem(
                 biometricsAvailability = BiometricsAvailability.Available,
-                isAppLocked = false
+                isAppLocked = false,
+                promptUi = prompt
             )
 
             BiometricsItem(
                 biometricsAvailability = BiometricsAvailability.NotAvailable,
-                isAppLocked = false
+                isAppLocked = false,
+                promptUi = prompt
             )
 
             BiometricsItem(
                 biometricsAvailability = BiometricsAvailability.Checking,
-                isAppLocked = false
+                isAppLocked = false,
+                promptUi = prompt
             )
         }
     }

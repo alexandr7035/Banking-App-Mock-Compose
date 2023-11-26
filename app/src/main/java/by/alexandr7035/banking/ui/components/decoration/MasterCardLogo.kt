@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.feature_cards.components
+package by.alexandr7035.banking.ui.components.decoration
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size

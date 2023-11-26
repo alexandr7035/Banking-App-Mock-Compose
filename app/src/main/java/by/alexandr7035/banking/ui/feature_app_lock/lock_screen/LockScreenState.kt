@@ -1,7 +1,6 @@
 package by.alexandr7035.banking.ui.feature_app_lock.lock_screen
 
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_app_lock.components.AppLockUiState
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricAuthResult

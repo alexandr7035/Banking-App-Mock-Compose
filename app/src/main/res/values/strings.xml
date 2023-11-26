@@ -132,4 +132,6 @@
     <string name="unavailable">Unavailable</string>
     <string name="biometric_lock">Biometric Lock</string>
     <string name="app_lock">App Lock</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
 </resources>

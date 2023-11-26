@@ -40,8 +40,8 @@ fun AccountActionPanel(
 ) {
     val balance = balanceFlow.collectAsStateWithLifecycle(initialValue = null).value
 
-    PrimaryCard() {
-        Column() {
+    PrimaryCard {
+        Column {
             Row(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 18.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -109,8 +109,8 @@ fun AccountActionPanel(
 @Composable
 fun AccountActionPanel_Skeleton() {
 
-    PrimaryCard() {
-        Column() {
+    PrimaryCard {
+        Column {
             Row(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 18.dp),
                 verticalAlignment = Alignment.CenterVertically

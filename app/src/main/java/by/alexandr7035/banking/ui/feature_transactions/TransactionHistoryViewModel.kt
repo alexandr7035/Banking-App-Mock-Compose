@@ -8,7 +8,6 @@ import androidx.paging.map
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.features.transactions.GetTransactionsUseCase
 import by.alexandr7035.banking.domain.features.transactions.ObserveTransactionStatusUseCase
-import by.alexandr7035.banking.domain.features.transactions.model.Transaction
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
 import by.alexandr7035.banking.ui.feature_transactions.model.TransactionUi
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

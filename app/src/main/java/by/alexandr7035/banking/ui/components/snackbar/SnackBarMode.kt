@@ -2,7 +2,7 @@ package by.alexandr7035.banking.ui.components.snackbar
 
 import androidx.compose.ui.graphics.Color
 
-sealed class SnackBarMode() {
+sealed class SnackBarMode {
     object Positive : SnackBarMode()
     object Negative : SnackBarMode()
     object Neutral : SnackBarMode()

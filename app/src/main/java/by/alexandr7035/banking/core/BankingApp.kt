@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.os.Build
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.core.di.appModule
-import by.alexandr7035.banking.data.transactions.TransactionWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory

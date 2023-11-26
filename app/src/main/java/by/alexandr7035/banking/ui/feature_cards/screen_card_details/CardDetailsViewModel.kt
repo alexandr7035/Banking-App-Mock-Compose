@@ -2,14 +2,13 @@ package by.alexandr7035.banking.ui.feature_cards.screen_card_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import by.alexandr7035.banking.domain.core.AppError
 import by.alexandr7035.banking.domain.core.ErrorType
 import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.domain.features.account.GetCardBalanceObservableUseCase
-import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import by.alexandr7035.banking.domain.features.cards.GetCardByIdUseCase
-import by.alexandr7035.banking.domain.features.cards.SetCardAsPrimaryUseCase
 import by.alexandr7035.banking.domain.features.cards.RemoveCardUseCase
+import by.alexandr7035.banking.domain.features.cards.SetCardAsPrimaryUseCase
+import by.alexandr7035.banking.domain.features.cards.model.PaymentCard
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi

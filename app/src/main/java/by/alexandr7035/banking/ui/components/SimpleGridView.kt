@@ -15,7 +15,7 @@ fun SimpleGridView(
     countOfItems: Int,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-    content: @Composable() (index: Int) -> Unit,
+    content: @Composable (index: Int) -> Unit,
 ) {
     val columnAndRowItems = (0 until countOfItems).chunked(columns)
 

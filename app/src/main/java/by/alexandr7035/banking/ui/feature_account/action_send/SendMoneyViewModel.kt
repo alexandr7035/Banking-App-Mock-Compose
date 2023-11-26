@@ -173,7 +173,7 @@ class SendMoneyViewModel(
                         it.copy(
                             contactPickerState = it.contactPickerState.copy(
                                 isLoading = false,
-                                selectedContact = contactResult.data?.let { ContactUi.mapFromDomain(it) }
+                                selectedContact = contactResult.data?.let { contact -> ContactUi.mapFromDomain(contact) }
                             )
                         )
                     }

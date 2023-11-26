@@ -155,7 +155,7 @@ private fun PinKeyboard(
             }
         }
 
-        val onEraseClick: () -> Unit = { ->
+        val onEraseClick: () -> Unit = {
             if (pinValue.isNotEmpty()) {
                 val updatedPin = pinValue.substring(0, pinValue.length - 1)
                 onIntent(AppLockIntent.PinFieldChange(updatedPin))

@@ -1,6 +1,5 @@
 package by.alexandr7035.banking.ui.feature_onboarding
 
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -38,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.DotsPagerIndicator
 import by.alexandr7035.banking.ui.components.PrimaryButton
+import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryButton
 import by.alexandr7035.banking.ui.components.TextBtn
-import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.theme.Gray20
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel

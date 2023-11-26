@@ -61,7 +61,7 @@ fun HelpScreen(
         )
 
         val searchQuery = rememberSaveable() {
-            mutableStateOf<String>("")
+            mutableStateOf("")
         }
 
         SearchField(

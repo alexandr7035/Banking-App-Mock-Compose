@@ -8,7 +8,7 @@ import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-sealed class HomeState() {
+sealed class HomeState {
     // Single loading for all parts of screen for simplicity
     object Loading: HomeState()
 

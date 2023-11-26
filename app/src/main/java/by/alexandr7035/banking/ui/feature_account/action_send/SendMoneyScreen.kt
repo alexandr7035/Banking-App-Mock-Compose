@@ -104,11 +104,11 @@ fun SendMoneyScreen(
     EnterScreenEffect {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val notificationPermission = android.Manifest.permission.POST_NOTIFICATIONS
-            val res =permissionHelper.checkIfPermissionGranted(context, notificationPermission)
+            val res = permissionHelper.checkIfPermissionGranted(context, notificationPermission)
             when (res) {
                 CheckPermissionResult.SHOULD_ASK_PERMISSION -> {
-                    permissionHelper.askForPermission(context, notificationPermission) { res ->
-                        when (res) {
+                    permissionHelper.askForPermission(context, notificationPermission) { askRes ->
+                        when (askRes) {
                             AskPermissionResult.GRANTED -> {
                                 context.showToast(R.string.permission_granted)
                             }

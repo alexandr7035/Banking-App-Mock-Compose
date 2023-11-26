@@ -32,7 +32,7 @@ The app is built with a **data <- domain <- ui** architecture typical for real a
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/7b25851e-68ef-416e-bbdc-d37e67156f43" width="20%"/>
 </p>
 
-**Design reference**: https://www.figma.com/community/file/1106055934725589367/Finance-Mobile-App-UI-KIT
+**Design reference**: https://www.figma.com/community/file/1106055934725589367/Finance-Mobile-App-UI-KIT by [Aparna Tati](https://www.figma.com/@6c9aa553_8682_4)
 
 // APP DEMO VIDEO
 

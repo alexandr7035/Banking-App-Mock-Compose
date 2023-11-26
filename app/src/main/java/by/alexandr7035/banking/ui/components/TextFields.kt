@@ -16,7 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -26,10 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -38,9 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.Gray15
-import by.alexandr7035.banking.ui.theme.Gray25
 import by.alexandr7035.banking.ui.theme.Gray5
 import by.alexandr7035.banking.ui.theme.Gray60
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -72,9 +70,12 @@ fun PrimaryTextField(
     singleLine: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedBorderColor = MaterialTheme.colorScheme.primary,
-        unfocusedBorderColor = Color(0xFFCFCFD3)
+    colors: TextFieldColors = TextFieldDefaults.colors(
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+        unfocusedIndicatorColor = Color(0xFFCFCFD3),
+        errorContainerColor = Color.Transparent,
     ),
     shape: Shape = RoundedCornerShape(4.dp),
 ) {
@@ -92,7 +93,7 @@ fun PrimaryTextField(
         maxLines = maxLines,
         textStyle = textStyle,
     ) { innerTextField ->
-        TextFieldDefaults.OutlinedTextFieldDecorationBox(
+        OutlinedTextFieldDefaults.DecorationBox(
             value = value,
             visualTransformation = visualTransformation,
             innerTextField = innerTextField,
@@ -118,14 +119,13 @@ fun PrimaryTextField(
             },
             label = label,
             container = {
-                TextFieldDefaults.OutlinedBorderContainerBox(enabled, error != null, interactionSource, colors, shape)
+                OutlinedTextFieldDefaults.ContainerBox(enabled, error != null, interactionSource, colors, shape)
             }
         )
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DecoratedTextField(
     value: String,
@@ -154,23 +154,10 @@ fun DecoratedTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = RoundedCornerShape(4.dp),
 ) {
-
-    val backgroundColor = remember {
-        mutableStateOf(Gray5)
-    }
-
     PrimaryTextField(
+        modifier = modifier,
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.then(
-            Modifier.onFocusChanged {
-                if (it.isFocused) {
-                    backgroundColor.value = Color.White
-                } else {
-                    backgroundColor.value = Gray5
-                }
-            }
-        ),
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,
@@ -186,10 +173,12 @@ fun DecoratedTextField(
         singleLine = singleLine,
         maxLines = maxLines,
         interactionSource = interactionSource,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            containerColor = backgroundColor.value,
-            unfocusedBorderColor = Gray5,
-            focusedBorderColor = Gray15
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Gray5,
+            focusedIndicatorColor = Gray15,
+            unfocusedIndicatorColor = Gray5,
+            errorContainerColor = Color.Transparent,
         ),
         shape = shape
     )
@@ -218,8 +207,7 @@ fun PasswordTextField(
                 painterResource(id = R.drawable.ic_invisible)
             }
 
-            // Please provide localized description for accessibility services
-            val description = if (passwordVisible.value) "Hide password" else "Show password"
+            val description = if (passwordVisible.value) stringResource(R.string.hide_password) else stringResource(R.string.show_password)
 
             IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
                 Icon(painter = icon, description)
@@ -237,8 +225,7 @@ fun DecoratedPasswordTextField(
     modifier: Modifier = Modifier,
     error: String? = null
 ) {
-
-    var passwordVisible = rememberSaveable { mutableStateOf(false) }
+    val passwordVisible = rememberSaveable { mutableStateOf(false) }
 
     DecoratedTextField(
         modifier = modifier,
@@ -254,8 +241,7 @@ fun DecoratedPasswordTextField(
                 painterResource(id = R.drawable.ic_invisible)
             }
 
-            // Please provide localized description for accessibility services
-            val description = if (passwordVisible.value) "Hide password" else "Show password"
+            val description = if (passwordVisible.value) stringResource(R.string.hide_password) else stringResource(R.string.show_password)
 
             IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
                 Icon(painter = icon, description)
@@ -296,7 +282,7 @@ fun ReadonlyTextField(
 @Preview
 @Composable
 fun TextField_Preview() {
-    Surface {
+    ScreenPreview{
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
