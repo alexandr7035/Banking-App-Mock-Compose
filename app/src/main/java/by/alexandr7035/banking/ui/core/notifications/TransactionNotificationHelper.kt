@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -17,6 +18,7 @@ import by.alexandr7035.banking.domain.features.transactions.model.TransactionTyp
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.maskCardId
 import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
+import by.alexandr7035.banking.ui.theme.Blue100
 
 class TransactionNotificationHelper(
     private val applicationContext: Context
@@ -80,13 +82,9 @@ class TransactionNotificationHelper(
         )
             .setContentTitle(notificationUi.title)
             .setContentText(notificationUi.message)
-            // FIXME
-            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setSmallIcon(R.drawable.ic_logo_vector)
+            .setColor(Blue100.toArgb())
             .setContentIntent(pendingIntent)
-            // Make not dismissible
-//            .setOngoing(true)
-            // Show notification immediately (prevent 10 sec delay)
-//            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .build()
     }
 
