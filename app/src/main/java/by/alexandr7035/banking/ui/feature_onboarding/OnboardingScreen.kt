@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import by.alexandr7035.banking.R
-import by.alexandr7035.banking.ui.components.DotsPagerIndicator
+import by.alexandr7035.banking.ui.components.pages.DotsPagerIndicator
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryButton
@@ -81,7 +81,6 @@ fun OnboardingScreen_Ui(
             val pagerState = rememberPagerState(pageCount = { pages.size })
 
             val coroutineScope = rememberCoroutineScope()
-            val context = LocalContext.current
 
             Spacer(modifier = Modifier.weight(1f))
 

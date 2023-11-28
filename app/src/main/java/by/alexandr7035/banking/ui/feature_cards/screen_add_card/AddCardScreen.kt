@@ -39,8 +39,8 @@ import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
-import by.alexandr7035.banking.ui.components.PrimaryTextField
-import by.alexandr7035.banking.ui.components.ReadonlyTextField
+import by.alexandr7035.banking.ui.components.text_fields.PrimaryTextField
+import by.alexandr7035.banking.ui.components.text_fields.ReadonlyTextField
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.dialogs.DatePickerDialog

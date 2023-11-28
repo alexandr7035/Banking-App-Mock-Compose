@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.components.text
+package by.alexandr7035.banking.ui.components.text_display
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.ClickableText

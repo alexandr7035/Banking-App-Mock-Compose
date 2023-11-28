@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import by.alexandr7035.banking.ui.components.DecoratedPasswordTextField
-import by.alexandr7035.banking.ui.components.DecoratedTextField
+import by.alexandr7035.banking.ui.components.text_fields.DecoratedPasswordTextField
+import by.alexandr7035.banking.ui.components.text_fields.DecoratedTextField
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField

@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.components
+package by.alexandr7035.banking.ui.components.text_display
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope

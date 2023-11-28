@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.components.debug
+package by.alexandr7035.banking.ui.components.images
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable

@@ -36,7 +36,7 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionStatus
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
 import by.alexandr7035.banking.ui.components.cards.PrimaryCard
-import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
+import by.alexandr7035.banking.ui.components.images.debugPlaceholder
 import by.alexandr7035.banking.ui.feature_transactions.model.TransactionUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily

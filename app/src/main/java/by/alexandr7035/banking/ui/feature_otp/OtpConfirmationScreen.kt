@@ -30,10 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
-import by.alexandr7035.banking.ui.components.OTPField
+import by.alexandr7035.banking.ui.components.text_fields.OTPField
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
-import by.alexandr7035.banking.ui.components.text.SpannableText
+import by.alexandr7035.banking.ui.components.text_display.SpannableText
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 

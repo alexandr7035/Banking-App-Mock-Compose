@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.components
+package by.alexandr7035.banking.ui.components.text_fields
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 // TODO show focus

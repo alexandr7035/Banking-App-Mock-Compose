@@ -49,7 +49,7 @@ import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.forms.DecoratedFormField
 import by.alexandr7035.banking.ui.components.forms.DecoratedPasswordFormField
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
-import by.alexandr7035.banking.ui.components.text.SpannableText
+import by.alexandr7035.banking.ui.components.text_display.SpannableText
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.core.extensions.showToast
 import by.alexandr7035.banking.ui.core.resources.UiText

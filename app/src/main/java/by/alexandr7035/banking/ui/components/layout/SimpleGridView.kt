@@ -1,4 +1,4 @@
-package by.alexandr7035.banking.ui.components
+package by.alexandr7035.banking.ui.components.layout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
-import by.alexandr7035.banking.ui.components.text.SpannableText
+import by.alexandr7035.banking.ui.components.text_display.SpannableText
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
