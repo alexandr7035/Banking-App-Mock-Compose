@@ -92,7 +92,7 @@ fun AppLockScreen_Ui(
                 Text(
                     text = state.error.asString(),
                     style = TextStyle(
-                        color = Color.Red,
+                        color = MaterialTheme.colorScheme.error,
                         fontFamily = primaryFontFamily,
                         fontSize = 14.sp,
                     ),

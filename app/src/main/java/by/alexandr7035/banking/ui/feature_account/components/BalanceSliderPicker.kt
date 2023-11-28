@@ -161,7 +161,7 @@ fun BalanceSliderPicker(
                 Text(
                     text = error.asString(),
                     style = TextStyle(
-                        color = Color.Red
+                        color = MaterialTheme.colorScheme.error
                     ),
                     modifier = Modifier.padding(start = 12.dp, top = 8.dp)
                 )
