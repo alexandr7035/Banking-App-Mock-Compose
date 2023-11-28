@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -88,21 +89,8 @@ private fun SavingsScreen_Ui(
 
         val pagerState = rememberPagerState(initialPage = 0, initialPageOffsetFraction = 0f, pageCount = { 2 })
 
-        PagerTabRow(
-            tabs = pages,
-            pagerState = pagerState
-        )
-
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
-
-            val onClick: (id: Long) -> Unit = {
-                onSavingDetails.invoke(it)
-            }
-
-            val savingsFiltered = when (page) {
+        val savingsFiltered = remember(savings, pagerState.currentPage) {
+            when (pagerState.currentPage) {
                 0 -> {
                     savings.filter {
                         !it.isCompleted
@@ -115,7 +103,21 @@ private fun SavingsScreen_Ui(
                     }
                 }
 
-                else -> error("Unexpected page index $page")
+                else -> error("Unexpected page index ${pagerState.currentPage}")
+            }
+        }
+
+        PagerTabRow(
+            tabs = pages,
+            pagerState = pagerState
+        )
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            val onClick: (id: Long) -> Unit = {
+                onSavingDetails.invoke(it)
             }
 
             SavingsList(
