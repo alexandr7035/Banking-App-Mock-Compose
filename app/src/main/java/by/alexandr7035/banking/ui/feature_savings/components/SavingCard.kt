@@ -89,6 +89,8 @@ fun SavingCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
+                Spacer(Modifier.height(8.dp))
+
                 Text(
                     text = savingUi.description,
                     style = TextStyle(
