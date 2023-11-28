@@ -22,19 +22,19 @@
 # About the app
 **Banking-App-Mock-Compose** is a mock android app written with **Jetpack Compose**
 
-The primary purpose of the app is to develop a medium-size (~20K LoC) app using Compose instead of Android Views and enjoy all Compose pitfalls :)
+The primary purpose of the app is to develop a medium-size (~20K LoC) app using [Jetpack Compose](https://developer.android.com/jetpack/compose) instead of Android Views and enjoy all Compose pitfalls :)
 
-The app is built with a **data <- domain <- ui** architecture typical for real applications with only difference that there is no remote data source. Thus, all the banking info is mocked on `data` layer. However, some data like Cards and Transactions is cached locally for persistence.
+The app is built with a **data -> domain <- ui** architecture typical for real applications with only difference that there is no remote data source. Thus, all the banking info is mocked on `data` layer. However, some data like Cards and Transactions is cached locally for persistence.
 
 <p align="left">
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/5b60ccfd-c1a5-4716-a18b-d70c434f6ea1" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/bbb1c8ad-e1cd-4958-9da1-b4c32c88f67a" width="20%"/>
-<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/7b25851e-68ef-416e-bbdc-d37e67156f43" width="20%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/0f2973f9-f809-47e6-a32b-0ba344c5534e" width="15%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/d3816fa8-1dc9-4813-a719-a084d64f1420" width="15%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/aa4d128f-7424-400a-a10d-ac0a7934807f" width="15%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/9bd22682-a422-48ce-9bc9-dc005bd32129" width="15%"/>
+<img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/946ae794-9568-4601-bbaa-b6179f1395d9" width="15%"/>
 </p>
 
 **Design reference**: https://www.figma.com/community/file/1106055934725589367/Finance-Mobile-App-UI-KIT by [Aparna Tati](https://www.figma.com/@6c9aa553_8682_4)
-
-// APP DEMO VIDEO
 
 ## Stack
 - [Jetpack Compose](https://developer.android.com/jetpack/compose)
