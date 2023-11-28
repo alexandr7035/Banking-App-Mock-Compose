@@ -2,11 +2,11 @@ package by.alexandr7035.banking.ui.feature_transactions.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,13 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
@@ -37,7 +35,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionStatus
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
-import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
+import by.alexandr7035.banking.ui.components.cards.PrimaryCard
+import by.alexandr7035.banking.ui.components.images.debugPlaceholder
 import by.alexandr7035.banking.ui.feature_transactions.model.TransactionUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -49,29 +48,14 @@ import coil.request.ImageRequest
 fun TransactionCard(
     modifier: Modifier = Modifier, transactionUi: TransactionUi
 ) {
-
-    val shape = RoundedCornerShape(10.dp)
-
-    Box(modifier = modifier.then(Modifier
-        .shadow(
-            elevation = 32.dp,
-            spotColor = Color.Gray,
-            ambientColor = Color.Gray,
-            shape = shape,
-        )
-        .background(
-            color = Color.White, shape = shape
-        )
-        .clickable {
-//                    onClick.invoke(savingUi.id)
-        }
-        .padding(16.dp))) {
-
+    PrimaryCard(
+        modifier = modifier,
+        paddingValues = PaddingValues(16.dp)
+    ) {
         when (transactionUi.type) {
             TransactionType.TOP_UP -> TopUpTransactionCard(transactionUi = transactionUi)
             else -> ContactTransactionCard(transactionUi = transactionUi)
         }
-
     }
 }
 
@@ -266,7 +250,7 @@ private fun TransactionStatusMark(
         modifier = Modifier
             .then(modifier)
             .size(16.dp)
-            .offset(0.dp, -4.dp),
+            .offset(0.dp, (-4).dp),
         painter = getTxStatusMark(status),
         contentDescription = "${transactionUi.recentStatus}"
     )

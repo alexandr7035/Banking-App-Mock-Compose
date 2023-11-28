@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_item_account_level">Account Level</string>
+    <string name="help_item_notifications">Notifications</string>
+    <string name="help_item_service_fees">Service Fees</string>
+    <string name="help_item_invite_friends">Invite Friends</string>
+    <string name="help_item_family_account">Family Account</string>
+
+    <string name="help_item_lorem">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500</string>
+</resources>

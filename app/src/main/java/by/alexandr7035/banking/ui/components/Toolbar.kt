@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -34,12 +33,12 @@ import by.alexandr7035.banking.ui.theme.primaryFontFamily
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecondaryToolBar(
+    modifier: Modifier = Modifier,
     onBack: () -> Unit,
     title: UiText,
     actions: @Composable RowScope.() -> Unit = {},
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = Color(0xFF262626),
-    modifier: Modifier = Modifier
 ) {
 
     CenterAlignedTopAppBar(

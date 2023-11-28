@@ -40,7 +40,7 @@ import by.alexandr7035.banking.ui.components.HorseshoeProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.ScreenSectionDivider
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
-import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
+import by.alexandr7035.banking.ui.components.images.debugPlaceholder
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.core.resources.UiText

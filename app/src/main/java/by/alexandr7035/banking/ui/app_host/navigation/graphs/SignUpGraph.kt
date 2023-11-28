@@ -6,37 +6,37 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import by.alexandr7035.banking.ui.app_host.navigation.model.NavEntries
+import by.alexandr7035.banking.ui.app_host.navigation.model.NavDestinations
 import by.alexandr7035.banking.ui.feature_signup.InitSignUpScreen
 import by.alexandr7035.banking.ui.feature_signup.confirm_signup.ConfirmSignUpScreen
 import by.alexandr7035.banking.ui.feature_signup.finish_signup.CompleteSignUpScreen
 
 fun NavGraphBuilder.signUpGraph(navController: NavController) {
     navigation(
-        startDestination = NavEntries.InitSignUp.route,
-        route = NavEntries.Graphs.SignUpGraph.route
+        route = NavDestinations.SignUpGraph.route,
+        startDestination = NavDestinations.SignUpGraph.InitSignUp.route,
     ) {
-        composable(route = NavEntries.InitSignUp.route) {
+        composable(route = NavDestinations.SignUpGraph.InitSignUp.route) {
             InitSignUpScreen(
                 onGoToSignIn = {
-                    navController.navigate(NavEntries.Login.route) {
+                    navController.navigate(NavDestinations.Login.route) {
                         // TODO check ux
-                        popUpTo(NavEntries.InitSignUp.route) {
+                        popUpTo(NavDestinations.SignUpGraph.InitSignUp.route) {
                             inclusive = true
                         }
                     }
                 },
                 onGoToConfirmSignUp = { email ->
-                    navController.navigate("${NavEntries.ConfirmSignUp.route}/${email}")
+                    navController.navigate("${NavDestinations.SignUpGraph.ConfirmSignUp.route}/${email}")
                 },
                 onGoToTermsAndConditions = {
-                    navController.navigate(NavEntries.TermsAndConditions.route)
+                    navController.navigate(NavDestinations.TermsAndConditions.route)
                 }
             )
         }
 
         composable(
-            route = "${NavEntries.ConfirmSignUp.route}/{otpDestination}",
+            route = "${NavDestinations.SignUpGraph.ConfirmSignUp.route}/{otpDestination}",
             arguments = listOf(navArgument("otpDestination") { type = NavType.StringType })
         ) {
             val email = it.arguments?.getString("otpDestination")!!
@@ -44,9 +44,8 @@ fun NavGraphBuilder.signUpGraph(navController: NavController) {
             ConfirmSignUpScreen(
                 email = email,
                 onCodeVerified = {
-                    navController.navigate(NavEntries.CompletedSignUp.route) {
-                        popUpTo(NavEntries.Graphs.SignUpGraph.route) {
-//                            popUpTo("${NavEntries.ConfirmSignUp.route}/${email}") {
+                    navController.navigate(NavDestinations.SignUpGraph.CompletedSignUp.route) {
+                        popUpTo(NavDestinations.SignUpGraph.route) {
                             inclusive = true
                         }
                     }
@@ -54,18 +53,18 @@ fun NavGraphBuilder.signUpGraph(navController: NavController) {
             )
         }
 
-        composable(NavEntries.CompletedSignUp.route) {
+        composable(NavDestinations.SignUpGraph.CompletedSignUp.route) {
             CompleteSignUpScreen(
                 onClose = {
-                    navController.navigate(NavEntries.Graphs.CreateAppLock.route) {
+                    navController.navigate(NavDestinations.SetupAppLockGraph.route) {
                         // TODO check
-                        popUpTo(NavEntries.Graphs.SignUpGraph.route) {
+                        popUpTo(NavDestinations.SignUpGraph.route) {
                             inclusive = true
                         }
                     }
                 },
                 onGoToTermsAndConditions = {
-                    navController.navigate(NavEntries.TermsAndConditions.route)
+                    navController.navigate(NavDestinations.TermsAndConditions.route)
                 }
             )
         }

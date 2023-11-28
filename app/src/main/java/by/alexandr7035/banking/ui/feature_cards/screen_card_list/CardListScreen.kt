@@ -1,12 +1,15 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_card_list
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -30,10 +33,10 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.DashedButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
-import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
+import by.alexandr7035.banking.ui.feature_cards.components.PaymentCardSkeleton
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import org.koin.androidx.compose.koinViewModel
 
@@ -54,7 +57,7 @@ fun CardListScreen(
             )
         },
         floatingActionButton = {
-            if (state is CardListState.Success && state.floatingAddCardShown) {
+            AnimatedVisibility(state.floatingAddCardShown) {
                 FloatingActionButton(
                     onClick = {
                         onAddCard.invoke()
@@ -77,25 +80,25 @@ fun CardListScreen(
                 bottom = pv.calculateBottomPadding()
             )
         ) {
-            when (state) {
-                is CardListState.Loading -> CardListScreen_Skeleton()
+            when {
+                state.isLoading -> CardListScreen_Skeleton()
 
-                is CardListState.Success -> {
+                state.error != null -> {
+                    ErrorFullScreen(
+                        error = state.error,
+                        onRetry = {
+                            viewModel.emitIntent(CardListIntent.EnterScreen)
+                        }
+                    )
+                }
+
+                else -> {
                     CardListScreen_Ui(
                         cards = state.cards,
                         onAddCard = { onAddCard.invoke() },
                         onCardDetails = { onCardDetails.invoke(it) },
                         onToggleFab = {
                             viewModel.emitIntent(CardListIntent.ToggleFloatingAddCardButton(it))
-                        }
-                    )
-                }
-
-                is CardListState.Error -> {
-                    ErrorFullScreen(
-                        error = state.error,
-                        onRetry = {
-                            viewModel.emitIntent(CardListIntent.EnterScreen)
                         }
                     )
                 }
@@ -130,12 +133,11 @@ fun CardListScreen_Ui(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
             .padding(
                 vertical = 16.dp,
                 horizontal = 24.dp,
-            ),
+            )
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         state = listState
@@ -154,7 +156,7 @@ fun CardListScreen_Ui(
             item() {
                 DashedButton(
                     onClick = { onAddCard.invoke() },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.size(300.dp, 200.dp),
                     text = stringResource(id = R.string.add_a_card),
                     icon = painterResource(id = R.drawable.ic_plus)
                 )
@@ -165,8 +167,8 @@ fun CardListScreen_Ui(
                 DashedButton(
                     onClick = { onAddCard.invoke() },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp),
+                        .width(300.dp)
+                        .height(200.dp),
                     text = stringResource(id = R.string.add_a_card),
                     icon = painterResource(id = R.drawable.ic_plus)
                 )
@@ -178,18 +180,17 @@ fun CardListScreen_Ui(
 @Composable
 private fun CardListScreen_Skeleton() {
     Column(
-        modifier = Modifier.padding(
-            vertical = 16.dp,
-            horizontal = 24.dp,
-        ),
+        modifier = Modifier
+            .padding(
+                vertical = 16.dp,
+                horizontal = 24.dp,
+            )
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        (0..2).forEach { _ ->
-            SkeletonShape(
-                modifier = Modifier
-                    .height(160.dp)
-                    .fillMaxWidth(),
-            )
+        repeat(2) {
+            PaymentCardSkeleton()
         }
     }
 }

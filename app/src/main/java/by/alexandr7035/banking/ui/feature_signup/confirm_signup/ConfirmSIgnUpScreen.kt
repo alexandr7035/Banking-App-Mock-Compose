@@ -10,7 +10,7 @@ import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
 import by.alexandr7035.banking.ui.components.snackbar.SnackBarMode
-import by.alexandr7035.banking.ui.core.EnterScreenEffect
+import by.alexandr7035.banking.ui.core.effects.EnterScreenEffect
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_otp.OtpConfirmationIntent
 import by.alexandr7035.banking.ui.feature_otp.OtpConfirmationScreen

@@ -10,8 +10,10 @@ import by.alexandr7035.banking.domain.features.profile.model.CompactProfile
 import by.alexandr7035.banking.ui.core.error.asUiTextError
 import by.alexandr7035.banking.ui.feature_logout.LogoutIntent
 import by.alexandr7035.banking.ui.feature_logout.LogoutViewModel
+import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,38 +23,102 @@ class ProfileViewModel(
     private val getCompactProfileUseCase: GetCompactProfileUseCase,
     private val logoutUseCase: LogoutUseCase
 ) : ViewModel(), LogoutViewModel {
-    private val _state = MutableStateFlow(
-        ProfileScreenState()
-    )
+
+    private val _state = MutableStateFlow(ProfileScreenState())
     val state = _state.asStateFlow()
+
+    private val errorHandler = CoroutineExceptionHandler { _, e ->
+        reduceError(ErrorType.fromThrowable(e))
+    }
 
     fun emitIntent(intent: ProfileScreenIntent) {
         when (intent) {
             is ProfileScreenIntent.EnterScreen -> {
                 reduceProfileLoading()
 
-                viewModelScope.launch {
-                    val profile = OperationResult.runWrapped {
-                        getCompactProfileUseCase.execute()
-                    }
+                viewModelScope.launch(errorHandler) {
+                    val profile = getCompactProfileUseCase.execute()
+                    reduceData(profile)
+                }
+            }
 
-                    when (profile) {
-                        is OperationResult.Success -> {
-                            reduceData(profile.data)
-                        }
+            is ProfileScreenIntent.ToggleMyQrDialog -> {
+                _state.update {
+                    it.copy(
+                        showMyQrDialog = intent.isShown
+                    )
+                }
+            }
 
-                        is OperationResult.Failure -> {
-                            reduceError(profile.error.errorType)
-                        }
-                    }
+            is ProfileScreenIntent.ToggleScanQrDialog -> {
+                _state.update {
+                    it.copy(
+                        showScanQrDialog = intent.isShown
+                    )
+                }
+            }
+
+            is ProfileScreenIntent.TogglePermissionDialog -> {
+                _state.update {
+                    it.copy(
+                        showPermissionDialog = intent.isShown
+                    )
                 }
             }
         }
     }
 
+    override fun emitLogoutIntent(intent: LogoutIntent) {
+        when (intent) {
+            is LogoutIntent.ToggleLogoutDialog -> {
+                reduceLogoutDialog(showDialog = intent.isShown)
+            }
+
+            is LogoutIntent.ConfirmLogOut -> {
+                reduceLogoutLoading()
+
+                viewModelScope.launch {
+                    val res = OperationResult.runWrapped {
+                        logoutUseCase.execute()
+                    }
+                    reduceLogoutResult(res)
+                }
+            }
+        }
+    }
+
+
     private fun reduceProfileLoading() {
         _state.update { curr ->
             curr.copy(isProfileLoading = true)
+        }
+    }
+
+    private fun reduceError(errorType: ErrorType) {
+        _state.update { curr ->
+            curr.copy(
+                isProfileLoading = false,
+                error = errorType.asUiTextError()
+            )
+        }
+    }
+
+    private fun reduceData(profile: CompactProfile) {
+        _state.update { curr ->
+            curr.copy(
+                isProfileLoading = false,
+                profile = ProfileUi.mapFromDomain(profile)
+            )
+        }
+    }
+
+    fun consumeLogoutEvent() {
+        _state.update { curr ->
+            val logoutState = curr.logoutState.copy(
+                isLoading = false,
+                logoutEvent = consumed()
+            )
+            curr.copy(logoutState = logoutState)
         }
     }
 
@@ -77,53 +143,6 @@ class ProfileViewModel(
             val logoutState = curr.logoutState.copy(
                 isLoading = false,
                 logoutEvent = triggered(result)
-            )
-            curr.copy(logoutState = logoutState)
-        }
-    }
-
-    private fun reduceError(errorType: ErrorType) {
-        _state.update { curr ->
-            curr.copy(
-                isProfileLoading = false,
-                error = errorType.asUiTextError()
-            )
-        }
-    }
-
-    private fun reduceData(profile: CompactProfile) {
-        _state.update { curr ->
-            curr.copy(
-                isProfileLoading = false,
-                profile = ProfileUi.mapFromDomain(profile)
-            )
-        }
-    }
-
-    override fun emitLogoutIntent(intent: LogoutIntent) {
-        when (intent) {
-            is LogoutIntent.ToggleLogoutDialog -> {
-                reduceLogoutDialog(showDialog = intent.isShown)
-            }
-
-            is LogoutIntent.ConfirmLogOut -> {
-                reduceLogoutLoading()
-
-                viewModelScope.launch {
-                    val res = OperationResult.runWrapped {
-                        logoutUseCase.execute()
-                    }
-                    reduceLogoutResult(res)
-                }
-            }
-        }
-    }
-
-    fun consumeLogoutEvent() {
-        _state.update { curr ->
-            val logoutState = curr.logoutState.copy(
-                isLoading = false,
-                logoutEvent = consumed()
             )
             curr.copy(logoutState = logoutState)
         }

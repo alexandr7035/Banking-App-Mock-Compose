@@ -1,17 +1,14 @@
 package by.alexandr7035.banking.ui.feature_cards.dialog_card_picker
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -25,7 +22,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -39,7 +35,7 @@ import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.DotsProgressIndicator
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.error.ErrorFullScreen
-import by.alexandr7035.banking.ui.core.EnterScreenEffect
+import by.alexandr7035.banking.ui.core.effects.EnterScreenEffect
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_cards.components.PaymentCard
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
@@ -55,7 +51,9 @@ fun CardPickerDialog(
     defaultSelectedCard: String? = null
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
-    val dialogState = rememberModalBottomSheetState()
+    val dialogState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     val selectedCardNumber = rememberSaveable<MutableState<String?>> {
         mutableStateOf(null)
@@ -104,7 +102,9 @@ private fun CardPickerDialog_Ui(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
     ) {
         Text(
             text = stringResource(R.string.choose_card),
@@ -134,7 +134,7 @@ private fun CardPickerDialog_Ui(
                     contentPadding = PaddingValues(
                         start = 24.dp,
                         end = 24.dp,
-                        bottom = 48.dp
+                        bottom = 24.dp
                     )
                 ) {
                     if (state.cards.isNotEmpty()) {
@@ -175,8 +175,6 @@ private fun CardPickerDialog_Ui(
                     onRetry = {
                         onRequestLoad()
                     },
-                    modifier = Modifier
-                        .padding(bottom = 32.dp)
                 )
 
                 LaunchedEffect(Unit) {

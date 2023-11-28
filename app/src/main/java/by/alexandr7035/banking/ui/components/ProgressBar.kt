@@ -1,6 +1,5 @@
 package by.alexandr7035.banking.ui.components
 
-import AutoSizeText
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -36,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import by.alexandr7035.banking.ui.components.text_display.AutoSizeText
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.delay
@@ -167,7 +166,7 @@ fun DotsProgressIndicator(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(spaceBetween)
     ) {
-        circleValues.forEachIndexed { index, value ->
+        circleValues.forEach { value ->
             Box(
                 Modifier
                     .size(circleSize)

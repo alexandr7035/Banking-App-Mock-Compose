@@ -1,11 +1,10 @@
 package by.alexandr7035.banking.ui.feature_savings.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,11 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -29,7 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.PercentageIndicator
-import by.alexandr7035.banking.ui.components.debug.debugPlaceholder
+import by.alexandr7035.banking.ui.components.cards.PrimaryCard
+import by.alexandr7035.banking.ui.components.images.debugPlaceholder
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -39,32 +37,19 @@ import coil.request.ImageRequest
 
 @Composable
 fun SavingCard(
-    modifier: Modifier = Modifier,
     savingUi: SavingUi,
     onClick: (savingId: Long) -> Unit = {}
 ) {
-
-    val shape = RoundedCornerShape(10.dp)
-
-    Box(
-        modifier = modifier.then(
-            Modifier
-                .shadow(
-                    elevation = 32.dp,
-                    spotColor = Color.Gray,
-                    ambientColor = Color.Gray,
-                    shape = shape,
-                )
-                .background(
-                    color = Color.White, shape = shape
-                )
-                .clickable {
-                    onClick.invoke(savingUi.id)
-                }
-                .padding(16.dp)
-        )
+    PrimaryCard(
+        paddingValues = PaddingValues(16.dp),
+        onClick = {
+            onClick(savingUi.id)
+        }
     ) {
-        Row(Modifier.height(IntrinsicSize.Max)) {
+        Row(
+            modifier = Modifier
+                .height(IntrinsicSize.Max)
+        ) {
             val imageReq = ImageRequest.Builder(LocalContext.current)
                 .data(savingUi.imageUrl)
                 .decoderFactory(SvgDecoder.Factory())
@@ -104,6 +89,8 @@ fun SavingCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
+                Spacer(Modifier.height(8.dp))
+
                 Text(
                     text = savingUi.description,
                     style = TextStyle(
@@ -128,7 +115,7 @@ fun SavingCard(
 fun SavingCard_Preview() {
     BankingAppTheme() {
         SavingCard(
-            savingUi = SavingUi.mock()
+            savingUi = SavingUi.mock(),
         )
     }
 }

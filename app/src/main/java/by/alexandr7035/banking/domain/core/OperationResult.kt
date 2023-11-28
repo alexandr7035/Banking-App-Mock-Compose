@@ -19,10 +19,8 @@ sealed class OperationResult<out T> {
                 Success(res)
             } catch (e: Exception) {
                 when (e) {
-                    // Proxy app error further
                     is AppError -> Failure(e)
-//                    else -> throw IllegalStateException("Unhandled exception somewhere in outer code: ${e.stackTrace}")
-                    else -> throw e
+                    else -> Failure(AppError(ErrorType.fromThrowable(e)))
                 }
             }
         }

@@ -20,8 +20,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import by.alexandr7035.banking.ui.components.PrimaryTextField
-import by.alexandr7035.banking.ui.feature_cards.helpers.CardNumberHelpers
+import by.alexandr7035.banking.ui.components.text_fields.PrimaryTextField
+import by.alexandr7035.banking.ui.feature_cards.helpers.CardUiHelpers
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.AddCardState
 import by.alexandr7035.banking.ui.feature_cards.screen_add_card.UiField
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
@@ -63,7 +63,7 @@ fun CardNumberField(
                 keyboardType = type,
             ),
             visualTransformation = { number ->
-                CardNumberHelpers.formatOtherCardNumbers(number)
+                CardUiHelpers.formatCardNumber(number)
             },
             trailingIcon = {
                 Box(

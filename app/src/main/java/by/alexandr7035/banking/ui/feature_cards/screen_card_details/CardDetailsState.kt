@@ -6,16 +6,12 @@ import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 
-sealed class CardDetailsState {
-    data class Success(
-        val card: CardUi,
-        val showLoading: Boolean = false,
-        val showDeleteCardDialog: Boolean = false,
-        val cardDeletedResultEvent: StateEventWithContent<OperationResult<Unit>> = consumed(),
-        val setCardAsPrimaryEvent: StateEventWithContent<OperationResult<Unit>> = consumed()
-    ) : CardDetailsState()
-
-    data class Error(val error: UiText) : CardDetailsState()
-
-    object Loading : CardDetailsState()
-}
+data class CardDetailsState(
+    val card: CardUi? = null,
+    val showCardSkeleton: Boolean = true,
+    val error: UiText? = null,
+    val showLoading: Boolean = false,
+    val showDeleteCardDialog: Boolean = false,
+    val cardDeletedResultEvent: StateEventWithContent<OperationResult<Unit>> = consumed(),
+    val setCardAsPrimaryEvent: StateEventWithContent<OperationResult<Unit>> = consumed()
+)

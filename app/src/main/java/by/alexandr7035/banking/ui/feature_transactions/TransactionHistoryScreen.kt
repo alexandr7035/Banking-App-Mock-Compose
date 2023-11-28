@@ -79,12 +79,22 @@ fun TransactionHistoryScreen(
         ) {
             val state = viewModel.state.collectAsStateWithLifecycle().value
 
-            TransactionHistoryScreen_Ui(
-                state = state,
-                onIntent = {
-                    viewModel.emitIntent(it)
+            when {
+                state.screenError != null -> ErrorFullScreen(
+                    error = state.screenError,
+                    onRetry = {
+                        viewModel.emitIntent(TransactionHistoryIntent.InitLoad)
+                    })
+
+                else -> {
+                    TransactionHistoryScreen_Ui(
+                        state = state,
+                        onIntent = {
+                            viewModel.emitIntent(it)
+                        }
+                    )
                 }
-            )
+            }
         }
     }
 

@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.CheckReturnValue
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.errorprone.annotations.RestrictedApi
+
+-keep class by.alexandr7035.banking.ui.app_host.navigation.model.NavDestinations
+-keep class by.alexandr7035.banking.ui.app_host.navigation.model.PrimaryDestination

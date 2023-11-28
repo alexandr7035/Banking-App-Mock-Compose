@@ -4,15 +4,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,16 +27,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import by.alexandr7035.banking.R
+import by.alexandr7035.banking.ui.components.DashedButton
+import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
 import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
+import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
+
+private const val CARD_ASPECT_RATIO = 1.5f
+private val CARD_HEIGHT_FIXED = 200.dp
+private val CARD_WIDTH_FIXED = 300.dp
+private val CardShape = RoundedCornerShape(10.dp)
+private val selectionStrokeWidth = 8.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +60,7 @@ fun PaymentCard(
         colors = CardDefaults.cardColors(
             containerColor = cardUi.cardColor
         ),
-        shape = RoundedCornerShape(10.dp),
+        shape = CardShape,
         onClick = { onCLick.invoke(cardUi.cardNumber) }
     ) {
 
@@ -64,8 +73,8 @@ fun PaymentCard(
                         Color(0x4DFFFFFF),
                     )
                 ),
-                width = 8.dp,
-                shape = RoundedCornerShape(10.dp)
+                width = selectionStrokeWidth,
+                shape = CardShape
             )
         } else {
             Modifier
@@ -76,8 +85,8 @@ fun PaymentCard(
                 .then(selectedBorder)
                 .then(
                     Modifier
-                        .height(IntrinsicSize.Max)
-                        .wrapContentWidth()
+                        .height(CARD_HEIGHT_FIXED)
+                        .width(CARD_HEIGHT_FIXED * CARD_ASPECT_RATIO)
                 )
         ) {
 
@@ -85,8 +94,8 @@ fun PaymentCard(
                 Icon(
                     modifier = Modifier.size(24.dp),
                     painter = painterResource(id = R.drawable.ic_bookmark_filled),
-                    contentDescription = "Default card",
-                    tint = Color(0xCCFF0000),
+                    contentDescription = stringResource(R.string.default_card),
+                    tint = Color(0x99FFFFFF),
                 )
             }
 
@@ -103,14 +112,12 @@ fun PaymentCard(
                     .align(Alignment.BottomEnd)
             )
 
-            Row(
+            Box(
                 modifier = Modifier
                     .padding(24.dp)
-                    .height(IntrinsicSize.Max)
-                    .wrapContentWidth()
+                    .fillMaxSize()
             ) {
-
-                Column() {
+                Column {
                     Text(
                         text = stringResource(R.string.payment_card), style = TextStyle(
                             fontSize = 12.sp,
@@ -120,7 +127,7 @@ fun PaymentCard(
                         )
                     )
 
-                    Spacer(Modifier.height(30.dp))
+                    Spacer(Modifier.weight(0.4f))
 
                     Text(
                         text = cardUi.cardNumber, style = TextStyle(
@@ -131,7 +138,7 @@ fun PaymentCard(
                         )
                     )
 
-                    Spacer(Modifier.height(50.dp))
+                    Spacer(Modifier.weight(0.6f))
 
                     val balance = cardUi.balanceFlow
                         .collectAsStateWithLifecycle(initialValue = cardUi.recentBalance)
@@ -147,13 +154,13 @@ fun PaymentCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
-
                 Column(
-                    modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.End
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .align(Alignment.CenterEnd),
+                    horizontalAlignment = Alignment.End
                 ) {
-                    // TODO there may be other logo
-                    MasterCardLogo(modifier = Modifier.size(width = 40.dp, height = 24.dp))
+                    CardNetworkLogo(cardNetwork = cardUi.cardNetwork)
 
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -170,32 +177,76 @@ fun PaymentCard(
             }
         }
 
-
     }
 }
 
 @Composable
-@Preview
+fun AddPaymentCardButton(
+    onCLick: () -> Unit
+) {
+    DashedButton(
+        onClick = {
+            onCLick()
+        },
+        modifier = Modifier
+            .height(CARD_HEIGHT_FIXED)
+            .width(CARD_WIDTH_FIXED),
+        text = stringResource(id = R.string.add_a_card)
+    )
+}
+
+@Composable
+fun PaymentCardSkeleton() {
+    SkeletonShape(
+        modifier = Modifier
+            .height(CARD_HEIGHT_FIXED)
+            .width(CARD_WIDTH_FIXED),
+        shape = CardShape
+    )
+}
+
+@Composable
+@Preview(device = Devices.NEXUS_5)
 fun PaymentCard_Preview() {
-    BankingAppTheme() {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            PaymentCard(
-                cardUi = CardUi.mock()
-            )
+    BankingAppTheme {
+        ScreenPreview {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(
+                    horizontal = 24.dp,
+                    vertical = 16.dp
+                )
+            ) {
+                PaymentCard(
+                    cardUi = CardUi.mock()
+                )
 
-            PaymentCard(
-                cardUi = CardUi.mock(),
-                isSelected = true
-            )
+                PaymentCard(
+                    cardUi = CardUi.mock(Color(0xFF000000)),
+                    isSelected = true
+                )
 
-            PaymentCard(
-                cardUi = CardUi.mock(Color(0xFF000000)),
-            )
+                AddPaymentCardButton(onCLick = {})
+            }
+        }
+    }
+}
 
-            PaymentCard(
-                cardUi = CardUi.mock(Color(0xFF000000)),
-                isSelected = true
-            )
+@Preview
+@Composable
+fun PaymentCard_States_Preview() {
+    BankingAppTheme {
+        ScreenPreview {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(
+                    horizontal = 24.dp,
+                    vertical = 16.dp
+                )
+            ) {
+                AddPaymentCardButton(onCLick = {})
+                PaymentCardSkeleton()
+            }
         }
     }
 }

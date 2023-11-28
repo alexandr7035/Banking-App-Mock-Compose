@@ -6,20 +6,17 @@ class GetHomeCardsUseCase(
     private val cardsRepository: CardsRepository
 ) {
     suspend fun execute(): List<PaymentCard> {
-        val all = cardsRepository.getCards()
+        val allCards = cardsRepository.getCards()
 
-        val primary = all
-            .filter { it.isPrimary }
-            .sortedByDescending { it.addedDate }
+        val (primary, other) = allCards.partition { it.isPrimary }
 
-        val other = all
-            .filter { !it.isPrimary }
-            .sortedByDescending { it.addedDate }
+        val sortedPrimary = primary.sortedByDescending { it.addedDate }
+        val sortedOther = other.sortedByDescending { it.addedDate }
 
-        return (primary + other).take(DISPLAYED_COUNT)
+        return (sortedPrimary + sortedOther).take(DISPLAYED_COUNT)
     }
 
     companion object {
-        private const val DISPLAYED_COUNT = 2
+        private const val DISPLAYED_COUNT = 3
     }
 }

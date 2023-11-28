@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.domain.features.account.model.MoneyAmount
-import by.alexandr7035.banking.ui.components.SimpleGridView
+import by.alexandr7035.banking.ui.components.layout.SimpleGridView
 import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -81,10 +80,9 @@ private fun GridButton(
             }
             .padding(
                 vertical = 14.dp,
-                horizontal = 16.dp
+                horizontal = 4.dp
             )
             .fillMaxWidth()
-            .wrapContentSize()
     ) {
         Text(
             text = MoneyAmountUi.mapFromDomain(value).amountStr,

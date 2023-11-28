@@ -55,7 +55,7 @@ fun HorseshoeProgressIndicator(
 
     var animatedIndicatorValue by remember { mutableStateOf(0f) }
     LaunchedEffect(key1 = allowedIndicatorValue) {
-        animatedIndicatorValue = allowedIndicatorValue.toFloat()
+        animatedIndicatorValue = allowedIndicatorValue
     }
 
     val percentage = (animatedIndicatorValue / maxValue) * 100

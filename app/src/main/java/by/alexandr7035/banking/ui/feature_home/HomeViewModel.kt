@@ -13,7 +13,7 @@ import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.feature_home.model.HomeIntent
 import by.alexandr7035.banking.ui.feature_home.model.HomeState
-import by.alexandr7035.banking.ui.feature_profile.ProfileUi
+import by.alexandr7035.banking.ui.feature_profile.model.ProfileUi
 import by.alexandr7035.banking.ui.feature_savings.model.SavingUi
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.async
@@ -131,7 +131,10 @@ class HomeViewModel(
                 MoneyAmountUi.mapFromDomain(it).amountStr
             }
             .catch {
-                reduceError(ErrorType.fromThrowable(it))
+                val error = ErrorType.fromThrowable(it)
+                if (error != ErrorType.CARD_HAS_BEEN_DELETED) {
+                    reduceError(ErrorType.fromThrowable(it))
+                }
             }
     }
 }

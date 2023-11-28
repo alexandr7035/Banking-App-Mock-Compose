@@ -8,6 +8,8 @@ import by.alexandr7035.banking.ui.core.extensions.getFormattedDate
 import by.alexandr7035.banking.ui.core.extensions.splitStringWithDivider
 import by.alexandr7035.banking.ui.core.resources.UiText
 import by.alexandr7035.banking.ui.feature_account.MoneyAmountUi
+import by.alexandr7035.banking.ui.feature_cards.helpers.CardNetwork
+import by.alexandr7035.banking.ui.feature_cards.helpers.CardUiHelpers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -22,7 +24,8 @@ data class CardUi(
     val addressSecondLine: String?,
     val dateAdded: String,
     val cardType: UiText,
-    val cardColor: Color
+    val cardColor: Color,
+    val cardNetwork: CardNetwork
 ) {
     companion object {
         fun mock(
@@ -41,13 +44,13 @@ data class CardUi(
                 dateAdded = "12 Jan 2021 22:12",
                 cardType = UiText.DynamicString("Debit"),
                 cardColor = cardColor,
-                isPrimary = true
+                isPrimary = true,
+                cardNetwork = CardNetwork.MASTERCARD
             )
         }
 
         fun mapFromDomain(
             card: PaymentCard,
-            // TODO fix
             balanceFlow: Flow<String>? = null
         ): CardUi {
             val date = card.expiration.getFormattedDate("MM/yy")
@@ -75,7 +78,8 @@ data class CardUi(
                     CardType.CREDIT -> {
                         Color(0xFF262627)
                     }
-                }
+                },
+                cardNetwork = CardUiHelpers.detectCardNetwork(card.cardNumber)
             )
         }
     }

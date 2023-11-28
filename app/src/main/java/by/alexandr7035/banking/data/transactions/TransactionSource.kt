@@ -27,8 +27,7 @@ class TransactionSource(
             LoadResult.Page(
                 data = transactions,
                 prevKey = if (currentPage == 1) null else currentPage - 1,
-                // TODO check
-                nextKey = if (transactions.isEmpty() || transactions.size < params.loadSize) null else currentPage + 1
+                nextKey = if (transactions.size < params.loadSize) null else currentPage + 1
             )
 
         } catch (e: Exception) {

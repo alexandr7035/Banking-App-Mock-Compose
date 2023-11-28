@@ -58,17 +58,21 @@ class CardsRepositoryMock(
         cardType = cardEntity.cardType
     )
 
-    private fun mapAddCardPayloadToCache(addCardPayload: AddCardPayload): CardEntity = CardEntity(
-        number = addCardPayload.cardNumber,
-        isPrimary = false,
-        cardHolder = addCardPayload.cardHolder,
-        addressFirstLine = addCardPayload.addressFirstLine,
-        addressSecondLine = addCardPayload.addressSecondLine,
-        expiration = addCardPayload.expirationDate,
-        addedDate = System.currentTimeMillis(),
-        recentBalance = MOCK_CARD_INITIAL_BALANCE,
-        cardType = CardType.DEBIT
-    )
+    private fun mapAddCardPayloadToCache(addCardPayload: AddCardPayload): CardEntity {
+        val type = MockCardConstants.cardTypeByNumber(addCardPayload.cardNumber) ?: CardType.DEBIT
+
+        return CardEntity(
+            number = addCardPayload.cardNumber,
+            isPrimary = false,
+            cardHolder = addCardPayload.cardHolder,
+            addressFirstLine = addCardPayload.addressFirstLine,
+            addressSecondLine = addCardPayload.addressSecondLine,
+            expiration = addCardPayload.expirationDate,
+            addedDate = System.currentTimeMillis(),
+            recentBalance = MOCK_CARD_INITIAL_BALANCE,
+            cardType = type
+        )
+    }
 
     override suspend fun deleteCardById(id: String) {
         val cardEntity = cardsDao.getCardByNumber(id) ?: throw AppError(ErrorType.CARD_NOT_FOUND)
@@ -80,15 +84,6 @@ class CardsRepositoryMock(
         when (isPrimary) {
             true ->  cardsDao.markCardAsPrimary(cardId)
             false -> cardsDao.unmarkCardAsPrimary(cardId)
-        }
-    }
-
-    override suspend fun getPrimaryCard(): PaymentCard? {
-        val card = cardsDao.getPrimaryCard()
-        return if (card != null) {
-            mapCachedCardToDomain(card)
-        } else {
-            null
         }
     }
 

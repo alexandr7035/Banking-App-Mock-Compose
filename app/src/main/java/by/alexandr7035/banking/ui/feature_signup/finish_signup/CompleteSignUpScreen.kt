@@ -1,16 +1,13 @@
 package by.alexandr7035.banking.ui.feature_signup.finish_signup
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.PrimaryButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
-import by.alexandr7035.banking.ui.components.text.SpannableText
+import by.alexandr7035.banking.ui.components.text_display.SpannableText
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 
 @Composable
@@ -109,7 +106,6 @@ fun CompleteSignUpScreen(
                     color = Color(0xFF100D40),
                     textAlign = TextAlign.Center,
                 ),
-                // TODO ToS link
                 actionString = stringResource(R.string.terms_and_conditions),
                 actionStyle = SpanStyle(
                     fontSize = 12.sp,

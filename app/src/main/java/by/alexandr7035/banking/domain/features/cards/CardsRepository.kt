@@ -9,5 +9,4 @@ interface CardsRepository {
     suspend fun getCardById(id: String): PaymentCard
     suspend fun deleteCardById(id: String)
     suspend fun markCardAsPrimary(cardId: String, isPrimary: Boolean = false)
-    suspend fun getPrimaryCard(): PaymentCard?
 }

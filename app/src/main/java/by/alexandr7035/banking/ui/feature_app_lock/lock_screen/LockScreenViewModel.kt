@@ -11,8 +11,8 @@ import by.alexandr7035.banking.domain.features.app_lock.model.AuthenticationResu
 import by.alexandr7035.banking.domain.features.app_lock.model.BiometricsAvailability
 import by.alexandr7035.banking.domain.features.login.LogoutUseCase
 import by.alexandr7035.banking.ui.core.resources.UiText
-import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockIntent
 import by.alexandr7035.banking.ui.feature_app_lock.components.AppLockUiState
+import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockIntent
 import by.alexandr7035.banking.ui.feature_app_lock.core.AppLockViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.core.BiometricsViewModel
 import by.alexandr7035.banking.ui.feature_app_lock.core.biometrics.BiometricAuthResult
@@ -61,7 +61,7 @@ class LockScreenViewModel(
 
     override fun emitBiometricsIntent(intent: BiometricsIntent) {
         when (intent) {
-            is BiometricsIntent.AuthenticationResult -> {
+            is BiometricsIntent.ConsumeAuthResult -> {
                 when (intent.result) {
                     is BiometricAuthResult.Success -> {
                         _state.update {
@@ -100,10 +100,6 @@ class LockScreenViewModel(
                 }
             }
         }
-    }
-
-    fun emitLogoutIntent() {
-
     }
 
     private fun reduce(intent: AppLockIntent.PinFieldChange) {

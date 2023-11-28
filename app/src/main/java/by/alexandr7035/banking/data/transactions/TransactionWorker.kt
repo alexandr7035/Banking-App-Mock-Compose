@@ -26,7 +26,7 @@ class TransactionWorker(
 
     companion object {
         const val TRANSACTION_ID_KEY = "transaction_id"
-        const val MOCK_TRANSACTION_DELAY = 10000L
+        private const val MOCK_TRANSACTION_DELAY = 10000L
     }
 
     override suspend fun doWork(): Result {

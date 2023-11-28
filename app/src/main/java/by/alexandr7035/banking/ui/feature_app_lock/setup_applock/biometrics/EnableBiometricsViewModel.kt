@@ -41,7 +41,7 @@ class EnableBiometricsViewModel(
                 }
             }
 
-            is BiometricsIntent.AuthenticationResult -> {
+            is BiometricsIntent.ConsumeAuthResult -> {
                 if (intent.result is BiometricAuthResult.Success) {
                     setupAppLockedWithBiometricsUseCase.execute()
                 }

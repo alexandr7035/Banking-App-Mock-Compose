@@ -25,7 +25,7 @@ data class LoginFormFields(
     val passwordField: UiField = UiField("", null),
 )
 
-enum class LoginFieldType() {
+enum class LoginFieldType {
     EMAIL,
     PASSWORD
 }

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Banking App</string>
 
+    <string name="TRANSACTIONS_NOTIFICATION_CHANNEL_ID">BANKING_WORKER_CHANNEL</string>
+    <string name="TRANSACTIONS_NOTIFICATION_CHANNEL_NAME">Transaction notifications</string>
+
     <string name="wizard_title_1">Send Money</string>
     <string name="wizard_title_2">Request Money</string>
     <string name="wizard_title_3">Easy To Use</string>
@@ -25,6 +28,7 @@
     <string name="change_password">Change Password</string>
     <string name="change_email_address">Change Email Address</string>
     <string name="change_personal_profile">Change Personal Profile</string>
+    <string name="app_settings">App Settings</string>
     <string name="account">Account</string>
     <string name="my_qr">My QR</string>
     <string name="scan_qr">Scan QR</string>
@@ -72,7 +76,7 @@
     <string name="setup_biometrics">Setup Biometrics</string>
     <string name="cancel">Cancel</string>
     <string name="go_to_settings">Go to Settings</string>
-    <string name="biometrics_enable_explanation">You should enable Biometrics in Settings</string>
+    <string name="biometrics_enable_explanation">You should enable Biometrics in System Settings</string>
     <string name="my_balance">My Balance</string>
     <string name="proceed">Proceed</string>
     <string name="set_the_nominal">Set the nominal</string>
@@ -88,10 +92,46 @@
     <string name="unknown_user">Unknown user</string>
     <string name="all">All</string>
     <string name="transaction_not_found">Transaction not found</string>
-    <string name="NOTIFICATION_CHANNEL_ID">BANKING_WORKER_CHANNEL</string>
     <string name="enter_nominal">Enter Nominal</string>
     <string name="choose_contact">Choose Contact</string>
     <string name="send_to">Send to</string>
     <string name="you_have_no_contacts">You have no contacts</string>
     <string name="insufficient_card_balance">Insufficient card balance.</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="history">History</string>
+    <string name="logout_now">Logout Now</string>
+    <string name="want_to_logout">Want to Logout ?</string>
+    <string name="logout_explanation">You will back to login screen if you click the logout button</string>
+    <string name="help_center">Help Center</string>
+    <string name="search_tint">Search anything here</string>
+    <string name="clear_search">Clear search</string>
+
+    <string name="grant_permission">Grant permission</string>
+    <string name="permission_granted">Permission granted</string>
+    <string name="permission_rejected">Permission denied</string>
+    <string name="provide_permission_template">Provide %s permission</string>
+    <string name="permissions_settings_explanation">You should provide the permission in app Settings</string>
+
+    <string name="camera">Camera</string>
+    <string name="camera_permission_explanation">The app needs permission to use Camera in order to scan QR codes</string>
+
+    <string name="notifications">Notifications</string>
+    <string name="notifications_permission_explanation">The app uses permission to send notifications in order to notify you on transaction progresss</string>
+
+    <string name="default_card">Default card</string>
+    <string name="add_a_contact">Add a Contact</string>
+    <string name="scan_again">Scan again</string>
+    <string name="add_contact_explanation">If you add this user to Contacts, you will be able to exchange money fast and have other bonuses</string>
+    <string name="scan_contact_qr_explanation">Scan a QR code to add a Contact</string>
+    <string name="contact_added">Contact added</string>
+    <string name="permissions_settings">Permissions Settings</string>
+    <string name="permissions">Permissions</string>
+    <string name="app_system_settings">App System Settings</string>
+    <string name="enable">Enable</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="biometric_lock">Biometric Lock</string>
+    <string name="app_lock">App Lock</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
 </resources>

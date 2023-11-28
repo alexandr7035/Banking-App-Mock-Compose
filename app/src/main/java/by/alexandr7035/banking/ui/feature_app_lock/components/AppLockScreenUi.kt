@@ -92,7 +92,7 @@ fun AppLockScreen_Ui(
                 Text(
                     text = state.error.asString(),
                     style = TextStyle(
-                        color = Color.Red,
+                        color = MaterialTheme.colorScheme.error,
                         fontFamily = primaryFontFamily,
                         fontSize = 14.sp,
                     ),
@@ -155,7 +155,7 @@ private fun PinKeyboard(
             }
         }
 
-        val onEraseClick: () -> Unit = { ->
+        val onEraseClick: () -> Unit = {
             if (pinValue.isNotEmpty()) {
                 val updatedPin = pinValue.substring(0, pinValue.length - 1)
                 onIntent(AppLockIntent.PinFieldChange(updatedPin))

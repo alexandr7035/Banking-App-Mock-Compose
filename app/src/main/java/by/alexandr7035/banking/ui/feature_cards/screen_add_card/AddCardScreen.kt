@@ -1,6 +1,5 @@
 package by.alexandr7035.banking.ui.feature_cards.screen_add_card
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,13 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -29,13 +23,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,8 +39,8 @@ import by.alexandr7035.banking.domain.core.OperationResult
 import by.alexandr7035.banking.ui.app_host.host_utils.LocalScopedSnackbarState
 import by.alexandr7035.banking.ui.components.FullscreenProgressBar
 import by.alexandr7035.banking.ui.components.PrimaryButton
-import by.alexandr7035.banking.ui.components.PrimaryTextField
-import by.alexandr7035.banking.ui.components.ReadonlyTextField
+import by.alexandr7035.banking.ui.components.text_fields.PrimaryTextField
+import by.alexandr7035.banking.ui.components.text_fields.ReadonlyTextField
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.SecondaryToolBar
 import by.alexandr7035.banking.ui.components.dialogs.DatePickerDialog

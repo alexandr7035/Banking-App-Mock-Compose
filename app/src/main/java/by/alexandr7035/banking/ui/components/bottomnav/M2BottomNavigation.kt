@@ -97,8 +97,6 @@ fun M2BottomNavigation(
     Surface(
         color = backgroundColor,
         contentColor = contentColor,
-//        elevation = elevation,
-        // TODO check
         tonalElevation = elevation,
         modifier = modifier,
     ) {
@@ -242,11 +240,11 @@ fun RowScope.M2BottomNavigationItem(
 }
 
 /**
- * Contains default values used for [BottomNavigation].
+ * Contains default values used for [M2BottomNavigation].
  */
 object BottomNavigationDefaults {
     /**
-     * Default elevation used for [BottomNavigation].
+     * Default elevation used for [M2BottomNavigation].
      */
     val Elevation = 8.dp
 
