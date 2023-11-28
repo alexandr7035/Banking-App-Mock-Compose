@@ -25,7 +25,7 @@ android {
         applicationId "by.alexandr7035.banking"
         minSdk 23
         targetSdk 34
-        versionCode 1
+        versionCode 100
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -37,7 +37,6 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.config
-            debuggable true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
