@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.R
 import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
 import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
-import by.alexandr7035.banking.ui.components.decoration.MasterCardLogo
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
@@ -94,8 +92,6 @@ fun SmallCardIcon() {
                 Column(
                     modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.End
                 ) {
-                    MasterCardLogo(modifier = Modifier.size(width = 6.dp, height = 3.5.dp))
-
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
@@ -135,14 +131,14 @@ fun SmallCardIconCustomizable(
         DecorationRectangle(
             modifier = Modifier
                 .size(decorationSize)
-                .offset(x = (-decorationSize / 2), y = (-decorationSize/2)),
+                .offset(x = (-decorationSize / 2), y = (-decorationSize / 2)),
             strokeWidth = decorationSize / 8
         )
 
         DecorationCircle(
             modifier = Modifier
                 .size(decorationSize)
-                .offset(x = decorationSize/3, y = decorationSize/2)
+                .offset(x = decorationSize / 3, y = decorationSize / 2)
                 .align(Alignment.BottomEnd),
             strokeWidth =  decorationSize / 8
         )
@@ -194,10 +190,6 @@ fun SmallCardIconCustomizable(
                 modifier = Modifier.fillMaxHeight(),
                 horizontalAlignment = Alignment.End
             ) {
-                MasterCardLogo(modifier = Modifier
-                    .width(12.dp)
-                    .height(8.dp))
-
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(

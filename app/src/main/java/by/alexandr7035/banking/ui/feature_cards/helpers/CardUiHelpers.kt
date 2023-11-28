@@ -4,9 +4,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 
-// https://dev.to/benyam7/formatting-credit-card-number-input-in-jetpack-compose-android-2nal
-object CardNumberHelpers {
-    fun formatOtherCardNumbers(text: AnnotatedString): TransformedText {
+object CardUiHelpers {
+    // https://dev.to/benyam7/formatting-credit-card-number-input-in-jetpack-compose-android-2nal
+    fun formatCardNumber(text: AnnotatedString): TransformedText {
 
         val trimmed = if (text.text.length >= 16) text.text.substring(0..15) else text.text
         var out = ""
@@ -35,4 +35,22 @@ object CardNumberHelpers {
 
         return TransformedText(AnnotatedString(out), creditCardOffsetTranslator)
     }
+
+    fun detectCardNetwork(cardNumber:String): CardNetwork {
+        return when {
+//            Regex("^3[47][0-9]{13}\$").matches(cardNumber) -> CardNetwork.AMEX
+            Regex("^4[0-9]{12}(?:[0-9]{3})?$").matches(cardNumber) -> CardNetwork.VISA
+            Regex("^(5018|5020|5038|6304|6759|6761|6763)[0-9]{8,15}$").matches(cardNumber) -> CardNetwork.MAESTRO
+            Regex("^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$").matches(cardNumber) -> CardNetwork.MASTERCARD
+            // Add more card types as needed
+            else -> CardNetwork.UNKNOWN
+        }
+    }
+}
+
+enum class CardNetwork {
+    VISA,
+    MAESTRO,
+    MASTERCARD,
+    UNKNOWN
 }

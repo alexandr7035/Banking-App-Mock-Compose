@@ -37,7 +37,6 @@ import by.alexandr7035.banking.ui.components.DashedButton
 import by.alexandr7035.banking.ui.components.ScreenPreview
 import by.alexandr7035.banking.ui.components.decoration.DecorationCircle
 import by.alexandr7035.banking.ui.components.decoration.DecorationRectangle
-import by.alexandr7035.banking.ui.components.decoration.MasterCardLogo
 import by.alexandr7035.banking.ui.components.decoration.SkeletonShape
 import by.alexandr7035.banking.ui.feature_cards.model.CardUi
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
@@ -161,8 +160,7 @@ fun PaymentCard(
                         .align(Alignment.CenterEnd),
                     horizontalAlignment = Alignment.End
                 ) {
-                    // TODO there may be other logo
-                    MasterCardLogo(modifier = Modifier.size(width = 40.dp, height = 24.dp))
+                    CardNetworkLogo(cardNetwork = cardUi.cardNetwork)
 
                     Spacer(modifier = Modifier.weight(1f))
 
