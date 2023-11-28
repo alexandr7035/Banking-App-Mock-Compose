@@ -40,6 +40,7 @@ class TransactionRepositoryMock(
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_MAX_SIZE,
+                initialLoadSize = PAGE_MAX_SIZE,
                 prefetchDistance = PREFETCH_DISTANCE
             ),
             pagingSourceFactory = {
@@ -117,8 +118,8 @@ class TransactionRepositoryMock(
     }
 
     companion object {
-        private const val PAGE_MAX_SIZE = 5
-        private const val PREFETCH_DISTANCE = 1
+        private const val PAGE_MAX_SIZE = 30
+        private const val PREFETCH_DISTANCE = 5
         private const val MOCK_TRANSACTION_STATUS_CHECK_DELAY = 5000L
     }
 }
