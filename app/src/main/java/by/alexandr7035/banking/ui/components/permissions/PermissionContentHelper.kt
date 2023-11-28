@@ -9,7 +9,6 @@ object PermissionContentHelper {
         return when (permission) {
             android.Manifest.permission.CAMERA -> {
                 PermissionExplanation(
-                    // FIXME
                     icon = R.drawable.ic_camera,
                     permissionName = UiText.StringResource(R.string.camera),
                     explanation = UiText.StringResource(R.string.camera_permission_explanation)

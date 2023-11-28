@@ -45,7 +45,6 @@ class LoginViewModel(
                 }
             }
 
-            // TODO validation use cases
             is LoginIntent.SubmitForm -> {
                 val email = currentState.formFields.loginField.value
                 val password = currentState.formFields.passwordField.value

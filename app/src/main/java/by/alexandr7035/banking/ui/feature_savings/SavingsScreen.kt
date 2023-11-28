@@ -65,7 +65,6 @@ fun SavingsScreen(
                     )
                 }
 
-                // TODO skeleton
                 is SavingsListState.Loading -> SavingsScreen_Skeleton()
 
                 is SavingsListState.Error -> ErrorFullScreen(error = state.error, onRetry = {

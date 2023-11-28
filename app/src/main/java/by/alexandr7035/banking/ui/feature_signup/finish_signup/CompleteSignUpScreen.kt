@@ -106,7 +106,6 @@ fun CompleteSignUpScreen(
                     color = Color(0xFF100D40),
                     textAlign = TextAlign.Center,
                 ),
-                // TODO ToS link
                 actionString = stringResource(R.string.terms_and_conditions),
                 actionStyle = SpanStyle(
                     fontSize = 12.sp,

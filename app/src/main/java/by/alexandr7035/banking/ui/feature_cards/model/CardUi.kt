@@ -47,7 +47,6 @@ data class CardUi(
 
         fun mapFromDomain(
             card: PaymentCard,
-            // TODO fix
             balanceFlow: Flow<String>? = null
         ): CardUi {
             val date = card.expiration.getFormattedDate("MM/yy")

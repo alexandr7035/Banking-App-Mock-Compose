@@ -97,8 +97,6 @@ fun M2BottomNavigation(
     Surface(
         color = backgroundColor,
         contentColor = contentColor,
-//        elevation = elevation,
-        // TODO check
         tonalElevation = elevation,
         modifier = modifier,
     ) {
