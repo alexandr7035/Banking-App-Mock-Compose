@@ -34,6 +34,10 @@ The app is built with a **data -> domain <- ui** architecture typical for real a
 <img src="https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/946ae794-9568-4601-bbaa-b6179f1395d9" width="15%"/>
 </p>
 
+**Demo video**:  
+
+https://github.com/alexandr7035/Banking-App-Mock-Compose/assets/22574399/66766faa-ba83-424e-8fc5-17243365a9a8
+
 **Design reference**: https://www.figma.com/community/file/1106055934725589367/Finance-Mobile-App-UI-KIT by [Aparna Tati](https://www.figma.com/@6c9aa553_8682_4)
 
 ## Stack
