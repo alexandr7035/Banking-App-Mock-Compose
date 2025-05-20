@@ -1,17 +1,16 @@
 package by.alexandr7035.banking.ui.components.pages
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,9 +24,9 @@ import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T>PagerTabRow(
+fun <T> PagerTabRow(
     tabs: List<Page<T>>,
     pagerState: PagerState
 ) {
@@ -39,18 +38,15 @@ fun <T>PagerTabRow(
 
 //    SecondaryScrollableTabRow(
     SecondaryTabRow(
-        selectedTabIndex = pagerState.currentPage,
+        pagerState.currentPage, Modifier.fillMaxWidth(), MaterialTheme.colorScheme.background,
         // TODO make indicator more close to design
-        indicator = { tabPositions ->
-            if (pagerState.currentPage < tabPositions.size) {
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                    height = 4.dp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+        indicator = { ->
+            TabRowDefaults.SecondaryIndicator(
+                modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
+                height = 4.dp,
+                color = MaterialTheme.colorScheme.primary
+            )
         },
-        containerColor = MaterialTheme.colorScheme.background,
         divider = @Composable {
             HorizontalDivider(
                 modifier = Modifier.offset(y = (-1).dp),
@@ -59,9 +55,7 @@ fun <T>PagerTabRow(
             )
         },
 //        edgePadding = 0.dp,
-        modifier = Modifier.fillMaxWidth()
     ) {
-
         tabs.forEachIndexed { tabIndex, tab ->
             PagerTab(
                 isSelected = pagerState.currentPage == tabIndex,
@@ -73,7 +67,6 @@ fun <T>PagerTabRow(
                 })
         }
     }
-
 }
 
 

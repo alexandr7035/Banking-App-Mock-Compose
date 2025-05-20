@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -205,10 +206,6 @@ fun RowScope.M2BottomNavigationItem(
             ProvideTextStyle(style, content = label)
         }
     }
-    // The color of the Ripple should always the selected color, as we want to show the color
-    // before the item is considered selected, and hence before the new contentColor is
-    // provided by BottomNavigationTransition.
-    val ripple = rememberRipple(bounded = false, color = selectedContentColor)
 
     Box(
         modifier
@@ -218,7 +215,10 @@ fun RowScope.M2BottomNavigationItem(
                 enabled = enabled,
                 role = Role.Tab,
                 interactionSource = interactionSource,
-                indication = ripple
+                indication = ripple(
+                    bounded = false,
+                    color = selectedContentColor,
+                )
             )
             .weight(1f),
         contentAlignment = Alignment.Center

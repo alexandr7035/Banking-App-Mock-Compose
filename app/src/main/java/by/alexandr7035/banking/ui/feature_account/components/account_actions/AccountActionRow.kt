@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -87,7 +87,7 @@ private fun AccountActionItem(
             onClick = {
                 onActionClick(action)
             },
-            indication = rememberRipple(radius = 48.dp, bounded = false),
+            indication = ripple(radius = 48.dp, bounded = false),
             interactionSource = interactionSource
         )
     } else {
