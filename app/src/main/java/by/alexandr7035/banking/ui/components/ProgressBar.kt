@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -34,7 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import by.alexandr7035.banking.ui.components.text_display.AutoSizeText
+import androidx.compose.ui.unit.sp
 import by.alexandr7035.banking.ui.theme.BankingAppTheme
 import by.alexandr7035.banking.ui.theme.primaryFontFamily
 import kotlinx.coroutines.delay
@@ -106,7 +108,7 @@ fun PercentageIndicator(
             )
         }
 
-        AutoSizeText(
+        BasicText(
             text = "${percentageStr}%",
             style = TextStyle(
                 fontFamily = primaryFontFamily,
@@ -114,7 +116,11 @@ fun PercentageIndicator(
                 color = Color(0xFF100D40),
                 textAlign = TextAlign.Center,
             ),
-            textAlignment = Alignment.Center,
+            autoSize = TextAutoSize.StepBased(
+                minFontSize = 4.sp,
+                maxFontSize = 32.sp,
+                stepSize = 2.sp,
+            ),
             maxLines = 1,
             modifier = Modifier.padding(
                 vertical = thickness + 4.dp,
