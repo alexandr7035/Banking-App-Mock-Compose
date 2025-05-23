@@ -13,19 +13,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -72,7 +73,11 @@ fun CustomSlider(
                         activeTickColor = MaterialTheme.colorScheme.primary,
                         inactiveTickColor = Color(0xFFE7E7E7),
                     ),
-                    enabled = enabled
+                    enabled = enabled,
+                    thumbTrackGapSize = 0.dp,
+                    // hotfix to restore previous size of slider before material update
+                    // used since TrackHeight is internal
+                    modifier = Modifier.scale(scaleX = 1f, scaleY = 0.25f)
                 )
             },
             steps = stepsCount,
@@ -113,9 +118,9 @@ private fun CustomSliderThumb(
         .size(thumbRadiusDp)
         .indication(
             interactionSource = interactionSource,
-            indication = rememberRipple(
+            indication = ripple(
                 bounded = false,
-                radius = thumbRadiusDp / 2
+                radius = thumbRadiusDp / 2,
             )
         )
         .hoverable(interactionSource = interactionSource)

@@ -20,6 +20,18 @@
 * [Used materials](#used-materials)
 
 # About the app
+<details>
+<summary><strong>ℹ️ 2025 updates</strong></summary>
+<br>
+A small technical update making app have fresh dependencies and build on recent Android Studio:  
+
+- Bump dependencies
+- Migrate gradle from Groovy to `*.ktx`
+- Add version catalog
+- Fix broken/incompatible Compose code after updates
+- **TODO**: update `targetSdk` to **35** after finding appropriate UI solution for statusbar/navbar styling: https://issuetracker.google.com/issues/364591621?pli=1
+</details>
+
 **Banking-App-Mock-Compose** is a mock android app written with **Jetpack Compose**
 
 The primary purpose of the app is to develop a medium-size (~20K LoC) app using [Jetpack Compose](https://developer.android.com/jetpack/compose) instead of Android Views and enjoy all Compose pitfalls :)

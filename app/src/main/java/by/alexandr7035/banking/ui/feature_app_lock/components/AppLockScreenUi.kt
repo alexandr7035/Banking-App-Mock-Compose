@@ -23,12 +23,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -262,21 +262,21 @@ private fun PinTextButton(
     val interactionState = remember { MutableInteractionSource() }
     val shape = RoundedCornerShape(cornerRadius)
 
-    Box(modifier = modifier.then(
-        Modifier
-            .clip(shape)
-            .clickable(
-                indication = rememberRipple(
-                    color = Color.Gray,
-
-                    ), interactionSource = interactionState
-            ) {
-                onValueClicked(value)
-            }
-            .padding(
-                vertical = 16.dp,
-//                horizontal = 54.dp
-            ))) {
+    Box(
+        modifier = modifier.then(
+            Modifier
+                .clip(shape)
+                .clickable(
+                    indication = ripple(
+                        color = Color.Gray,
+                    ),
+                    interactionSource = interactionState,
+                ) {
+                    onValueClicked(value)
+                }
+                .padding(
+                    vertical = 16.dp,
+                ))) {
         Text(
             text = value.toString(), style = TextStyle(
                 fontSize = 20.sp,
