@@ -20,3 +20,6 @@ local.properties
 
 # Java heap dumps
 *.hprof
+
+# Claude Code
+CLAUDE.md
