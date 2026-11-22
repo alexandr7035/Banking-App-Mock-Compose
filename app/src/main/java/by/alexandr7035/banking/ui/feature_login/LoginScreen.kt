@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -185,6 +186,7 @@ private fun LoginForm(
         Spacer(modifier = Modifier.height(36.dp))
 
         DecoratedFormField(
+            modifier = Modifier.testTag("login_email"),
             fieldTitle = UiText.StringResource(R.string.email_address),
             onValueChange = {
                 onIntent.invoke(
@@ -200,6 +202,7 @@ private fun LoginForm(
         Spacer(modifier = Modifier.height(24.dp))
 
         DecoratedPasswordFormField(
+            modifier = Modifier.testTag("login_password"),
             fieldTitle = UiText.StringResource(R.string.password),
             onValueChange = {
                 onIntent.invoke(
@@ -234,7 +237,9 @@ private fun LoginForm(
                     focusManager.clearFocus()
                     onIntent.invoke(LoginIntent.SubmitForm)
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("login_submit"),
                 text = stringResource(R.string.sign_in)
             )
         }
