@@ -23,10 +23,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -77,7 +79,8 @@ fun OnboardingScreen_Ui(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            val pages = OnboardingPage.getPages(LocalContext.current)
+            val context = LocalContext.current
+            val pages = remember { OnboardingPage.getPages(context) }
             val pagerState = rememberPagerState(pageCount = { pages.size })
 
             val coroutineScope = rememberCoroutineScope()
@@ -165,7 +168,9 @@ fun OnboardingScreen_Ui(
                             pagerState.animateScrollToPage(pagerState.pageCount - 1)
                         }
                     },
-                    modifier = Modifier.wrapContentSize(),
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .testTag("onboarding_skip"),
                     text = stringResource(R.string.skip_this_step)
                 )
 
@@ -192,7 +197,9 @@ fun OnboardingScreen_Ui(
                         onClick = {
                             onGoToLogin()
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("onboarding_login_now"),
                         text = stringResource(R.string.login_now)
                     )
                 }
