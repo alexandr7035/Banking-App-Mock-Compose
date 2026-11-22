@@ -15,13 +15,15 @@ import by.alexandr7035.banking.domain.features.transactions.model.TransactionSta
 import by.alexandr7035.banking.domain.features.transactions.model.TransactionType
 import by.alexandr7035.banking.ui.core.notifications.TransactionNotificationHelper
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 class TransactionWorker(
     appContext: Context,
     workerParams: WorkerParameters,
     private val transactionDao: TransactionDao,
     private val accountRepository: AccountRepository,
-    private val transactionNotificationHelper: TransactionNotificationHelper
+    private val transactionNotificationHelper: TransactionNotificationHelper,
+    private val transactionDelayMillis: Long = MOCK_TRANSACTION_DELAY
 ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
@@ -35,7 +37,7 @@ class TransactionWorker(
             Log.d("WORKER_TAG", "Run transaction operation for transaction: $transactionId")
 
             if (transactionId != -1L) {
-                delay(MOCK_TRANSACTION_DELAY)
+                delay(transactionDelayMillis.milliseconds)
 
                 val transaction = transactionDao.getTransaction(transactionId) ?: throw AppError(ErrorType.TRANSACTION_NOT_FOUND)
                 val transactionResult = executeTransaction(transaction = transaction)
