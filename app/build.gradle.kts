@@ -1,5 +1,6 @@
 import java.io.FileInputStream
 import java.util.Properties
+
 val keystoreProperties = Properties()
 
 plugins {
@@ -42,7 +43,12 @@ android {
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
         vectorDrawables.useSupportLibrary = true
+    }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     buildTypes {
@@ -50,8 +56,8 @@ android {
             signingConfig = signingConfigs.findByName("config")
             isMinifyEnabled = true
             proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
         }
         getByName("debug") {
@@ -137,6 +143,7 @@ dependencies {
         androidTestImplementation(androidx.espresso.core)
         androidTestImplementation(platform(compose.bom))
         androidTestImplementation(androidx.ui.test.junit4)
+        androidTestUtil("androidx.test:orchestrator:1.5.1")
 
         // Debug dependencies
         debugImplementation(compose.tooling)
