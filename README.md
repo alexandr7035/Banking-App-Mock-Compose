@@ -1,98 +1,132 @@
-![GitHub top language](https://img.shields.io/github/languages/top/alexandr7035/Banking-App-Mock-Compose?color=%237f52ff&style=for-the-badge)
+# Banking App — Android QA Portfolio
 
+![Kotlin](https://img.shields.io/badge/Kotlin-7f52ff?style=for-the-badge&logo=kotlin&logoColor=white)
+![Compose UI Test](https://img.shields.io/badge/Compose_UI_Test-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)
+![Android API 35](https://img.shields.io/badge/Android-API_35-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 
+## Project Goal
 
-<h2>Project Goal</h2>
+I am developing this project as a QA portfolio focused on designing and
+automating Android tests, investigating bugs, and integrating tests into CI.
+I document my contributions, technical decisions, and the limitations
+of the solution.
 
-<p>
-  I am developing this project as a QA portfolio focused on designing and
-  automating Android tests, investigating bugs, and integrating tests into CI.
-  I document my contributions, technical decisions, and the limitations
-  of the solution.
-</p>
+The app itself is a fork of
+[alexandr7035/Banking-App-Mock-Compose](https://github.com/alexandr7035/Banking-App-Mock-Compose)
+(see [About the original app](#about-the-original-app) below).
+All testing work in this repository is mine.
 
-<h3>Running the Project</h3>
+## Current Status
 
-<p>
-  Open the project in Android Studio, install Android SDK 35, and sync Gradle.
-  Then run the <code>app</code> configuration using the <code>debug</code> build variant.
-</p>
+| Milestone | Status |
+|---|---|
+| M0 — Working project baseline | ✅ Done |
+| M1 — Test strategy | ✅ Done |
+| M2 — Logic tests | 🟡 In progress |
+| M3 — UI automation | 🟡 In progress |
+| M4 — CI and MVP | ⏳ Planned |
+| M5 — HTTP layer | ⏳ Planned |
+| M6 — Resilience and presentation | ⏳ Planned |
 
-<p>
-  Successfully launched on the <strong>Pixel 6 emulator running Android 15 / API 35</strong>.
-</p>
+## Highlights
 
-<p>
-  <strong>Demo credentials:</strong>
-  login <code>example@mail.com</code>,
-  password <code>1234567Ab</code>,
-  OTP <code>1111</code>.
-</p>
+- **A UI test found a real bug.** While automating login (LG-001), the test
+  could not reach the login screen. Using Layout Inspector and recomposition
+  counters, I found an infinite recomposition loop on the onboarding screen
+  and fixed it with `remember`
+  ([PR #4](https://github.com/kalug89/Banking-App-Mock-Compose/pull/4)).
+- **Stable, isolated UI tests.** Every test runs in its own process with
+  Android Test Orchestrator and `clearPackageData`, so no test depends on
+  data left by another one
+  ([PR #5](https://github.com/kalug89/Banking-App-Mock-Compose/pull/5)).
+- **Test design before automation.** A written
+  [test strategy](docs/testing/test-strategy.md) and
+  [money transfer test cases](docs/testing/money-transfer-test-cases.md)
+  (TR-001 – TR-007, Gherkin) with observations and open questions
+  from manual testing.
 
-<h3>Tests</h3>
+## Running the Project
 
-<pre><code class="language-bash">./gradlew testDebugUnitTest
-./gradlew connectedDebugAndroidTest</code></pre>
+Open the project in Android Studio, install Android SDK 35, and sync Gradle.
+Then run the `app` configuration using the `debug` build variant.
 
-<p>
-  The second command requires a running emulator or a connected Android device.
-</p>
+Tested on the **Pixel 6 emulator running Android 15 / API 35**.
 
-<p>
-  The project contains two template tests, with no automated user-flow tests.
-  Running the existing tests and manually verifying login, money transfers,
-  and transaction history remain planned tasks for M3.
-</p>
+**Demo credentials:** login `example@mail.com`, password `1234567Ab`, OTP `1111`.
 
-<h2>Roadmap</h2>
+## Tests
 
-<ul>
-  <li>
-    <strong>M0 — Working Project Baseline:</strong>
-    run the app, check existing tests and core user flows, and document
-    setup instructions.
-  </li>
-  <li>
-    <strong>M1 — Test Strategy:</strong>
-    analyze risks and define requirements and test cases for money transfers.
-  </li>
-  <li>
-    <strong>M2 — Logic Tests:</strong>
-    prepare reproducible test data, isolate tests, and cover transfer
-    validation and ViewModels.
-  </li>
-  <li>
-    <strong>M3 — UI Automation:</strong>
-    add Compose UI tests covering transfers, balances, transaction history,
-    and error scenarios.
-  </li>
-  <li>
-    <strong>M4 — CI and MVP:</strong>
-    automate builds, lint checks, tests, and reports with GitHub Actions.
-  </li>
-  <li>
-    <strong>M5 — HTTP Layer:</strong>
-    introduce HTTP communication for a selected flow and test controlled
-    responses and failures.
-  </li>
-  <li>
-    <strong>M6 — Resilience and Presentation:</strong>
-    verify accessibility and lifecycle behavior, document decisions,
-    and prepare a project demo.
-  </li>
-</ul>
+```bash
+./gradlew testDebugUnitTest
+./gradlew connectedDebugAndroidTest
+```
 
-<h3>My Contributions — M0</h3>
+The second command requires a running emulator or a connected Android device.
 
-<ul>
-  <li>Enabled local builds without the original author's signing configuration.</li>
-  <li>Enabled AndroidX and added <code>gradle.properties</code> to version control.</li>
-  <li>Added <code>*.hprof</code> heap dumps to <code>.gitignore</code>.</li>
-</ul>
+### What is covered
 
- 
+| ID | Test | Type |
+|---|---|---|
+| LG-001 | Login with valid credentials opens the Create PIN screen | Compose UI test |
+| — | `sendFromCard` reduces the card balance when funds are sufficient | Unit test (fake in-memory DAO) |
+| — | Test database and Koin test modules load the prepared test data | Instrumented setup tests |
 
+### How the tests are built
 
+- **Compose UI tests** find elements by `testTag`, not by visible text.
+- **IdlingResource** waits for the app start-up loading, instead of fixed sleeps.
+- **Reproducible test data:** a custom test runner starts a test application
+  with an in-memory Room database and Koin test modules (cards, contacts).
+- **Android Test Orchestrator** with `clearPackageData` isolates every test.
+- Test cases are written in Gherkin (Given / When / Then), and automated tests
+  reference their scenario IDs.
+
+## Roadmap
+
+- **M0 — Working Project Baseline:** run the app, check existing tests and
+  core user flows, and document setup instructions.
+- **M1 — Test Strategy:** analyze risks and define requirements and test
+  cases for money transfers.
+- **M2 — Logic Tests:** prepare reproducible test data, isolate tests,
+  and cover transfer validation and ViewModels.
+- **M3 — UI Automation:** add Compose UI tests covering login, transfers,
+  balances, transaction history, and error scenarios.
+  Next step: Page Object pattern, then money transfer tests (TR-xxx).
+- **M4 — CI and MVP:** automate builds, lint checks, tests, and reports
+  with GitHub Actions.
+- **M5 — HTTP Layer:** introduce HTTP communication for a selected flow and
+  test controlled responses and failures.
+- **M6 — Resilience and Presentation:** verify accessibility and lifecycle
+  behavior, document decisions, and prepare a project demo.
+
+## My Contributions
+
+**M0**
+- Enabled local builds without the original author's signing configuration.
+- Enabled AndroidX and added `gradle.properties` to version control.
+- Added `*.hprof` heap dumps to `.gitignore`.
+
+**M1**
+- Wrote the [test strategy](docs/testing/test-strategy.md) and
+  [money transfer test cases](docs/testing/money-transfer-test-cases.md).
+
+**M2**
+- Added an in-memory fake DAO and a unit test for `sendFromCard`.
+- Prepared reproducible test data (test database, test contacts, Koin test modules).
+
+**M3**
+- Added `testTag`s to the onboarding and login screens.
+- Added an IdlingResource for app start-up.
+- Automated LG-001 (successful login).
+- Found and fixed the onboarding infinite recomposition bug.
+- Configured Android Test Orchestrator with `clearPackageData`.
+
+---
+
+# About the original app
+
+> Everything below this line describes the original app by
+> [alexandr7035](https://github.com/alexandr7035/Banking-App-Mock-Compose).
 
 <br>
 <p align="center"> 
