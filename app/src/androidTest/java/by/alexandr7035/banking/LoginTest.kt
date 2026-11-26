@@ -15,6 +15,7 @@ import by.alexandr7035.banking.LoginTest.LoginTestData.CREATE_PIN_TITLE
 import by.alexandr7035.banking.LoginTest.LoginTestData.SCREEN_TIMEOUT_MS
 import by.alexandr7035.banking.LoginTest.LoginTestData.VALID_EMAIL
 import by.alexandr7035.banking.LoginTest.LoginTestData.VALID_PASSWORD
+import by.alexandr7035.banking.pages.LoginPage
 import by.alexandr7035.banking.testsetup.AppLoadingIdlingResource
 import by.alexandr7035.banking.ui.app_host.AppViewModel
 import org.junit.After
@@ -30,6 +31,8 @@ class LoginTest {
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var appLoadingIdlingResource: AppLoadingIdlingResource
+
+    val loginPage = LoginPage(composeTestRule)
 
     @Before
     fun setUp() {
@@ -51,13 +54,9 @@ class LoginTest {
         composeTestRule.onNodeWithTag("onboarding_login_now").performClick()
 
         // When: user logs in with valid credentials
-        composeTestRule
-            .onNode(hasSetTextAction() and hasAnyAncestor(hasTestTag("login_email")))
-            .performTextReplacement(VALID_EMAIL)
-        composeTestRule
-            .onNode(hasSetTextAction() and hasAnyAncestor(hasTestTag("login_password")))
-            .performTextReplacement(VALID_PASSWORD)
-        composeTestRule.onNodeWithTag("login_submit").performClick()
+        loginPage.enterEmail(VALID_EMAIL)
+        loginPage.enterPassword(VALID_PASSWORD)
+        loginPage.clickOnSubmitButton()
 
         // Then: Create PIN screen is displayed
         composeTestRule.waitUntilAtLeastOneExists(
